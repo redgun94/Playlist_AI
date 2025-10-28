@@ -1,0 +1,27 @@
+<div class="container d-flex flex-row my-2">
+    <div class="container bg-body-tertiary">
+        <div class="container-fluid">
+          <div class="d-flex" role="search">
+            <input type="text" [formControl]="artistName" 
+            placeholder="Escribe un artista" style="max-width: 50%;" 
+            [ngStyle]="{ 'border-color': artistName.invalid && artistName.touched ? 'red' : 'black' }">
+            <button class="btn btn-outline-success" type="button" (click)="buscarArtista()">Search </button>
+          </div>
+        </div>
+        <div class="container">
+         <ul>
+            @for(artist of allMatches; track artist.name){
+              <li (click)="addArtistToList(artist)">
+                <h4>{{artist.name}}</h4>
+              </li>
+            }
+          </ul>
+            
+        </div>
+    </div>
+    <div class="container .bg-danger-subtle" style="width:18rem;background-color: rgb(191, 200, 210);">
+      <button [disabled]="!responseSearch"  class="btn btn-outline-success" (click)="addArtistToList()">
+        <h5>Add</h5>
+      </button>
+    </div>
+</div>

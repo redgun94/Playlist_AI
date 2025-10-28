@@ -1,0 +1,43 @@
+<app-artist-search [artists]="artists"></app-artist-search>
+<div>
+    <div class="container-fluid">
+        <div class="d-flex">
+            <h1>Artist selected</h1>
+            <button (click)="cleanLocalStorage()">
+                <h2>Clean list</h2>
+            </button>
+            <button (click)="makePlaylist()">
+                <H2>Make a playlist with this artist</H2>
+            </button>
+        </div>
+    </div>
+<div>
+  <div>
+    <ul class="container-fluid">
+      @if (artists.length > 0) {
+        @for (item of artists.slice().reverse(); track item.name) {
+          <li class="d-flex align-items-start" (click)="selectArtist(item)">
+            <img [src]="item.images[0]?.url" alt="{{item.name}}" width="100">
+            <div class="ms-3">
+              <h3>{{item.name}}</h3>
+
+              <!-- Mostrar panel solo si este artista está seleccionado -->
+              <app-artist-panel
+                *ngIf="selected && artist?.id === item.id"
+                [artistDetail]="item"
+                (clic)="clearSelection()"
+              ></app-artist-panel>
+            </div>
+          </li>
+        } @empty {
+          <li><h2>No artists</h2></li>
+        }
+      }
+    </ul>
+  </div>
+</div>
+
+</div>
+<div>
+
+</div>
