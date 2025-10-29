@@ -1,0 +1,14 @@
+ichX5i0Ohm20BjF8
+
+connection string : 
+
+mongodb+srv://leandrobf94:<db_password>@plailist-cluster.tg0s1mg.mongodb.net/
+
+
+3. Add your connection string into your application code
+Use this connection string in your application
+
+
+View full code sample
+
+mongodb+srv://leandrobf94:<db_password>@plailist-cluster.tg0s1mg.mongodb.net/?appName=PlAIlist-Cluster
