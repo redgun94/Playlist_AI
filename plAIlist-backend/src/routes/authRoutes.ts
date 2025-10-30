@@ -1,7 +1,7 @@
-import express from 'express';
-import { register } from '../controllers/authController.ts';
+import express, { Router } from 'express';
+import { register } from '../controllers/authController';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // POST /api/auth/register
 
