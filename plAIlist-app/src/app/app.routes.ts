@@ -3,7 +3,7 @@ import { HomeComponent } from './nav/home/home.component';
 import { AppComponent } from './app.component';
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './login/login/login.component';
-import { SignupComponent } from './sigup/signup/signup.component';
+import { SignupComponent } from './signup/signup.component';
 
 
 export const routes: Routes = [
