@@ -2,6 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { RegisterRequest } from '../models/auth.model';
+import { Router } from 'express';
+import { Observable } from 'rxjs';
+
 
 
 @Component({
@@ -14,7 +19,12 @@ export class SignupComponent {
   showPassword = false;
   showConfirmPassword = false;
   passwordStrengthCat : string = "Fuerte";
+  errorMessage: string | null = null; 
 
+  constructor(private authService: AuthService, private router: Router){
+ 
+
+}
   signupForm = new FormGroup({
     fullName : new FormControl('',[Validators.required,Validators.minLength(3)]),
     email: new FormControl('',[Validators.required,Validators.email]),
@@ -74,6 +84,22 @@ export class SignupComponent {
     console.log('📝 Datos:', this.signupForm.value);
     
     // Aquí llamarías a tu AuthService
-    // this.authService.signup(this.signupForm.value).subscribe(...)
+    const userData = this.signupForm.value as RegisterRequest;
+    this.authService.register(userData).subscribe({
+      next: (response) => { 
+        if(response.success){
+          this.errorMessage = null;
+          console.log("Welcome: ",response.user.fullName);
+          this.router.navigate(['/home']);
+
+        }
+    },
+      error: (err) => {
+        this.errorMessage = err.message;
+        console.error(this.errorMessage);
+      }
+    
+    })
+
   }
 }
