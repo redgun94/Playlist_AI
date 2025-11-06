@@ -43,6 +43,18 @@ export class AuthService {
       );
   }
 
+  login(credentials: LoginRequest): Observable<AuthResponse>{
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(response => {
+        // Si el login es exitoso, guardar token y usuario
+        if( response.success && response.token){
+          this.saveAuthData(response.token, response.user);
+        }
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   logout(): void{
     //limpiar localStorage
     localStorage.removeItem('token');
@@ -55,7 +67,29 @@ export class AuthService {
   isAuthenticated():boolean{
     const token = localStorage.getItem('token');
     return !!token;
-
   }
 
+  getToken():string | null {
+    return localStorage.getItem('token');
+  }
+
+  private saveAuthData(token: string, user:User):void{
+    localStorage.setItem('token',token);
+    localStorage.setItem('current',JSON.stringify(user));
+
+    //Actualizar el behaviorSubject
+    this.currentUserSubject.next(user);
+  }
+  private handleError(error: HttpErrorResponse) {
+  let errorMessage = 'Ocurrió un error desconocido';
+  
+  if (error.error instanceof ErrorEvent) {
+    errorMessage = `Error: ${error.error.message}`;
+  } else {
+    errorMessage = error.error?.message || `Código de error: ${error.status}`;
+  }
+  
+  console.error('Error en AuthService:', errorMessage);
+  return throwError(() => new Error(errorMessage));
+}
 }

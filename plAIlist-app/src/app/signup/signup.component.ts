@@ -4,7 +4,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { RegisterRequest } from '../models/auth.model';
-import { Router } from 'express';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
 
