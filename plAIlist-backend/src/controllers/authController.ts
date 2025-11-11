@@ -10,6 +10,10 @@ interface RegisterRequestBody {
   confirmPassword: string;
   acceptTerms: boolean;
 }
+interface LoginRequestBody{
+  email: string;
+  password: string;
+}
 
 // Registrar nuevo usuario
 export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: Response): Promise<void> => {
@@ -92,3 +96,60 @@ export const register = async (req: Request<{}, {}, RegisterRequestBody>, res: R
     });
   }
 };
+export const login = async (req : Request<{},{}, LoginRequestBody>, res: Response): Promise<void> => {
+
+  try{
+    const {email,password} = req.body;
+ // Verificar si el usuario ya existe
+    if (!email && !password){
+        res.status(401).json({
+          success : false,
+          message : "Email and password are required"
+        })
+      }
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if(!existingUser){
+        res.status(401).json(
+          {
+            success : false,
+            message : "We could not find any match with your info"
+          }
+        )
+        return;}
+      const isPasswordValid = await existingUser.comparePassword(password);
+      if (!isPasswordValid){
+        res.status(401).json(
+          {
+            success : false,
+            message : "We could not find any match with your info"
+          }
+        )
+        return;
+      }
+      const token = jwt.sign(
+        {
+          userId : existingUser._id, email: existingUser.email
+        },
+        process.env.JWT_SECRET as string,
+        { expiresIn : '7d'}
+      );
+      res.status(200).json({
+        success : true,
+        message : `Welcome ${existingUser.fullName}`,
+        token,
+        user: {
+          id:existingUser._id,
+          fullName: existingUser.fullName,
+          email: existingUser.email
+        }
+
+      })
+  } catch(error){
+    console.error('Error found:', error);
+    res.status(500).json({
+      success : false,
+      message : "Error found, try later"
+    });
+  }
+
+    }
