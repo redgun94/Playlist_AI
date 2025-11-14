@@ -1,0 +1,145 @@
+<div class="dashboard-container">
+  
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <h1 class="logo">🎵 PlAIlist</h1>
+    </div>
+    
+    <div class="navbar-right">
+      <!-- Selector de idioma -->
+      <select [(ngModel)]="currentLanguage" (change)="changeLanguage(currentLanguage)">
+        <option value="es">🇪🇸 Español</option>
+        <option value="en">🇺🇸 English</option>
+      </select>
+      
+      <!-- Info del usuario -->
+      <div class="user-info" *ngIf="currentUser">
+        <span>{{ 'dashboard.welcome' | translate }}, {{ currentUser.fullName }}</span>
+        <button (click)="logout()" class="btn-logout">
+          {{ 'dashboard.logout' | translate }}
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Sección principal -->
+  <main class="main-content">
+    
+    <!-- Título -->
+    <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>
+    
+    <!-- Tabs -->
+    <div class="tabs">
+      <button 
+        [class.active]="searchType === 'artist'"
+        (click)="changeSearchType('artist')">
+        {{ 'dashboard.search.tabs.artists' | translate }}
+      </button>
+      <button 
+        [class.active]="searchType === 'track'"
+        (click)="changeSearchType('track')">
+        {{ 'dashboard.search.tabs.tracks' | translate }}
+      </button>
+    </div>
+    
+    <!-- Barra de búsqueda -->
+    <div class="search-container">
+      <div class="search-box">
+        <input 
+          type="text"
+          [(ngModel)]="searchQuery"
+          [placeholder]="'dashboard.search.placeholder' | translate"
+          (keyup.enter)="onSearch()"
+          class="search-input">
+        <button 
+          (click)="onSearch()" 
+          class="btn-search"
+          [disabled]="isSearching || !searchQuery">
+          🔍 {{ 'dashboard.search.button' | translate }}
+        </button>
+        <button 
+          *ngIf="searchQuery"
+          (click)="clearSearch()" 
+          class="btn-clear">
+          ✖
+        </button>
+      </div>
+    </div>
+    
+    <!-- Loading -->
+    <div *ngIf="isSearching" class="loading">
+      <div class="spinner"></div>
+      <p>{{ 'dashboard.search.searching' | translate }}</p>
+    </div>
+    
+    <!-- Error -->
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+    
+    <!-- Resultados: Artistas -->
+    <div *ngIf="searchType === 'artist' && artists.length > 0 && !isSearching" class="results">
+      <div class="results-grid">
+        <div *ngFor="let artist of artists" class="card artist-card">
+          <img 
+            [src]="artist.images[0]?.url || 'assets/placeholder.png'" 
+            [alt]="artist.name"
+            class="card-image">
+          <div class="card-content">
+            <h3 class="card-title">{{ artist.name }}</h3>
+            <p class="card-info">
+              <strong>{{ 'dashboard.artist.popularity' | translate }}:</strong> 
+              {{ artist.popularity }}/100
+            </p>
+            <p class="card-info" *ngIf="artist.genres.length > 0">
+              <strong>{{ 'dashboard.artist.genres' | translate }}:</strong> 
+              {{ artist.genres.slice(0, 3).join(', ') }}
+            </p>
+            <a 
+              [href]="artist.external_urls.spotify" 
+              target="_blank"
+              class="btn-spotify">
+              {{ 'dashboard.artist.viewSpotify' | translate }} →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Resultados: Canciones -->
+    <div *ngIf="searchType === 'track' && tracks.length > 0 && !isSearching" class="results">
+      <div class="results-grid">
+        <div *ngFor="let track of tracks" class="card track-card">
+          <img 
+            [src]="track.album.images[0]?.url || 'assets/placeholder.png'" 
+            [alt]="track.name"
+            class="card-image">
+          <div class="card-content">
+            <h3 class="card-title">{{ track.name }}</h3>
+            <p class="card-info">
+              <strong>{{ 'dashboard.track.artist' | translate }}:</strong> 
+              {{ track.artists[0].name }}
+            </p>
+            <p class="card-info">
+              <strong>{{ 'dashboard.track.album' | translate }}:</strong> 
+              {{ track.album.name }}
+            </p>
+            <a 
+              [href]="track.external_urls.spotify" 
+              target="_blank"
+              class="btn-spotify">
+              {{ 'dashboard.track.listen' | translate }} →
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sin resultados -->
+    <div *ngIf="!isSearching && searchQuery && artists.length === 0 && tracks.length === 0" class="no-results">
+      <p>{{ 'dashboard.search.noResults' | translate }} "{{ searchQuery }}"</p>
+    </div>
+    
+  </main>
+</div>

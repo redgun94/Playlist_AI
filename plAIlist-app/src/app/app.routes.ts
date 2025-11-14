@@ -4,13 +4,27 @@ import { AppComponent } from './app.component';
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './login/login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { authGuard } from './guards/auth.guard';
+import { noAuthGuard } from './guards/no-auth.guard';
 
 
 export const routes: Routes = [
     {path: '', component: LandingComponent},  // Ruta raíz muestra landing
     {path: 'landing', component: LandingComponent},  // Ruta explícita para landing
-    {path: 'home', component: HomeComponent},
-    {path: 'login', component: LoginComponent},
-    {path: 'signup', component: SignupComponent},
+    {
+        path: 'home', 
+        component: HomeComponent,
+        canActivate : [authGuard]
+    },
+    {
+        path: 'login',
+        component: LoginComponent,
+        canActivate: [noAuthGuard]
+    },
+    {
+        path: 'signup', 
+        component: SignupComponent,
+        canActivate: [noAuthGuard]
+    },
     {path: '**', redirectTo: '', pathMatch: 'full'}  // Wildcard SIEMPRE al final
 ];
