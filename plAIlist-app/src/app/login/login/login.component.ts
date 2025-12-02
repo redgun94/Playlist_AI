@@ -34,7 +34,7 @@ console.log(this.loginForm.get("email")?.errors?.['email']);
   const isUserActive = this.authService.isAuthenticated();
   if(isUserActive){
     console.log(this.loginForm.invalid)
-    this.route.navigate(['/home']);
+    this.route.navigate(['/dashboard']);
   }
 
   const userDataLogin = this.loginForm.value as LoginRequest;
@@ -42,7 +42,7 @@ console.log(this.loginForm.get("email")?.errors?.['email']);
     next: response => {
       if(response.success){
         console.log("Welcome:",response.user.fullName);
-        this.route.navigate(['/home']);
+        this.route.navigate(['/dashboard']);
       }
     },
     error: err =>{ alert("Error found : " + err.error.message)}

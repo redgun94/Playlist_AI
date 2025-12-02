@@ -104,44 +104,23 @@
               class="btn-spotify">
               {{ 'dashboard.artist.viewSpotify' | translate }} →
             </a>
+            <button 
+             (click)="selectArtist(artist)" 
+            class="btn-spotify">
+            {{ 'dashboard.artist.viewDetails' | translate }} →
+          </button> 
           </div>
         </div>
       </div>
     </div>
-    
-    <!-- Resultados: Canciones -->
-    <div *ngIf="searchType === 'track' && tracks.length > 0 && !isSearching" class="results">
-      <div class="results-grid">
-        <div *ngFor="let track of tracks" class="card track-card">
-          <img 
-            [src]="track.album.images[0]?.url || 'assets/placeholder.png'" 
-            [alt]="track.name"
-            class="card-image">
-          <div class="card-content">
-            <h3 class="card-title">{{ track.name }}</h3>
-            <p class="card-info">
-              <strong>{{ 'dashboard.track.artist' | translate }}:</strong> 
-              {{ track.artists[0].name }}
-            </p>
-            <p class="card-info">
-              <strong>{{ 'dashboard.track.album' | translate }}:</strong> 
-              {{ track.album.name }}
-            </p>
-            <a 
-              [href]="track.external_urls.spotify" 
-              target="_blank"
-              class="btn-spotify">
-              {{ 'dashboard.track.listen' | translate }} →
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
+   
     
     <!-- Sin resultados -->
     <div *ngIf="!isSearching && searchQuery && artists.length === 0 && tracks.length === 0" class="no-results">
       <p>{{ 'dashboard.search.noResults' | translate }} "{{ searchQuery }}"</p>
     </div>
-    
+    @if(selectedArtist){
+      <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
+    }
   </main>
 </div>

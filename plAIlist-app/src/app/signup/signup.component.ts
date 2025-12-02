@@ -90,7 +90,7 @@ export class SignupComponent {
         if(response.success){
           this.errorMessage = null;
           console.log("Welcome: ",response.user.fullName);
-          this.router.navigate(['/home']);
+          this.router.navigate(['/dashboard']);
 
         }
     },

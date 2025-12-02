@@ -2,20 +2,22 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation } fr
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { LanguageService } from '../../services/language.service';
-import { AuthService } from '../../services/auth.service';
+import { LanguageService } from '../services/language.service';
+import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { SpotifyAPIService } from '../../services/spotify-api.service';
+import { SpotifyAPIService } from '../services/spotify-api.service';
+import { ArtistPanelComponent } from '../Artist/artist-panel/artist-panel.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [TranslateModule, FormsModule, CommonModule],
+  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   encapsulation: ViewEncapsulation.None
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+
   currentLanguage: string = 'es';
   currentUser: any = null;
   searchType: 'artist' | 'track' = 'artist';
@@ -27,7 +29,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private userSubscription?: Subscription;
   private langChangeSubscription?: Subscription;
   title: any;
-
+  static artists: any[];
+  selectedArtist: any = null;
   constructor(
     private translate: TranslateService, 
     private authService: AuthService, 
@@ -144,6 +147,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Redirigir al login después del logout
     this.router.navigate(['./login']);
   }
-  
+  selectArtist(artist:any){
+    this.selectedArtist = artist;
+  }
 
 }

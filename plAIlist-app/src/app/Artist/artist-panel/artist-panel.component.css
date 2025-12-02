@@ -1,0 +1,333 @@
+/* ============================================
+   ARTIST DETAIL PANEL
+   ============================================ */
+
+   :host {
+    display: block;
+    height: 100%;
+  }
+  
+  .artist-detail-panel {
+    background: linear-gradient(180deg, #1a1a1a 0%, #121212 100%);
+    padding: 2rem;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  /* ============================================
+     HEADER DEL ARTISTA
+     ============================================ */
+  .artist-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #282828;
+  }
+  
+  .artist-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+  
+  .artist-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .artist-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .artist-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+  
+  .artist-meta {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #b3b3b3;
+    font-size: 0.9rem;
+  }
+  
+  .meta-item svg {
+    color: #1db954;
+  }
+  
+  /* ============================================
+     TABS DE NAVEGACIÓN
+     ============================================ */
+  .detail-tabs {
+    display: flex;
+    gap: 0.5rem;
+    border-bottom: 1px solid #282828;
+    padding-bottom: 0;
+  }
+  
+  .tab-btn {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    color: #b3b3b3;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    position: relative;
+    bottom: -1px;
+  }
+  
+  .tab-btn:hover {
+    color: #ffffff;
+  }
+  
+  .tab-btn.active {
+    color: #ffffff;
+    border-bottom-color: #1db954;
+  }
+  
+  /* ============================================
+     SECCIÓN DE TRACKS
+     ============================================ */
+  .tracks-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .track-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .track-item:hover {
+    background-color: #1a1a1a;
+  }
+  
+  .track-item:hover .btn-play {
+    opacity: 1;
+  }
+  
+  .track-number {
+    width: 24px;
+    text-align: center;
+    color: #b3b3b3;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .track-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .track-title {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .track-artist {
+    color: #b3b3b3;
+    font-size: 0.85rem;
+  }
+  
+  .track-duration {
+    color: #b3b3b3;
+    font-size: 0.9rem;
+    margin-right: 1rem;
+  }
+  
+  .btn-play {
+    width: 40px;
+    height: 40px;
+    background-color: #1db954;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.2s ease;
+    color: #000000;
+  }
+  
+  .btn-play:hover {
+    background-color: #1ed760;
+    transform: scale(1.05);
+  }
+  
+  /* ============================================
+     SECCIÓN DE ÁLBUMES
+     ============================================ */
+  .albums-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+  }
+  
+  .albums-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+  
+  .album-card {
+    background-color: #181818;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+  }
+  
+  .album-card:hover {
+    background-color: #282828;
+  }
+  
+  .album-card:hover .album-play-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .album-cover {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+  
+  .album-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .album-play-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 48px;
+    height: 48px;
+    background-color: #1db954;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    color: #000000;
+  }
+  
+  .album-play-btn:hover {
+    background-color: #1ed760;
+    transform: translateY(0) scale(1.05);
+  }
+  
+  .album-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .album-name {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .album-year {
+    color: #b3b3b3;
+    font-size: 0.8rem;
+  }
+  
+  /* ============================================
+     SCROLLBAR
+     ============================================ */
+  .artist-detail-panel::-webkit-scrollbar {
+    width: 12px;
+  }
+  
+  .artist-detail-panel::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .artist-detail-panel::-webkit-scrollbar-thumb {
+    background: #282828;
+    border-radius: 6px;
+  }
+  
+  .artist-detail-panel::-webkit-scrollbar-thumb:hover {
+    background: #3e3e3e;
+  }
+  
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 768px) {
+    .artist-header {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .artist-name {
+      font-size: 1.5rem;
+    }
+  
+    .artist-meta {
+      justify-content: center;
+    }
+  
+    .detail-tabs {
+      overflow-x: auto;
+    }
+  
+    .albums-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }

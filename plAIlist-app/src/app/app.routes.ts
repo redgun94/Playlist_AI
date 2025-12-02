@@ -6,7 +6,7 @@ import { LoginComponent } from './login/login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
-import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 export const routes: Routes = [

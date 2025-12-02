@@ -16,7 +16,8 @@
     "artist": {
       "popularity": "Popularidad",
       "genres": "Géneros",
-      "viewSpotify": "Ver en Spotify"
+      "viewSpotify": "Ver en Spotify",
+      "viewDetails": "Ver detalles"
     },
     "track": {
       "artist": "Artista",
