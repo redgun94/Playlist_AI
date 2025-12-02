@@ -1,0 +1,30 @@
+{
+  "dashboard": {
+    "welcome": "Bienvenido",
+    "logout": "Cerrar Sesión",
+    "title": "Dashboard",
+    "search": {
+      "tabs": {
+        "artists": "Artistas",
+        "tracks": "Canciones"
+      },
+      "placeholder": "Buscar artistas o canciones...",
+      "button": "Buscar",
+      "searching": "Buscando...",
+      "noResults": "No se encontraron resultados para"
+    },
+    "artist": {
+      "popularity": "Popularidad",
+      "genres": "Géneros",
+      "viewSpotify": "Ver en Spotify"
+    },
+    "track": {
+      "artist": "Artista",
+      "album": "Álbum",
+      "listen": "Escuchar en Spotify"
+    }
+  }
+}
+
+
+

@@ -8,6 +8,7 @@ import { response } from 'express';
   providedIn: 'root'
 })
 export class SpotifyAPIService {
+
   private clientId:string = "c74e5ceefe234e1995a0df05e9991948";
   private clientSecret:string = "a52a61c5919843b6bbacd03bde74c823";
   private url = 'https://accounts.spotify.com/api/token';
@@ -21,6 +22,9 @@ export class SpotifyAPIService {
    getStringToken(){
     return this.token;
    }
+   searchTracks(searchQuery: string): Observable<any> {
+    throw new Error('Method not implemented.');
+  }
 
   //  private getToken(){
       

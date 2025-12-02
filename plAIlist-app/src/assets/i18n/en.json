@@ -1,0 +1,28 @@
+{
+  "dashboard": {
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "title": "Dashboard",
+    "search": {
+      "tabs": {
+        "artists": "Artists",
+        "tracks": "Tracks"
+      },
+      "placeholder": "Search artists or tracks...",
+      "button": "Search",
+      "searching": "Searching...",
+      "noResults": "No results found for"
+    },
+    "artist": {
+      "popularity": "Popularity",
+      "genres": "Genres",
+      "viewSpotify": "View on Spotify"
+    },
+    "track": {
+      "artist": "Artist",
+      "album": "Album",
+      "listen": "Listen on Spotify"
+    }
+  }
+}
+

@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
+import { DashboardComponent } from './dashboard/dashboard/dashboard.component';
 
 
 export const routes: Routes = [
@@ -25,6 +26,11 @@ export const routes: Routes = [
         path: 'signup', 
         component: SignupComponent,
         canActivate: [noAuthGuard]
+    },
+    { 
+        path: 'dashboard', 
+        component: DashboardComponent,
+        canActivate: [authGuard]
     },
     {path: '**', redirectTo: '', pathMatch: 'full'}  // Wildcard SIEMPRE al final
 ];

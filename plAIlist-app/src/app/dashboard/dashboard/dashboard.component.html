@@ -15,10 +15,12 @@
       
       <!-- Info del usuario -->
       <div class="user-info" *ngIf="currentUser">
-        <span>{{ 'dashboard.welcome' | translate }}, {{ currentUser.fullName }}</span>
+        <span>{{ 'dashboard.welcome' | translate }}, {{ currentUser?.fullName }}</span>
         <button (click)="logout()" class="btn-logout">
           {{ 'dashboard.logout' | translate }}
         </button>
+        <p>{{ 'dashboard.title' | translate }}</p>
+
       </div>
     </div>
   </nav>

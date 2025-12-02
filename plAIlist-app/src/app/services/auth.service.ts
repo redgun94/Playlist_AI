@@ -17,16 +17,45 @@ export class AuthService {
   public currentUser: Observable<User | null>;
 
   constructor(private http: HttpClient) {
-  const storedUser = localStorage.getItem('currentUser');
-  this.currentUserSubject = new BehaviorSubject<User | null>(
-    storedUser ? JSON.parse(storedUser) : null
-  );
-  this.currentUser = this.currentUserSubject.asObservable();
-}
+    
+    // Recuperar usuario del localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    let parsedUser: User | null = null;
+    
+    if (storedUser) {
+      try {
+        // Intentar parsear el JSON
+        parsedUser = JSON.parse(storedUser);
+        // Validar que sea un objeto y no un string
+        if (typeof parsedUser === 'string') {
+          // Si es un string, intentar parsearlo de nuevo
+          parsedUser = JSON.parse(parsedUser);
+        }
+      } catch (error) {
+        console.error('Error al parsear usuario del localStorage:', error);
+        // Si hay error, limpiar el dato corrupto
+        localStorage.removeItem('currentUser');
+        parsedUser = null;
+      }
+    }
+    
+    this.currentUserSubject = new BehaviorSubject<User | null>(parsedUser);
+    this.currentUser = this.currentUserSubject.asObservable();
+  }
 
  // Getter para obtener el valor actual del usuario
   public get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
+    const value = this.currentUserSubject.value;
+    // Asegurarse de que el valor no sea un string JSON
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch (error) {
+        console.error('Error al parsear currentUserValue:', error);
+        return null;
+      }
+    }
+    return value;
   }
 
   // Método para registrar un nuevo usuario
@@ -73,9 +102,9 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  private saveAuthData(token: string, user:User):void{
+  public saveAuthData(token: string, user:User):void{
     localStorage.setItem('token',token);
-    localStorage.setItem('current',JSON.stringify(user));
+    localStorage.setItem('currentUser',JSON.stringify(user));
 
     //Actualizar el behaviorSubject
     this.currentUserSubject.next(user);
