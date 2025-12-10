@@ -5,6 +5,43 @@
     <div class="navbar-left">
       <h1 class="logo">🎵 PlAIlist</h1>
     </div>
+    <div class="tabs">
+      <button 
+        [class.active]="searchType === 'artist'"
+        (click)="changeSearchType('artist')">
+        {{ 'dashboard.search.tabs.artists' | translate }}
+      </button>
+      <button 
+      [class.active]="searchType === 'track'"
+      (click)="changeSearchType('track')">
+      {{ 'dashboard.search.tabs.tracks' | translate }}
+    </button>
+  </div>
+  
+  <!-- Barra de búsqueda -->
+  <div class="search-container">
+    <div class="search-box">
+      <input 
+      type="text"
+      [(ngModel)]="searchQuery"
+      [placeholder]="'dashboard.search.placeholder' | translate"
+      (keyup.enter)="onSearch()"
+      class="search-input">
+      <button 
+      (click)="onSearch()" 
+      class="btn-search"
+      [disabled]="isSearching || !searchQuery">
+      🔍 {{ 'dashboard.search.button' | translate }}
+    </button>
+    <button 
+    *ngIf="searchQuery"
+    (click)="clearSearch()" 
+    class="btn-clear">
+    ✖
+  </button>
+</div>
+</div>
+
     
     <div class="navbar-right">
       <!-- Selector de idioma -->
@@ -19,7 +56,6 @@
         <button (click)="logout()" class="btn-logout">
           {{ 'dashboard.logout' | translate }}
         </button>
-        <p>{{ 'dashboard.title' | translate }}</p>
 
       </div>
     </div>
@@ -27,66 +63,37 @@
   
   <!-- Sección principal -->
   <main class="main-content">
+    <app-sidebar></app-sidebar>
     
-    <!-- Título -->
-    <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>
-    
-    <!-- Tabs -->
-    <div class="tabs">
-      <button 
-        [class.active]="searchType === 'artist'"
-        (click)="changeSearchType('artist')">
-        {{ 'dashboard.search.tabs.artists' | translate }}
-      </button>
-      <button 
-        [class.active]="searchType === 'track'"
-        (click)="changeSearchType('track')">
-        {{ 'dashboard.search.tabs.tracks' | translate }}
-      </button>
-    </div>
-    
-    <!-- Barra de búsqueda -->
-    <div class="search-container">
-      <div class="search-box">
-        <input 
-          type="text"
-          [(ngModel)]="searchQuery"
-          [placeholder]="'dashboard.search.placeholder' | translate"
-          (keyup.enter)="onSearch()"
-          class="search-input">
-        <button 
-          (click)="onSearch()" 
-          class="btn-search"
-          [disabled]="isSearching || !searchQuery">
-          🔍 {{ 'dashboard.search.button' | translate }}
-        </button>
-        <button 
-          *ngIf="searchQuery"
-          (click)="clearSearch()" 
-          class="btn-clear">
-          ✖
-        </button>
-      </div>
-    </div>
-    
-    <!-- Loading -->
-    <div *ngIf="isSearching" class="loading">
-      <div class="spinner"></div>
-      <p>{{ 'dashboard.search.searching' | translate }}</p>
-    </div>
-    
-    <!-- Error -->
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-    
-    <!-- Resultados: Artistas -->
-    <div *ngIf="searchType === 'artist' && artists.length > 0 && !isSearching" class="results">
-      <div class="results-grid">
-        <div *ngFor="let artist of artists" class="card artist-card">
-          <img 
-            [src]="artist.images[0]?.url || 'assets/placeholder.png'" 
-            [alt]="artist.name"
+    <section class="section-content">
+      
+      <!-- Título -->
+      <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>
+      
+      <!-- Tabs -->
+  
+  
+  <!-- Barra de búsqueda -->
+
+
+<!-- Loading -->
+<div *ngIf="isSearching" class="loading">
+  <div class="spinner"></div>
+  <p>{{ 'dashboard.search.searching' | translate }}</p>
+</div>
+
+<!-- Error -->
+<div *ngIf="errorMessage" class="error-message">
+  {{ errorMessage }}
+</div>
+
+<!-- Resultados: Artistas -->
+<div *ngIf="searchType === 'artist' && artists.length > 0 && !isSearching" class="results">
+  <div class="results-grid">
+    <div *ngFor="let artist of artists" class="card artist-card">
+      <img 
+      [src]="artist.images[0]?.url || 'assets/placeholder.png'" 
+      [alt]="artist.name"
             class="card-image">
           <div class="card-content">
             <h3 class="card-title">{{ artist.name }}</h3>
@@ -99,28 +106,29 @@
               {{ artist.genres.slice(0, 3).join(', ') }}
             </p>
             <a 
-              [href]="artist.external_urls.spotify" 
-              target="_blank"
-              class="btn-spotify">
-              {{ 'dashboard.artist.viewSpotify' | translate }} →
-            </a>
-            <button 
-             (click)="selectArtist(artist)" 
+            [href]="artist.external_urls.spotify" 
+            target="_blank"
             class="btn-spotify">
-            {{ 'dashboard.artist.viewDetails' | translate }} →
-          </button> 
-          </div>
-        </div>
+            {{ 'dashboard.artist.viewSpotify' | translate }} →
+          </a>
+          <button 
+          (click)="selectArtist(artist)" 
+          class="btn-spotify">
+          {{ 'dashboard.artist.viewDetails' | translate }} →
+        </button> 
       </div>
     </div>
-   
-    
-    <!-- Sin resultados -->
-    <div *ngIf="!isSearching && searchQuery && artists.length === 0 && tracks.length === 0" class="no-results">
-      <p>{{ 'dashboard.search.noResults' | translate }} "{{ searchQuery }}"</p>
-    </div>
-    @if(selectedArtist){
-      <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
-    }
-  </main>
+  </div>
+</div>
+
+
+<!-- Sin resultados -->
+<div *ngIf="!isSearching && searchQuery && artists.length === 0 && tracks.length === 0" class="no-results">
+  <p>{{ 'dashboard.search.noResults' | translate }} "{{ searchQuery }}"</p>
+</div>
+@if(selectedArtist){
+  <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
+}
+</section>
+</main>
 </div>

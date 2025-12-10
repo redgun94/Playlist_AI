@@ -79,5 +79,14 @@ export class SpotifyAPIService {
     });
     return this.httpRqst.get(url, { headers });
   }
+
+  getAlbumsByArtist(artistId : string){
+    const url =  `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&market=US&limit=10`;
+    const headers = new HttpHeaders({
+      'Authorization': (`Bearer ${this.token}`)
+    });
+    console.log("getting albums");
+      return this.httpRqst.get(url, { headers });
+  }
 }
 

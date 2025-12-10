@@ -29,13 +29,13 @@
   
     <!-- Tabs de navegación -->
     <div class="detail-tabs">
-      <button class="tab-btn active">Popular Tracks</button>
-      <button class="tab-btn">Albums</button>
-      <button class="tab-btn">About {{artistDetail.name}}</button>
+      <button (click)="viewAlbums(1)" class="tab-btn" [ngClass]="{active : activeView == 1}">Popular Tracks</button>
+      <button (click)="viewAlbums(2)" class="tab-btn " [class.active]="activeView == 2">Albums</button>
+      <button (click)="viewAlbums(3)"class="tab-btn" [ngClass]="{active : activeView == 3}">About {{artistDetail.name}}</button>
     </div>
   
     <!-- Contenido: Popular Tracks -->
-    <div class="tracks-section">
+    <div *ngIf="activeView === 1" class="tracks-section">
       <div *ngFor="let song of songs; let i = index" class="track-item">
         <div class="track-number">{{i + 1}}</div>
         <div class="track-info">
@@ -49,71 +49,52 @@
             </svg>
           </button>
         </div>
+      </div>
     
   
     <!-- Sección de Álbumes -->
-    <div class="albums-section">
+    <div *ngIf="activeView === 2" class="albums-section">
       <h3 class="section-title">Albums</h3>
       <div class="albums-grid">
-        <div class="album-card">
-          <div class="album-cover">
-            <img src="{{artistDetail.images[0].url}}" alt="Album">
-            <button class="album-play-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </button>
+        @if( albums.length > 0){
+          @for(album of albums; track album.name ){
+          <div class="album-card">
+            <div class="album-cover">
+              <img [src]="album.images[0].url" alt="Album">
+              <button class="album-play-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </button>
+            </div>
+            <div class="album-info">
+              <div class="album-name">{{album.name}}</div>
+              <div class="album-year">{{album.release_date}}</div>
+            </div>
           </div>
-          <div class="album-info">
-            <div class="album-name">My Way</div>
-            <div class="album-year">1969</div>
-          </div>
+        }
+      }
+      </div>
+    </div>
+
+    <div *ngIf="activeView === 3" class="artist-info">
+      <h2 class="artist-name">{{artistDetail.name}}</h2>
+      <div class="artist-meta">
+        <div class="meta-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+          <span>{{artistDetail.followers.total}}</span>
         </div>
-  
-        <div class="album-card">
-          <div class="album-cover">
-            <img src="https://via.placeholder.com/120" alt="Album">
-            <button class="album-play-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </button>
-          </div>
-          <div class="album-info">
-            <div class="album-name">In The Wee Small Hours</div>
-            <div class="album-year">1955</div>
-          </div>
-        </div>
-  
-        <div class="album-card">
-          <div class="album-cover">
-            <img src="https://via.placeholder.com/120" alt="Album">
-            <button class="album-play-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </button>
-          </div>
-          <div class="album-info">
-            <div class="album-name">Come Fly With Me</div>
-            <div class="album-year">1958</div>
-          </div>
-        </div>
-  
-        <div class="album-card">
-          <div class="album-cover">
-            <img src="https://via.placeholder.com/120" alt="Album">
-            <button class="album-play-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-            </button>
-          </div>
-          <div class="album-info">
-            <div class="album-name">Songs for Swingin' Lovers</div>
-            <div class="album-year">1956</div>
-          </div>
+        
+        <div class="meta-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          <span>{{artistDetail.external_urls.spotify}}</span>
         </div>
       </div>
     </div>
-  </div>
+
+  

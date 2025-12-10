@@ -1,0 +1,30 @@
+{
+  // Configuración de Cursor AI - Autocompletado
+  "cursor.cpp.disabledLanguages": [],
+  
+  // Activar sugerencias automáticas de Cursor
+  "editor.inlineSuggest.enabled": true,
+  
+  // Aceptar sugerencias solo con Tab (no con Enter)
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "editor.acceptSuggestionOnEnter": "off",
+  "editor.tabCompletion": "on",
+  
+  // Activar autocompletado mientras escribes
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": "off",
+    "strings": "on"
+  },
+  
+  // Sugerencias automáticas
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.wordBasedSuggestions": "off",
+  
+  // Configuración adicional de sugerencias
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.suggest.localityBonus": true
+}
+
+
+

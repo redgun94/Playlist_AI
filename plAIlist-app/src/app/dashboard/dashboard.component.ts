@@ -8,10 +8,11 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { SpotifyAPIService } from '../services/spotify-api.service';
 import { ArtistPanelComponent } from '../Artist/artist-panel/artist-panel.component';
+import { SidebarComponent } from "../Artist/sidebar/sidebar.component";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent],
+  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent, SidebarComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   encapsulation: ViewEncapsulation.None

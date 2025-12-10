@@ -9,7 +9,7 @@ export class DurationPipe implements PipeTransform {
         const totalSeconds = Math.floor(value / 1000);
         const minutes = Math.floor(totalSeconds / 60);
         const seconds = totalSeconds % 60;
-        const formatedSecond = seconds < 10 ? "0 + ${seconds}" : seconds;
+        const formatedSecond = seconds < 10 ? "0"+ `${seconds}` : seconds;
         return `${minutes}:${formatedSecond}`; 
     }
 }
