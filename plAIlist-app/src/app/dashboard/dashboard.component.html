@@ -67,8 +67,8 @@
     
     <section class="section-content">
       
-      <!-- Título -->
-      <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>
+      <!-- Título  <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>-->
+      
       
       <!-- Tabs -->
   
@@ -97,25 +97,19 @@
             class="card-image">
           <div class="card-content">
             <h3 class="card-title">{{ artist.name }}</h3>
-            <p class="card-info">
-              <strong>{{ 'dashboard.artist.popularity' | translate }}:</strong> 
-              {{ artist.popularity }}/100
-            </p>
-            <p class="card-info" *ngIf="artist.genres.length > 0">
-              <strong>{{ 'dashboard.artist.genres' | translate }}:</strong> 
-              {{ artist.genres.slice(0, 3).join(', ') }}
-            </p>
-            <a 
-            [href]="artist.external_urls.spotify" 
-            target="_blank"
+            <div>
+              <a 
+              [href]="artist.external_urls.spotify" 
+              target="_blank"
+              class="btn-spotify">
+              {{ 'dashboard.artist.viewSpotify' | translate }} →
+            </a>
+            <button 
+            (click)="selectArtist(artist)" 
             class="btn-spotify">
-            {{ 'dashboard.artist.viewSpotify' | translate }} →
-          </a>
-          <button 
-          (click)="selectArtist(artist)" 
-          class="btn-spotify">
-          {{ 'dashboard.artist.viewDetails' | translate }} →
-        </button> 
+            {{ 'dashboard.details' | translate }} →
+          </button> 
+        </div>
       </div>
     </div>
   </div>

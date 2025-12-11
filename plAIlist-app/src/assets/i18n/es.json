@@ -3,6 +3,7 @@
     "welcome": "Bienvenido",
     "logout": "Cerrar Sesión",
     "title": "Dashboard",
+    "details": "Ver Artista",
     "search": {
       "tabs": {
         "artists": "Artistas",

@@ -3,6 +3,7 @@
     "welcome": "Welcome",
     "logout": "Logout",
     "title": "Dashboard",
+    "details": "Details",
     "search": {
       "tabs": {
         "artists": "Artists",
