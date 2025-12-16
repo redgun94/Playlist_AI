@@ -1,9 +1,64 @@
 import { Request , Response } from 'express';
-import { Playlist } from '../models/Playlist';
+import Playlist, { IPlailist } from '../models/Playlist';
 
 
 interface PlaylistRequestBody {
-    playlisName : String;
-    memoDescriptip : String;
+    playlistName : String;
+    memoDescription : String;
     
 }
+
+export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>, res: Response): Promise <void> => {
+    try{
+        const { playlistName, memoDescription } = req.body;
+        //Validar la exist
+        if(!playlistName || (playlistName.length< 3)){
+            res.status(400).json({ 
+                success: false,
+                message: "Please enter a playlist name with at least 4 characters"
+              });
+              return;
+        }
+        //Verificar si exite otra playlist con mismo nombre
+        const alreadyPlaylist = await Playlist.findOne({playlistName : playlistName.toLowerCase()});
+        if(alreadyPlaylist){
+            res.status(400).json({ 
+                success: false,
+                message: "Playlist name already exists. Enter a new name."
+              });
+              return;
+        }
+
+        const newPlaylist = new Playlist({
+            playlistName,
+            memoDescription: memoDescription ? memoDescription : null
+        });
+
+        await newPlaylist.save();
+
+        res.status(201).json({
+            success: true,
+            message: "Playlist created successfully.",
+            playlist: newPlaylist
+        });}
+        catch(error){
+            if((error as any).name === 'ValidationError'){
+                const messages = Object.values((error as any).errors).map((err: any) => err.message);
+                res.status(400).json({ 
+                    success: false,
+                    message: messages[0]
+                  });
+                  return;
+            }
+        }
+    // Error del servidor
+    console.error('Error en registro:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error al registrar usuario. Intenta nuevamente.' 
+    });
+  }
+};
+    
+    
+    }
