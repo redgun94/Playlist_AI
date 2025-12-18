@@ -2,9 +2,11 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPlailist extends Document{
     playlistName : string;
-    memoDescription : string;
+    memoDescription? : string;
+    tracks: any[];
     createdAt: Date;
     updatedAt: Date;
+    userId: string
 };
 
     const playlistSchema = new Schema({
@@ -16,7 +18,16 @@ export interface IPlailist extends Document{
         memoDescription : {
             type : String, 
             required : false,
-            }},
+            },
+        tracks: {
+            type: [Schema.Types.Mixed],
+            default: [],
+        },
+        userId: {
+            type: String,
+            required: true,
+        }
+        },
             {
                 timestamps: true
             }

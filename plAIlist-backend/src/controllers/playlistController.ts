@@ -5,12 +5,14 @@ import Playlist, { IPlailist } from '../models/Playlist';
 interface PlaylistRequestBody {
     playlistName : String;
     memoDescription : String;
+    tracks: any[];
+    userId: string;
     
 }
 
 export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>, res: Response): Promise <void> => {
     try{
-        const { playlistName, memoDescription } = req.body;
+        const { playlistName, memoDescription, tracks, userId } = req.body;
         //Validar la exist
         if(!playlistName || (playlistName.length< 3)){
             res.status(400).json({ 
@@ -31,7 +33,9 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
 
         const newPlaylist = new Playlist({
             playlistName,
-            memoDescription: memoDescription ? memoDescription : null
+            memoDescription: memoDescription ? memoDescription : null,
+            tracks,
+            userId
         });
 
         await newPlaylist.save();
@@ -39,7 +43,13 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
         res.status(201).json({
             success: true,
             message: "Playlist created successfully.",
-            playlist: newPlaylist
+            playlist: {
+                id: newPlaylist._id,
+                name: newPlaylist.playlistName,
+                description: newPlaylist.memoDescription,
+                tracks: newPlaylist.tracks,
+                userId: newPlaylist.userId
+            }
         });}
         catch(error){
             if((error as any).name === 'ValidationError'){
@@ -50,15 +60,11 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
                   });
                   return;
             }
+                // Error del servidor
+            console.error('Error en registro:', error);
+            res.status(500).json({ 
+            success: false,
+            message: 'Error al registrar usuario. Intenta nuevamente.' 
+            });
         }
-    // Error del servidor
-    console.error('Error en registro:', error);
-    res.status(500).json({ 
-      success: false,
-      message: 'Error al registrar usuario. Intenta nuevamente.' 
-    });
-  }
-};
-    
-    
-    }
+    };
