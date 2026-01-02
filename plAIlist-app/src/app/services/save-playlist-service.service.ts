@@ -3,14 +3,22 @@ import { Playlist, PlaylistsResponse } from '../models/playlist.models';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
+
+// interface Playlist {
+//   id: string;
+//   name: string;
+//   description: string;
+//   tracks: any[];
+//   createdAt: Date;
+//   userId: string;
+// }
 @Injectable({
   providedIn: 'root'
 })
+
 export class SavePlaylistService {
   private apiUrl;
 
-
-  
   //Estado central de playlists
   private playlistsSubjet = new BehaviorSubject<Playlist[]>([]);
   public playlists$ = this.playlistsSubjet.asObservable();
@@ -38,8 +46,8 @@ export class SavePlaylistService {
     );
   }
   //Crear nueva playlist
-  createPlaylist(playlistData : Playlist): Observable<Playlist> {
-    return this.http.post<PlaylistsResponse>(`${this.apiUrl}/register`, playlistData)
+  createPlaylist(playlistData : Playlist): Observable<PlaylistsResponse> {
+    return this.http.post<PlaylistsResponse>(`${this.apiUrl}/createPlaylist`, playlistData)
       .pipe(
         tap(response => {
           // AGregar la nueva playlist al contexto

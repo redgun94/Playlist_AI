@@ -1,7 +1,7 @@
 <aside class="sidebar">
     <!-- Header con acciones -->
     <div class="sidebar-header">
-      <button class="btn-action">
+      <button class="btn-action" (click)="newPlaylist()">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -21,65 +21,31 @@
     <!-- Lista de playlists -->
     <nav class="playlist-nav">
       <ul class="playlist-list">
-        <li class="playlist-item">
-          <div class="playlist-icon">🎵</div>
-          <span class="playlist-name">Chill Mix</span>
-          <button class="btn-expand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </li>
-  
-        <li class="playlist-item">
-          <div class="playlist-icon">💼</div>
-          <span class="playlist-name">Work Anthemes</span>
-          <button class="btn-expand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </li>
-  
-        <li class="playlist-item">
-          <div class="playlist-icon">📻</div>
-          <span class="playlist-name">80s Focus</span>
-          <button class="btn-expand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </li>
-  
-        <li class="playlist-item">
-          <div class="playlist-icon">🎸</div>
-          <span class="playlist-name">80s Pop</span>
-          <button class="btn-expand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </li>
-  
-        <li class="playlist-item">
-          <div class="playlist-icon">📚</div>
-          <span class="playlist-name">Study Focus</span>
-          <button class="btn-expand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </li>
-  
-        <li class="playlist-item active">
-          <div class="playlist-icon">🎧</div>
-          <span class="playlist-name">Chill Mix</span>
-          <button class="btn-expand">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </li>
+        @if(newPlaylistclicked){
+          <div class="overlay"> 
+            <form class="playlist-modal" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
+              <input class="form-group">
+                <label class="form-label" for="fullName">Playlist Name</label>
+                <input 
+                  type="text"
+                  id = "playlistName"
+                  formControlName = "playlistName"
+                  placeholder="Unknow"
+                />
+                <div class="form-group">
+                  <label class="form-label" for="playlistDescription">
+                    Playlist Description (Optional)
+                  </label>
+                  <input
+                    type = "text"
+                    id = "playlistDescription"
+                    formControlName = "playlistDescription"
+                    placeholder="Add an optional description" 
+                  />
+                </div>
+            </form>
+          </div>
+        }
       </ul>
     </nav>
   </aside>

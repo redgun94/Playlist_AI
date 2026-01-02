@@ -3,6 +3,7 @@ import Playlist, { IPlailist } from '../models/Playlist';
 
 
 interface PlaylistRequestBody {
+    id : string,
     playlistName : String;
     memoDescription : String;
     tracks: any[];
@@ -12,7 +13,7 @@ interface PlaylistRequestBody {
 
 export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>, res: Response): Promise <void> => {
     try{
-        const { playlistName, memoDescription, tracks, userId } = req.body;
+        const { id, playlistName, memoDescription, tracks, userId } = req.body;
         //Validar la exist
         if(!playlistName || (playlistName.length< 3)){
             res.status(400).json({ 
