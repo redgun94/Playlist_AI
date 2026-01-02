@@ -23,27 +23,41 @@
       <ul class="playlist-list">
         @if(newPlaylistclicked){
           <div class="overlay"> 
-            <form class="playlist-modal" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
-              <input class="form-group">
+            <div class="playlist-modal">
+              <form [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
+                <input class="form-group">
                 <label class="form-label" for="fullName">Playlist Name</label>
                 <input 
-                  type="text"
-                  id = "playlistName"
-                  formControlName = "playlistName"
-                  placeholder="Unknow"
+                type="text"
+                id = "playlistName"
+                formControlName = "playlistName"
+                placeholder="Unknow"
                 />
                 <div class="form-group">
                   <label class="form-label" for="playlistDescription">
                     Playlist Description (Optional)
                   </label>
                   <input
-                    type = "text"
-                    id = "playlistDescription"
-                    formControlName = "playlistDescription"
-                    placeholder="Add an optional description" 
+                  type = "text"
+                  id = "playlistDescription"
+                  formControlName = "playlistDescription"
+                  placeholder="Add an optional description" 
                   />
                 </div>
-            </form>
+              </form>
+              <div class="btn-container">
+                <button class="btn-close" (click)="newPlaylist()">
+
+                </button>
+                <button class="btn-save" type="submit" [disabled]="createPlaylistForm.invalid">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5v14"></path>
+                  </svg>
+                  Save
+                </button>
+              </div>
+            </div>
           </div>
         }
       </ul>
