@@ -15,15 +15,16 @@ export class SidebarComponent {
 newPlaylistclicked : boolean = false;
 
 onSubmit() {
-throw new Error('Method not implemented.');
+  this.onCreatePlaylist();
 }
 newPlaylist() {
   this.newPlaylistclicked = !this.newPlaylistclicked;
   console.log(this.newPlaylistclicked);
 }
-  playlist: Playlist[] = [];
+  playlists: Playlist[] = [];
   currentPlaylist : Playlist | null = null;
   currentUser!: User;
+
 
   constructor(private playlistService: SavePlaylistService){
     const userObject : string = localStorage.getItem("currentUser")!;
@@ -38,7 +39,7 @@ newPlaylist() {
   ngOniti(){
     //subscribirse a cambios en playlists
     this.playlistService.playlists$.subscribe(playlist => {
-      this.playlist = playlist;
+      this.playlists = [...playlist];
     });
     //subscribirse a la playlist actual
     this.playlistService.currentPlaylist$.subscribe(playlist => {
@@ -47,11 +48,10 @@ newPlaylist() {
   }
   onCreatePlaylist() {
     const newPlaylist: Playlist = {
-      // Adjust property names according to Playlist model
-      playlistName: "Unknow",
+      playlistName: this.createPlaylistForm.value.playlistName ?? '',
       id: '', // You'll likely need to generate or leave blank depending on model
       tracks: [],
-      memoDescription: "Optional",
+      memoDescription: this.createPlaylistForm.value.playlistDescription ?? "Optional",
       userId: this.currentUser.id
     };
 
@@ -59,7 +59,6 @@ newPlaylist() {
       next: (response) => {
         console.log('✅ Playlist creada:', response.playlist);
         // El estado ya se actualizó automáticamente en el servicio
-        // No necesitas hacer nada más aquí
       },
       error: (error) => {
         console.error('❌ Error:', error);

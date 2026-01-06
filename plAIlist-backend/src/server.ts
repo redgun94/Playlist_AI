@@ -3,8 +3,8 @@ import express, { Application, urlencoded } from 'express';
 import cors from 'cors';
 import connectDB from './config/database';
 import authRoutes from './routes/authRoutes';
+import playlistRoutes from './routes/playlistRoutes';
 import mongoose from 'mongoose';
-
 
 const app: Application = express();
 
@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Ruta
 app.use('/api/auth', authRoutes);
+app.use('/api/playlist', playlistRoutes);
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.json({ message: '🎵 PlAIlist Backend API funcionando con TypeScript!' });

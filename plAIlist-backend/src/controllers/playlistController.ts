@@ -8,17 +8,19 @@ interface PlaylistRequestBody {
     memoDescription : String;
     tracks: any[];
     userId: string;
-    
+
 }
 
 export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>, res: Response): Promise <void> => {
+    
     try{
+        
         const { id, playlistName, memoDescription, tracks, userId } = req.body;
         //Validar la exist
-        if(!playlistName || (playlistName.length< 3)){
+        if(!playlistName || (playlistName.length < 3)){
             res.status(400).json({ 
                 success: false,
-                message: "Please enter a playlist name with at least 4 characters"
+                message: "Please enter a playlist name with at least 3 characters"
               });
               return;
         }
@@ -52,7 +54,19 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
                 userId: newPlaylist.userId
             }
         });}
-        catch(error){
+        catch(error:any){
+
+            // Error de índice único (duplicate key)
+            if (error.code === 11000) {
+                 res.status(400).json({
+                success: false,
+                message: "Playlist name already exists. Enter a new name."
+                
+                });
+                return;
+            }
+
+
             if((error as any).name === 'ValidationError'){
                 const messages = Object.values((error as any).errors).map((err: any) => err.message);
                 res.status(400).json({ 
@@ -62,10 +76,9 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
                   return;
             }
                 // Error del servidor
-            console.error('Error en registro:', error);
             res.status(500).json({ 
             success: false,
-            message: 'Error al registrar usuario. Intenta nuevamente.' 
+            message: 'Error al crear la playlist. Intenta nuevamente.' 
             });
         }
     };

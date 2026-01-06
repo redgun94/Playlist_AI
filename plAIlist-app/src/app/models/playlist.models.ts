@@ -12,5 +12,5 @@ export interface PlaylistsResponse{
     success: boolean,
     message: String,
     playlists: Playlist[],
-    playlist: Playlist
+    playlist: Playlist,
     }

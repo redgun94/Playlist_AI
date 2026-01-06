@@ -1,11 +1,10 @@
 import express, { Router } from 'express';
-import { login, register } from '../controllers/authController';
 import { createPlaylist } from '../controllers/playlistController';
+
 const router: Router = express.Router();
 
 // POST /api/auth/register
 
-router.post('/register', register);
-router.post('/login', login);
+router.post('/createPlaylist', createPlaylist);
 
 export default router;

@@ -6,7 +6,12 @@
     display: block;
     height: 100%;
   }
-  
+  input:-internal-autofill-selected {
+    appearance: menulist-button;
+    background-image: none !important;
+    background-color: light-dark(rgb(124, 124, 124), rgba(70, 90, 126, 0.4)) !important;
+    color: fieldtext !important;
+}
   .sidebar {
     height: 100vh;
     background-color: #000000;
@@ -268,6 +273,9 @@
 }
 .btn-save:hover{
   background-color: #1ed760;
+}
+.validationError{
+  border-color: red;
 }
   
   /* ============================================

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Playlist, PlaylistsResponse } from '../models/playlist.models';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { response } from 'express';
 
 
 // interface Playlist {
@@ -25,9 +26,11 @@ export class SavePlaylistService {
 // Playlist actualmente seleccionada
   private currentPlaylistSubject = new BehaviorSubject<Playlist | null>(null);
   public currentPlaylist$ = this.currentPlaylistSubject.asObservable();
+  private messageError!: String;
+  private error: String = "";
   
   constructor(private http: HttpClient) { 
-    this.apiUrl = 'http://localhost:3000/api/playlists';
+    this.apiUrl = 'http://localhost:3000/api/playlist';
     //Cargar playlists al inicializar
     this.loadPlaylists();
   }
@@ -50,12 +53,14 @@ export class SavePlaylistService {
     return this.http.post<PlaylistsResponse>(`${this.apiUrl}/createPlaylist`, playlistData)
       .pipe(
         tap(response => {
-          // AGregar la nueva playlist al contexto
+  
+          // Agregar la nueva playlist al contexto
           if (response.success) {
             const currentplaylist = response.playlist;
             this.currentPlaylistSubject.next(currentplaylist);
             const currentPlaylists = response.playlists;
             this.playlistsSubjet.next(currentPlaylists);
+            return;
           }
         }),
         catchError(this.handleError)
@@ -81,15 +86,9 @@ export class SavePlaylistService {
     )
   }
   private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'Ocurrió un error desconocido';
-    
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      errorMessage = error.error?.message || `Código de error: ${error.status}`;
-    }
-    
-    console.error('Error en AuthService:', errorMessage);
-    return throwError(() => new Error(errorMessage));
+    console.log("tirando el error que viene del servidor :", error.error.message);
+    //  throwError(() => error.error.message || 'Unexpected error');
+     return throwError(() => error.error.message) ;
   }
+  
 }
