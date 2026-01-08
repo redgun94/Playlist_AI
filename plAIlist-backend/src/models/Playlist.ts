@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
-export interface IPlailist extends Document{
+export interface IPlaylist extends Document{
     playlistName : string;
     memoDescription? : string;
     tracks: any[];
@@ -9,7 +9,7 @@ export interface IPlailist extends Document{
     userId: string
 };
 
-    const playlistSchema = new Schema({
+    const playlistSchema = new Schema<IPlaylist>({
         playlistName : { 
             type: String, 
             required : true, 
@@ -20,7 +20,7 @@ export interface IPlailist extends Document{
             required : false,
             },
         tracks: {
-            type: [Schema.Types.Mixed],
+            type: [],
             default: [],
         },
         userId: {
@@ -35,5 +35,5 @@ export interface IPlailist extends Document{
 
 
 
-const Playlist: Model<IPlailist> = mongoose.model<IPlailist>('Playlist', playlistSchema);
+const Playlist: Model<IPlaylist> = mongoose.model<IPlaylist>('Playlist', playlistSchema);
 export default Playlist;

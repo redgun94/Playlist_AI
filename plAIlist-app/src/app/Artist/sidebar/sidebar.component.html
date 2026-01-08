@@ -24,18 +24,20 @@
         @if(newPlaylistclicked){
           <div class="overlay"> 
             <div class="playlist-modal">
-              <form id="createPlaylistForm" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
-                <label class="form-label" for="fullName">Playlist Name</label>
-                <input 
-                type="text"
-                id = "playlistName"
-                formControlName = "playlistName"
-                placeholder="Unknow"
-                [class.validationError] = "errorfound" 
-                />
+              <form class="playlistForm" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
+                <div>
+                  <label class="form-label" for="fullName">Playlist Name</label>
+                  <input 
+                  type="text"
+                  id = "playlistName"
+                  formControlName = "playlistName"
+                  placeholder="Min 3 characters length"
+                  [class.validationError] = "errorfound" 
+                  />
+                </div>
                 <div class="form-group">
                   <label class="form-label" for="playlistDescription">
-                    Playlist Description (Optional)
+                    Playlist Description 
                   </label>
                   <textarea
                   type = "text"

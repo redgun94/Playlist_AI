@@ -1,16 +1,18 @@
 import { Request , Response } from 'express';
-import Playlist, { IPlailist } from '../models/Playlist';
+import Playlist, { IPlaylist } from '../models/Playlist';
 
 
 interface PlaylistRequestBody {
-    id : string,
+    id : string;
     playlistName : String;
     memoDescription : String;
-    tracks: any[];
+    tracks: IPlaylist[];
     userId: string;
 
 }
-
+interface PlaylistsArrayResBody {
+    playlistsArray: IPlaylist[] ;
+}
 export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>, res: Response): Promise <void> => {
     
     try{
@@ -82,3 +84,31 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
             });
         }
     };
+export const loadPlaylists = async(req: Request, res: Response): Promise<void> => {
+
+    try{
+        const userPlaylists = await Playlist.find();
+        if(!userPlaylists.length){
+            res.status(400).json({
+                success : false,
+                message: "You haven't saved any playlists"
+                
+            });
+            return;
+        }
+        res.status(200).json({
+            success : true,
+            message: "User's playlists loaded",
+            playlists : userPlaylists
+        });
+       
+        
+
+    }
+    catch(error:any){
+        res.status(500).json({
+            success: false,
+            message: "Error retrieving user playlists"
+        })
+    };
+}

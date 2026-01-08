@@ -3,6 +3,7 @@ import { SavePlaylistService } from '../../services/save-playlist-service.servic
 import { Playlist } from '../../models/playlist.models';
 import { User } from '../../models/auth.model';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from "@angular/forms";
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,9 +11,10 @@ import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } 
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit{
 
 newPlaylistclicked : boolean = false;
+  errorfound: boolean = false;
 
 onSubmit() {
   this.onCreatePlaylist();
@@ -36,14 +38,18 @@ newPlaylist() {
     playlistDescription : new FormControl('')
   })
 
-  ngOniti(){
-    //subscribirse a cambios en playlists
-    this.playlistService.playlists$.subscribe(playlist => {
-      this.playlists = [...playlist];
+  ngOnInit(){
+    //subscribirse a cambios en playlists 
+    this.playlistService.playlists$.subscribe(value => {
+      this.playlists = value;
+      console.log('El componente recibió:', value);
     });
+  
     //subscribirse a la playlist actual
     this.playlistService.currentPlaylist$.subscribe(playlist => {
       this.currentPlaylist = playlist;
+      console.log(this.currentPlaylist);
+
     })
   }
   onCreatePlaylist() {
@@ -61,6 +67,7 @@ newPlaylist() {
         // El estado ya se actualizó automáticamente en el servicio
       },
       error: (error) => {
+        this.errorfound = true;
         console.error('❌ Error:', error);
       }
     });

@@ -21,8 +21,8 @@ export class SavePlaylistService {
   private apiUrl;
 
   //Estado central de playlists
-  private playlistsSubjet = new BehaviorSubject<Playlist[]>([]);
-  public playlists$ = this.playlistsSubjet.asObservable();
+  private playlistsSubject = new BehaviorSubject<Playlist[]>([]);
+  public playlists$ = this.playlistsSubject.asObservable();
 // Playlist actualmente seleccionada
   private currentPlaylistSubject = new BehaviorSubject<Playlist | null>(null);
   public currentPlaylist$ = this.currentPlaylistSubject.asObservable();
@@ -32,18 +32,22 @@ export class SavePlaylistService {
   constructor(private http: HttpClient) { 
     this.apiUrl = 'http://localhost:3000/api/playlist';
     //Cargar playlists al inicializar
-    this.loadPlaylists();
+    this.loadPlaylists().subscribe();
+    console.log("en el constructor",this.playlists$);
   }
 
   get currentPlaylists(): Playlist[] {
-    return this.playlistsSubjet.value
+    return this.playlistsSubject.value
   }
 
   loadPlaylists(): Observable<any>{
-    return this.http.get<PlaylistsResponse>(`${this.apiUrl}`).pipe(
+    const url = `${this.apiUrl}/loadPlaylists`;
+    return this.http.get<PlaylistsResponse>(url).pipe(
       tap(response => {
         if (response.success){
-          this.playlistsSubjet.next(response.playlists);
+          this.playlistsSubject.next(response.playlists);
+          console.log("Message", this.playlistsSubject);
+         // console.log(response.playlists);
         }
       })
     );
@@ -58,8 +62,6 @@ export class SavePlaylistService {
           if (response.success) {
             const currentplaylist = response.playlist;
             this.currentPlaylistSubject.next(currentplaylist);
-            const currentPlaylists = response.playlists;
-            this.playlistsSubjet.next(currentPlaylists);
             return;
           }
         }),
@@ -80,7 +82,7 @@ export class SavePlaylistService {
               return playlist;
             }
           });
-          this.playlistsSubjet.next(updatedPlaylists); 
+          this.playlistsSubject.next(updatedPlaylists); 
         }
       })
     )
