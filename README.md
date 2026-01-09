@@ -1,5 +1,6 @@
 🎵 AI‑Powered Playlist Builder
 A smart web application that generates personalized playlists using artificial intelligence and exports them directly to Spotify.
+
 🚀 Overview
 AI‑Powered Playlist Builder is an intelligent music discovery tool that creates custom playlists based on mood, genre, activity, or listening history.
 Using AI‑driven recommendations and seamless Spotify integration, users can generate unique music collections and save them to their Spotify account with a single click.
