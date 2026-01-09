@@ -43,8 +43,8 @@ Exporta la playlist generada directamente a tu cuenta con un solo clic.
 Diseñada para que crear música sea simple y divertido.
 
 🛠️ Tecnologías utilizadas
-- Frontend: React / TypeScript
-- Backend: Node.js / Express (opcional según implementación)
+- Frontend: Angular / TypeScript
+- Backend: Node.js / Express 
 - IA: Modelos generativos para análisis y creación de playlists
 - Integraciones: Spotify Web API
-- Estilos: TailwindCSS / CSS Modules (dependiendo del setup)
+- Estilos: CSS Modules 
