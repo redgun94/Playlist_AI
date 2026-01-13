@@ -305,7 +305,43 @@
   .artist-detail-panel::-webkit-scrollbar-thumb:hover {
     background: #3e3e3e;
   }
-  
+  .spotify-btn {
+    /* Contenedor circular */
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+    
+    /* Estado inicial: borde gris */
+    background-color: transparent;
+    border: 2px solid #b3b3b3;
+    color: #b3b3b3;
+  }
+
+  /* Hover: El borde y el icono se iluminan en blanco */
+  .spotify-btn:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+    transform: scale(1.06);
+  }
+  .spotify-btn.active {
+    background-color: #1ed760;
+    border-color: #1ed760;
+    color: #000000;
+  }
+  .spotify-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: white; /* El SVG toma el color del texto del botón */
+  }
+  .spotify-btn .icon-check { display: none; }
+  .spotify-btn.active .icon-plus { display: none; }
+  .spotify-btn.active .icon-check { display: block; }
   /* ============================================
      RESPONSIVE
      ============================================ */

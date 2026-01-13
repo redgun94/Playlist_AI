@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SpotifyAPIService } from '../../services/spotify-api.service';
 import { firstValueFrom } from 'rxjs';
 import { DurationPipe } from '../../pipes/duration.pipes';
+import { SavePlaylistService } from '../../services/save-playlist-service.service';
 
 
 @Component({
@@ -14,11 +15,15 @@ import { DurationPipe } from '../../pipes/duration.pipes';
 })
 export class ArtistPanelComponent implements OnInit{
 
+
 @Input() artistDetail:any;
-spotifyAPIService:SpotifyAPIService = inject(SpotifyAPIService);
-  songs: any;
+  spotifyAPIService:SpotifyAPIService = inject(SpotifyAPIService);
+  loadPlaylistsService: SavePlaylistService = inject(SavePlaylistService);
+  songs: any[] = [];
   albums: any;
-activeView: any;
+  activeView: any;
+  viewPlaylistList:boolean =  false;
+  playlistList : any[] | undefined 
 
 constructor( private translate: TranslateService){
 }
@@ -28,6 +33,8 @@ constructor( private translate: TranslateService){
     this.songs = await this.getSongsByArtist(this.artistDetail?.name);
     this.albums = await this.getAlbumsByArtist(this.artistDetail?.id);
     this.activeView = 1;
+    this.loadPlaylistsService.playlists$.subscribe(value=>this.playlistList = value);
+
     console.log( "albums: "+ this.albums );
   }
   }
@@ -46,7 +53,7 @@ constructor( private translate: TranslateService){
       const response: any = await firstValueFrom(
         this.spotifyAPIService.getSongsByArtist(this.artistDetail.name)
       );
-      console.log(response.tracks);
+      console.log("Songs",response.tracks.items);
       return response.tracks.items;
     }
 
@@ -61,6 +68,16 @@ constructor( private translate: TranslateService){
       this.activeView = id;
       console.log(id);
     }
+    addTrackToPlaylistDialog() {
+      this.viewPlaylistList = true;
+      
 
+    }
+    addTrackToPlaylist() {
+    throw new Error('Method not implemented.');
+    }
+    addToPlaylist() {
+    throw new Error('Method not implemented.');
+    }
 
 }

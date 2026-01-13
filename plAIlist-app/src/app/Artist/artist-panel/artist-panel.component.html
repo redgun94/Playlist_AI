@@ -37,17 +37,20 @@
     <!-- Contenido: Popular Tracks -->
     <div *ngIf="activeView === 1" class="tracks-section">
       <div *ngFor="let song of songs; let i = index" class="track-item">
-        <div class="track-number">{{i + 1}}</div>
-        <div class="track-info">
-            <div class="track-title">{{songs[i].album.name}}</div>
-            <div class="track-artist">{{artistDetail.name}}</div>
-          </div>
-          <div class="track-duration">{{songs[i].duration_ms | duration }}</div>
-          <button class="btn-play">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        <div>
+          <button class="spotify-btn" aria-label="Add item" (click)="addTrackToPlaylistDialog()">
+            <svg class="icon-plus" viewBox="0 0 16 16">
+              <path d="M8 1.5a.75.75 0 01.75.75v5h5a.75.75 0 010 1.5h-5v5a.75.75 0 01-1.5 0v-5h-5a.75.75 0 010-1.5h5v-5A.75.75 0 018 1.5z"></path>
             </svg>
           </button>
+
+        </div>
+        <div class="track-number">{{i + 1}}</div>
+        <div class="track-info">
+            <div class="track-title">{{songs[i].name}}</div>
+            <div class="track-artist">{{songs[i].album.name}}</div>
+          </div>
+          <div class="track-duration">{{songs[i].duration_ms | duration }}</div>
         </div>
       </div>
     
@@ -96,5 +99,19 @@
         </div>
       </div>
     </div>
+    @if(viewPlaylistList){
 
+    <section>
+      <div>
+        <div><label for="playlistList">Add to Playlist</label></div>
+        <select name="playlistList" id="playlistList">
+          @for( playlist of playlistList; track playlist){
+            <option value="option1">
+              {{playlist.playlistName}}
+            </option>
+          }
+        </select>
+      </div>
+    </section>
+  }
   
