@@ -290,7 +290,18 @@ textarea {
 .validationError{
   border-color: red;
 }
+  /*Aside PLaylists Panel */
+  .aside-playlists{
+    background-color: #1a1a1a;
+    color: #b3b3b3;
+  }
   
+  .ul-playlists{
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    gap: .5vh;
+  }
   /* ============================================
      RESPONSIVE
      ============================================ */

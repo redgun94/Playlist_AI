@@ -8,7 +8,19 @@
         </svg>
         New Playlist
       </button>
-      
+      @if(playlists){
+        <aside class="aside-playlists">
+          <div class="playlists-container">
+            <ul class="ul-playlists">
+              @for( playlist of playlists; track playlist){
+                <li class="li-playlist">
+                  {{playlist.playlistName}}
+                </li>
+              }
+            </ul>
+          </div>
+        </aside>
+      }
       <button class="btn-action btn-delete">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <polyline points="3 6 5 6 21 6"></polyline>
@@ -24,7 +36,7 @@
         @if(newPlaylistclicked){
           <div class="overlay"> 
             <div class="playlist-modal">
-              <form class="playlistForm" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
+              <form id="createPlaylistForm" class="playlistForm" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
                 <div>
                   <label class="form-label" for="fullName">Playlist Name</label>
                   <input 
@@ -54,7 +66,7 @@
                 (click)="newPlaylist()">
                 
                 </button>
-                <button form="createPlaylistForm" class="btn-save" type="submit" [disabled]="createPlaylistForm.invalid">
+                <button id="createPlaylistForm" form="createPlaylistForm" class="btn-save" type="submit" [disabled]="createPlaylistForm.invalid">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12h14"></path>
                     <path d="M12 5v14"></path>

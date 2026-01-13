@@ -42,7 +42,7 @@ newPlaylist() {
     //subscribirse a cambios en playlists 
     this.playlistService.playlists$.subscribe(value => {
       this.playlists = value;
-      console.log('El componente recibió:', value);
+      console.log('El componente recibió:', value[0].playlistName);
     });
   
     //subscribirse a la playlist actual
@@ -63,6 +63,7 @@ newPlaylist() {
 
     this.playlistService.createPlaylist(newPlaylist).subscribe({
       next: (response) => {
+        this.playlists = [...this.playlists ,newPlaylist];
         console.log('✅ Playlist creada:', response.playlist);
         // El estado ya se actualizó automáticamente en el servicio
       },
@@ -71,6 +72,7 @@ newPlaylist() {
         console.error('❌ Error:', error);
       }
     });
+    this.newPlaylist();
   }
   
   onAddTrack(track: any) {
