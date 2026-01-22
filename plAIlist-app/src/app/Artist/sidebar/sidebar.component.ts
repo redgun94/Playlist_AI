@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
 import { User } from '../../models/auth.model';
@@ -15,14 +15,7 @@ export class SidebarComponent implements OnInit{
 
 newPlaylistclicked : boolean = false;
   errorfound: boolean = false;
-
-onSubmit() {
-  this.onCreatePlaylist();
-}
-newPlaylist() {
-  this.newPlaylistclicked = !this.newPlaylistclicked;
-  console.log(this.newPlaylistclicked);
-}
+  editingPlaylist: Playlist | null = null;
   playlists: Playlist[] = [];
   currentPlaylist : Playlist | null = null;
   currentUser!: User;
@@ -32,6 +25,43 @@ newPlaylist() {
     const userObject : string = localStorage.getItem("currentUser")!;
     this.currentUser = JSON.parse(userObject);
   }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   this.playlistService.playlists$.subscribe(value => {
+  //     this.playlists = value;
+  //   });
+  
+  //   //subscribirse a la playlist actual
+  //   this.playlistService.currentPlaylist$.subscribe(playlist => {
+  //     this.currentPlaylist = playlist;
+
+  //   })
+  // }
+
+onSubmit() {
+  if(this.editingPlaylist)
+  {return this.onUpdatePlaylist();}
+  this.onCreatePlaylist();
+
+}
+newPlaylist() {
+  this.newPlaylistclicked = !this.newPlaylistclicked;
+  if (!this.newPlaylistclicked) {
+    this.resetForm();
+  }
+  console.log(this.newPlaylistclicked);
+}
+
+closeModal() {
+  this.newPlaylistclicked = false;
+  this.resetForm();
+}
+
+resetForm() {
+  this.editingPlaylist = null;
+  this.createPlaylistForm.reset();
+  this.errorfound = false;
+}
+
 
   createPlaylistForm = new FormGroup({
     playlistName : new FormControl('',[Validators.required, Validators.minLength(3)]),
@@ -42,20 +72,18 @@ newPlaylist() {
     //subscribirse a cambios en playlists 
     this.playlistService.playlists$.subscribe(value => {
       this.playlists = value;
-      console.log('El componente recibió:', value[0].playlistName);
     });
   
     //subscribirse a la playlist actual
     this.playlistService.currentPlaylist$.subscribe(playlist => {
       this.currentPlaylist = playlist;
-      console.log(this.currentPlaylist);
 
     })
   }
-  onCreatePlaylist() {
+onCreatePlaylist() {
     const newPlaylist: Playlist = {
       playlistName: this.createPlaylistForm.value.playlistName ?? '',
-      id: '', // You'll likely need to generate or leave blank depending on model
+      _id: '', // You'll likely need to generate or leave blank depending on model
       tracks: [],
       memoDescription: this.createPlaylistForm.value.playlistDescription ?? "Optional",
       userId: this.currentUser.id
@@ -63,21 +91,63 @@ newPlaylist() {
 
     this.playlistService.createPlaylist(newPlaylist).subscribe({
       next: (response) => {
-        this.playlists = [...this.playlists ,newPlaylist];
         console.log('✅ Playlist creada:', response.playlist);
         // El estado ya se actualizó automáticamente en el servicio
+        this.closeModal();
       },
       error: (error) => {
         this.errorfound = true;
         console.error('❌ Error:', error);
       }
     });
-    this.newPlaylist();
   }
   
+editPlaylist(playlist: Playlist) {
+    this.editingPlaylist = playlist;
+    this.createPlaylistForm.patchValue({
+      playlistName: playlist.playlistName,
+      playlistDescription: playlist.memoDescription || "" });
+    this.newPlaylistclicked = true;
+  }
+
+  onUpdatePlaylist() {
+    if (!this.editingPlaylist) return;
+
+    const updatedPlaylist: Playlist = {
+      ...this.editingPlaylist,
+      playlistName: this.createPlaylistForm.value.playlistName ?? this.editingPlaylist.playlistName,
+      memoDescription: this.createPlaylistForm.value.playlistDescription ?? this.editingPlaylist.memoDescription
+    };
+
+    this.playlistService.updatePlaylist(this.editingPlaylist._id, updatedPlaylist).subscribe({
+      next: (response) => {
+        console.log('✅ Playlist actualizada:', response.message);
+        this.closeModal();
+      },
+      error: (error) => {
+        this.errorfound = true;
+        console.error('❌ Error updating playlist:', error);
+      }
+    });
+  }
+
+  deletePlaylist(playlist: Playlist) {
+    if (confirm(`Are you sure you want to delete "${playlist.playlistName}"?`)) {
+      this.playlistService.deletePlaylist(playlist).subscribe({
+        next: (response) => {
+          console.log('✅ Playlist eliminada:', response);
+          // El estado ya se actualizó automáticamente en el servicio
+        },
+        error: (error) => {
+          console.error('❌ Error deleting playlist:', error);
+        }
+      });
+    }
+  }
+
   onAddTrack(track: any) {
     if (this.currentPlaylist) {
-      this.playlistService.addTrackToPlaylist(this.currentPlaylist.id, track)
+      this.playlistService.addTrackToPlaylist(this.currentPlaylist._id, track)
         .subscribe({
           next: () => console.log('✅ Canción agregada'),
           error: (err) => console.error('❌ Error:', err)

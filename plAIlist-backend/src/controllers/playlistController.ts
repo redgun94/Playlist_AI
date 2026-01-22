@@ -49,9 +49,9 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
             success: true,
             message: "Playlist created successfully.",
             playlist: {
-                id: newPlaylist._id,
-                name: newPlaylist.playlistName,
-                description: newPlaylist.memoDescription,
+                _id: newPlaylist._id,
+                playlistName: newPlaylist.playlistName,
+                memoDescription: newPlaylist.memoDescription,
                 tracks: newPlaylist.tracks,
                 userId: newPlaylist.userId
             }
@@ -109,6 +109,62 @@ export const loadPlaylists = async(req: Request, res: Response): Promise<void> =
         res.status(500).json({
             success: false,
             message: "Error retrieving user playlists"
+        })
+    };
+}
+
+export const deletePlaylist = async(req:Request, res:Response):Promise<void> =>{
+    try{
+        const { id, playlistName, memoDescription, tracks, userId } = req.body;
+        console.log(id,playlistName,memoDescription);
+        const deletedPlaylist = await Playlist.deleteOne({playlistName : playlistName})         
+        
+        if(!deletedPlaylist.acknowledged){
+             res.status(404).json({
+                success : false,
+                message: "Playlist not found"
+            })
+            return;
+        }
+       
+        res.status(200).json({
+            success : true,
+            message : "Plalist deleted successfully",
+            playlistId : deletedPlaylist.acknowledged
+        })
+        
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            message: `Server Error : ${error}`
+        });
+    }}
+
+export const updatePlaylist = async(req:Request, res:Response):Promise<void>=>{
+    try{
+        const playlist = req.body;
+        const subjectPlaylist = await Playlist.updateOne({_id: playlist._id }, playlist);
+        console.log('Update result:', subjectPlaylist);
+        if (subjectPlaylist?.matchedCount === 0) {
+            await Playlist.create(playlist);
+            return
+        }
+        if(subjectPlaylist.modifiedCount === 0){
+            res.status(404).json({
+                success : false,
+                message : "Server Error"
+            })
+            return;
+        }
+        res.status(200).json({
+            success : true,
+            message : "Playlist updated successfully"
+        })
+    }
+    catch(error : any){
+        res.status(500).json({
+            success : false,
+            message : `Server Error : ${error}` 
         })
     };
 }

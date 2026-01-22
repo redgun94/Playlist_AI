@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { createPlaylist, loadPlaylists } from '../controllers/playlistController';
+import { createPlaylist, loadPlaylists, deletePlaylist, updatePlaylist } from '../controllers/playlistController';
 
 const router: Router = express.Router();
 
@@ -7,5 +7,7 @@ const router: Router = express.Router();
 
 router.post('/createPlaylist', createPlaylist);
 router.get('/loadPlaylists',loadPlaylists);
+router.delete('/deletePlaylist', deletePlaylist);
+router.put('/updatePlaylist',updatePlaylist)
 
 export default router;
