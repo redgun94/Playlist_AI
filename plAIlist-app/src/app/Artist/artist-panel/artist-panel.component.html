@@ -38,7 +38,7 @@
     <div *ngIf="activeView === 1" class="tracks-section">
       <div *ngFor="let song of songs; let i = index" class="track-item">
         <div>
-          <button class="spotify-btn" aria-label="Add item" (click)="addTrackToPlaylistDialog()">
+          <button class="spotify-btn" aria-label="Add item" (click)="addTrackToPlaylistDialog(song)">
             <svg class="icon-plus" viewBox="0 0 16 16">
               <path d="M8 1.5a.75.75 0 01.75.75v5h5a.75.75 0 010 1.5h-5v5a.75.75 0 01-1.5 0v-5h-5a.75.75 0 010-1.5h5v-5A.75.75 0 018 1.5z"></path>
             </svg>
@@ -47,10 +47,10 @@
         </div>
         <div class="track-number">{{i + 1}}</div>
         <div class="track-info">
-            <div class="track-title">{{songs[i].name}}</div>
-            <div class="track-artist">{{songs[i].album.name}}</div>
+            <div class="track-title">{{song.name}}</div>
+            <div class="track-artist">{{song.album.name}}</div>
           </div>
-          <div class="track-duration">{{songs[i].duration_ms | duration }}</div>
+          <div class="track-duration">{{song.duration_ms | duration }}</div>
         </div>
       </div>
     
@@ -99,19 +99,44 @@
         </div>
       </div>
     </div>
+<!-- Diálogo flotante para seleccionar playlist -->
     @if(viewPlaylistList){
-
-    <section>
-      <div>
-        <div><label for="playlistList">Add to Playlist</label></div>
-        <select name="playlistList" id="playlistList">
-          @for( playlist of playlistList; track playlist){
-            <option value="option1">
-              {{playlist.playlistName}}
-            </option>
-          }
-        </select>
+      <div class="playlist-dialog-overlay" (click)="closePlaylistDialog()">
+        <div class="playlist-dialog" (click)="$event.stopPropagation()">
+          <div class="dialog-header">
+            <h3>Add to Playlist</h3>
+            <button class="close-btn" (click)="closePlaylistDialog()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+          <div class="dialog-content">
+            @if(playlistList && playlistList.length > 0) {
+              <div class="playlist-list">
+                @for(playlist of playlistList; track playlist) {
+                  <div class="playlist-item" (click)="addTrackToPlaylist(playlist)">
+                    <div class="playlist-info">
+                      <div class="playlist-name">{{playlist.playlistName}}</div>
+                      <div class="playlist-tracks">{{playlist.tracks?.length || 0}} tracks</div>
+                    </div>
+                    <div class="playlist-arrow">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="no-playlists">
+                <p>No playlists available</p>
+                <button class="create-playlist-btn">Create New Playlist</button>
+              </div>
+            }
+          </div>
+        </div>
       </div>
-    </section>
-  }
+    }
   
