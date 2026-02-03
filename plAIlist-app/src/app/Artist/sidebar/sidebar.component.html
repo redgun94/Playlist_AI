@@ -13,7 +13,7 @@
           <div class="playlists-container">
             <ul class="ul-playlists">
               @for( playlist of playlists; track playlist){
-                <li class="li-playlist">
+                <li class="li-playlist" (click)="playlistClicked(playlist)">
                   <span class="playlist-name-text">{{playlist.playlistName}}</span>
                   <div class="playlist-actions">
                     <button class="btn-edit" (click)="editPlaylist(playlist)" title="Edit playlist">
@@ -43,10 +43,11 @@
         Delete Playlist
       </button>
     </div>
+    @if(playlistSelected){
+      <app-playlist-track [tracks]="currentPlaylist?.tracks || []">
   
-    <!-- Lista de playlists -->
-    <nav class="playlist-nav">
-      <ul class="playlist-list">
+      </app-playlist-track>}
+      
 @if(newPlaylistclicked){
           <div class="overlay"> 
             <div class="playlist-modal">
@@ -92,6 +93,4 @@
             </div>
           </div>
         }
-      </ul>
-    </nav>
   </aside>

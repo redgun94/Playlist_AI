@@ -1,0 +1,289 @@
+/* ============================================
+   PLAYLIST-TRACK COMPONENT
+   Tracks de una playlist específica
+   ============================================ */
+
+:host {
+  display: block;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+   ============================================ */
+.playlist-tracks-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: 8px;
+  padding: 1rem;
+  gap: 0.75rem;
+}
+
+/* ============================================
+   HEADER DE TRACKS
+   ============================================ */
+.tracks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 0.5rem;
+}
+
+.tracks-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.tracks-count {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* ============================================
+   LISTA DE TRACKS
+   ============================================ */
+.tracks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Scrollbar personalizado */
+.tracks-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.tracks-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.tracks-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.tracks-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   ITEM DE TRACK
+   ============================================ */
+.track-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0.875rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.track-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(29, 185, 84, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.track-item:hover::before {
+  left: 100%;
+}
+
+.track-item:hover {
+  background: linear-gradient(135deg, var(--surface-hover) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-color: rgba(29, 185, 84, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   INFORMACIÓN DEL TRACK
+   ============================================ */
+.track-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.track-number {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 24px;
+  text-align: center;
+}
+
+.track-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-name {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 0.125rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+}
+
+.track-artist {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+/* ============================================
+   ACCIONES DEL TRACK
+   ============================================ */
+.track-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.track-duration {
+  font-size: 0.825rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+}
+
+.btn-track-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.7;
+}
+
+.btn-track-action:hover {
+  background: var(--primary);
+  color: white;
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(29, 185, 84, 0.3);
+}
+
+.btn-track-action.btn-remove:hover {
+  background: var(--error);
+  border-color: var(--error);
+  box-shadow: 0 4px 8px rgba(226, 33, 52, 0.3);
+}
+
+.btn-track-action svg {
+  transition: transform 0.2s ease;
+}
+
+.btn-track-action:hover svg {
+  transform: scale(1.1);
+}
+
+/* ============================================
+   ESTADO VACÍO
+   ============================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.empty-state svg {
+  margin-bottom: 1rem;
+  opacity: 0.3;
+}
+
+.empty-text {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-secondary);
+}
+
+.empty-subtext {
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.7;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .playlist-tracks-container {
+    padding: 0.75rem;
+  }
+  
+  .track-item {
+    padding: 0.625rem 0.75rem;
+  }
+  
+  .track-info {
+    gap: 0.75rem;
+  }
+  
+  .track-actions {
+    gap: 0.5rem;
+  }
+  
+  .btn-track-action {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .track-duration {
+    display: none;
+  }
+  
+  .track-name {
+    font-size: 0.875rem;
+  }
+  
+  .track-artist {
+    font-size: 0.8rem;
+  }
+}

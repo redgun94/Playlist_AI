@@ -5,6 +5,7 @@ import { SpotifyAPIService } from '../../services/spotify-api.service';
 import { firstValueFrom } from 'rxjs';
 import { DurationPipe } from '../../pipes/duration.pipes';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
+import { Playlist } from '../../models/playlist.models';
 
 
 @Component({
@@ -23,7 +24,8 @@ export class ArtistPanelComponent implements OnInit{
   albums: any;
   activeView: any;
   viewPlaylistList:boolean =  false;
-  playlistList : any[] | undefined 
+  playlistList : any[] | undefined
+  selectedTrack: any = null; 
 
 constructor( private translate: TranslateService){
 }
@@ -68,13 +70,34 @@ constructor( private translate: TranslateService){
       this.activeView = id;
       console.log(id);
     }
-    addTrackToPlaylistDialog() {
+    addTrackToPlaylistDialog(song: any) {
+      this.selectedTrack = song;
       this.viewPlaylistList = true;
-      
-
+      console.log(song);
     }
-    addTrackToPlaylist() {
-    throw new Error('Method not implemented.');
+
+    closePlaylistDialog() {
+      this.viewPlaylistList = false;
+      this.selectedTrack = null;
+    }
+    addTrackToPlaylist(playlist: Playlist) {
+      if (this.selectedTrack && playlist) {
+        console.log("Track:", this.selectedTrack.name);
+        console.log("Added Successfully to:", playlist.playlistName);
+        // this.loadPlaylistsService.addTrackToPlaylist(this.selectedTrack, playlist);
+        this.loadPlaylistsService.addTrackToPlaylist(playlist._id,this.selectedTrack).subscribe({
+          next: (response) => {
+            if(response.success){
+              console.log(response);
+            }
+          },
+          error: (error) => {
+            console.error(error);
+            }
+        });
+        // Cierra el diálogo después de agregar
+        this.closePlaylistDialog();
+      }
     }
     addToPlaylist() {
     throw new Error('Method not implemented.');

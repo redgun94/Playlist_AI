@@ -12,7 +12,8 @@
       "placeholder": "Search artists or tracks...",
       "button": "Search",
       "searching": "Searching...",
-      "noResults": "No results found for"
+      "noResults": "No results found for",
+      "thinking": "Thinking..."
     },
     "artist": {
       "popularity": "Popularity",

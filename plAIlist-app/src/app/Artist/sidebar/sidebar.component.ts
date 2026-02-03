@@ -4,21 +4,23 @@ import { Playlist } from '../../models/playlist.models';
 import { User } from '../../models/auth.model';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from "@angular/forms";
 import { OnInit } from '@angular/core';
+import { PlaylistTrackComponent } from "./playlist-track/playlist-track.component";
 
 @Component({
   selector: 'app-sidebar',
-  imports: [FormsModule, ReactiveFormsModule],
+  imports: [FormsModule, ReactiveFormsModule, PlaylistTrackComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent implements OnInit{
 
-newPlaylistclicked : boolean = false;
+  newPlaylistclicked : boolean = false;
   errorfound: boolean = false;
   editingPlaylist: Playlist | null = null;
   playlists: Playlist[] = [];
   currentPlaylist : Playlist | null = null;
   currentUser!: User;
+  playlistSelected: boolean = false;
 
 
   constructor(private playlistService: SavePlaylistService){
@@ -69,6 +71,18 @@ resetForm() {
   })
 
   ngOnInit(){
+    //subscribirse a cambios en playlists 
+    this.playlistService.playlists$.subscribe(value => {
+      this.playlists = value;
+    });
+  
+    //subscribirse a la playlist actual
+    this.playlistService.currentPlaylist$.subscribe(playlist => {
+      this.currentPlaylist = playlist;
+
+    })
+  }
+  ngOnchange(){
     //subscribirse a cambios en playlists 
     this.playlistService.playlists$.subscribe(value => {
       this.playlists = value;
@@ -155,4 +169,13 @@ editPlaylist(playlist: Playlist) {
     }
   }
 
+  playlistClicked(playlist: Playlist) {
+    console.log(playlist.tracks);
+    if(playlist == this.currentPlaylist && this.playlistSelected){
+      this.playlistSelected = false;
+    }else{
+      this.playlistSelected = true;
+      this.playlistService.currentSubjectPlaylist = playlist;
+    }
+}
 }

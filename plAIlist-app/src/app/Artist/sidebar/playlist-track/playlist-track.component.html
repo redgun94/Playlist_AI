@@ -1,0 +1,45 @@
+<div class="playlist-tracks-container">
+  <!-- Header de tracks -->
+  <div class="tracks-header">
+    <h3 class="tracks-title">Tracks</h3>
+    <span class="tracks-count">{{tracks?.length || 0}} songs</span>
+  </div>
+
+  <!-- Lista de tracks -->
+  <div class="tracks-list">
+    @for(track of tracks; track track; let i = $index) {
+      <div class="track-item">
+        <div class="track-info">
+          <span class="track-number">{{i + 1}}</span>
+          <div class="track-details">
+            <h4 class="track-name">{{track.name || 'Unknown Track'}}</h4>
+            <p class="track-artist">{{track.artist || 'Unknown Artist'}}</p>
+          </div>
+        </div>
+        <div class="track-actions">
+          <span class="track-duration">{{track.duration || '0:00'}}</span>
+          <button class="btn-track-action" title="Play">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          <button class="btn-track-action btn-remove" title="Remove from playlist">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <div class="empty-state">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 6v6l4 2"></path>
+        </svg>
+        <p class="empty-text">No tracks in this playlist</p>
+        <p class="empty-subtext">Add tracks to see them here</p>
+      </div>
+    }
+  </div>
+</div>

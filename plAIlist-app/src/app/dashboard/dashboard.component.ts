@@ -139,6 +139,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.artists = [];
     this.tracks = [];
     this.errorMessage = null;
+    this.selectedArtist = null;
+
   }
 
   logout(){

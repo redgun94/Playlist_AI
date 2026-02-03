@@ -1,4 +1,4 @@
-import { Request , Response } from 'express';
+import { Request , response, Response } from 'express';
 import Playlist, { IPlaylist } from '../models/Playlist';
 
 
@@ -168,3 +168,31 @@ export const updatePlaylist = async(req:Request, res:Response):Promise<void>=>{
         })
     };
 }
+export const addTrackToPlaylist = async(req: Request, res: Response):Promise<void>=>{
+   
+    try{
+        
+        const playlistId = req.params.playlistId;
+        const track = req.body.track;
+        const query = { $push: {tracks: track}};
+        const updateDocument = { new: true};
+        const playlist = await Playlist.findByIdAndUpdate(playlistId,query,updateDocument);
+        if(track.name != playlist?.tracks[playlist?.tracks.length - 1].name){
+            res.status(404).json({
+                success : false,
+                messages : "Database Error"
+            })
+            return;
+        }
+        res.status(200).json({
+            success : true,
+            messages : "Track added successfully"
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            success : false,
+            messages : "Server Error : " + error
+        })
+    };
+    }

@@ -39,6 +39,9 @@ export class SavePlaylistService {
   get currentPlaylists(): Playlist[] {
     return this.playlistsSubject.value
   }
+  set currentSubjectPlaylist(playlist: Playlist) {
+    this.currentPlaylistSubject.next(playlist);
+  }
 
   loadPlaylists(): Observable<any>{
     const url = `${this.apiUrl}/loadPlaylists`;
@@ -79,15 +82,27 @@ export class SavePlaylistService {
     return this.http.post<any>(`${this.apiUrl}/${playlistId}/track`,{ track }).pipe(
       tap(response => {
         if(response.success){
-          //Actualizar la playlist en el front
-          const updatedPlaylists = this.currentPlaylists.map( playlist =>{
+          console.log(response);
+          let updatedPlaylist: Playlist | null = null;
+          
+          // Actualizar la playlist en el array
+          const updatedPlaylists = this.currentPlaylists.map(playlist => {
             if (playlist._id === playlistId){
-              return playlist = {...playlist, tracks: [...playlist.tracks,track]}; 
-            }else {
+              updatedPlaylist = {...playlist, tracks: [...playlist.tracks, track]};
+              return updatedPlaylist;
+            } else {
               return playlist;
             }
           });
-          this.playlistsSubject.next(updatedPlaylists); 
+          
+          // Actualizar ambos subjects
+          console.log(updatedPlaylists)
+          this.playlistsSubject.next(updatedPlaylists);
+          
+          // Actualizar currentPlaylist con la versión actualizada
+          if (updatedPlaylist) {
+            this.currentPlaylistSubject.next(updatedPlaylist);
+          }
         }
       })
     )
@@ -102,8 +117,9 @@ export class SavePlaylistService {
           console.log(response);
           if (response.success) {
             // Actualizar la playlist en el estado local
+            console.log("Status : ",response.playlist);
             const updatedPlaylists = this.currentPlaylists.map(playlist => 
-              playlist._id === playlistId ? response.playlist : playlist
+              playlist._id === playlistId ? playlistData : playlist
             );
             this.playlistsSubject.next(updatedPlaylists);
             
