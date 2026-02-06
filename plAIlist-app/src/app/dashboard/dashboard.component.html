@@ -61,68 +61,66 @@
     </div>
   </nav>
   
-  <!-- Sección principal -->
+<!-- Sección principal -->
   <main class="main-content">
-    <app-sidebar></app-sidebar>
+    <!-- Sidebar izquierdo -->
+    <aside class="sidebar-section">
+      <app-sidebar></app-sidebar>
+    </aside>
     
-    <section class="section-content">
-      
-      <!-- Título  <h2 class="page-title">{{ 'dashboard.title' | translate }}</h2>-->
-      
-      
-      <!-- Tabs -->
-  
-  
-  <!-- Barra de búsqueda -->
+    <!-- Contenido principal -->
+    <section class="content-section">
+      <!-- Loading -->
+      <div *ngIf="isSearching" class="loading">
+        <div class="spinner"></div>
+        <p>{{ 'dashboard.search.thinking' | translate }}</p>
+      </div>
 
+      <!-- Error -->
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
 
-<!-- Loading -->
-<div *ngIf="isSearching" class="loading">
-  <div class="spinner"></div>
-  <p>{{ 'dashboard.search.thinking' | translate }}</p>
-</div>
-
-<!-- Error -->
-<div *ngIf="errorMessage" class="error-message">
-  {{ errorMessage }}
-</div>
-
-<!-- Resultados: Artistas -->
-<div *ngIf="searchType === 'artist' && artists.length > 0 && !isSearching" class="results">
-  <div class="results-grid">
-    <div *ngFor="let artist of artists" class="card artist-card">
-      <img 
-      [src]="artist.images[0]?.url || 'assets/placeholder.png'" 
-      [alt]="artist.name"
-            class="card-image">
-          <div class="card-content">
-            <h3 class="card-title">{{ artist.name }}</h3>
-            <div>
-              <a 
-              [href]="artist.external_urls.spotify" 
-              target="_blank"
-              class="btn-spotify">
-              {{ 'dashboard.artist.viewSpotify' | translate }} →
-            </a>
-            <button 
-            (click)="selectArtist(artist)" 
-            class="btn-spotify">
-            {{ 'dashboard.details' | translate }} →
-          </button> 
+      <!-- Resultados: Artistas -->
+      <div *ngIf="searchType === 'artist' && artists.length > 0 && !isSearching" class="results">
+        <div class="results-list">
+          @for(artist of artists; track artist.id) {
+            <div class="artist-list-item" (click)="selectArtist(artist)">
+              <div class="artist-thumbnail">
+                <img [src]="artist.images[0]?.url || 'assets/placeholder.png'" [alt]="artist.name">
+              </div>
+              <div class="artist-info">
+                <h3 class="artist-name">{{ artist.name }}</h3>
+                <div class="artist-meta">
+                  <span class="artist-followers">{{ artist.followers?.total || 0 }} followers</span>
+                  <span class="artist-popularity">Popularity: {{ artist.popularity || 0 }}</span>
+                </div>
+              </div>
+              <div class="artist-actions">
+                <a [href]="artist.external_urls.spotify" target="_blank" class="btn-spotify-small">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+                  </svg>
+                  Spotify
+                </a>
+                <button (click)="selectArtist(artist); $event.stopPropagation()" class="btn-details">
+                  Details
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-
-<!-- Sin resultados -->
-<div *ngIf="!isSearching && searchQuery && artists.length === 0 && tracks.length === 0" class="no-results">
-  <p>{{ 'dashboard.search.noResults' | translate }} "{{ searchQuery }}"</p>
-</div>
-@if(selectedArtist){
-  <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
-}
-</section>
-</main>
+      <!-- Sin resultados -->
+      <div *ngIf="!isSearching && searchQuery && artists.length === 0 && tracks.length === 0" class="no-results">
+        <p>{{ 'dashboard.search.noResults' | translate }} "{{ searchQuery }}"</p>
+      </div>
+      
+      <!-- Panel de artista seleccionado -->
+      @if(selectedArtist){
+        <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
+      }
+    </section>
+  </main>
 </div>

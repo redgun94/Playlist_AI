@@ -1,27 +1,108 @@
-<div class="container d-flex flex-row my-2">
-    <div class="container bg-body-tertiary">
-        <div class="container-fluid">
-          <div class="d-flex" role="search">
-            <input type="text" [formControl]="artistName" 
-            placeholder="Escribe un artista" style="max-width: 50%;" 
-            [ngStyle]="{ 'border-color': artistName.invalid && artistName.touched ? 'red' : 'black' }">
-            <button class="btn btn-outline-success" type="button" (click)="buscarArtista()">Search </button>
-          </div>
-        </div>
-        <div class="container">
-         <ul>
-            @for(artist of allMatches; track artist.name){
-              <li (click)="addArtistToList(artist)">
-                <h4>{{artist.name}}</h4>
-              </li>
-            }
-          </ul>
-            
-        </div>
+<div class="artist-search-container">
+  <!-- Sección de búsqueda -->
+  <div class="search-section">
+    <div class="search-header">
+      <h2 class="search-title">Search Artists</h2>
+      <p class="search-subtitle">Find your favorite artists and add them to your collection</p>
     </div>
-    <div class="container .bg-danger-subtle" style="width:18rem;background-color: rgb(191, 200, 210);">
-      <button [disabled]="!responseSearch"  class="btn btn-outline-success" (click)="addArtistToList()">
-        <h5>Add</h5>
+    
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          [formControl]="artistName" 
+          placeholder="Type an artist name..." 
+          class="search-input"
+          [class.error]="artistName.invalid && artistName.touched">
+      </div>
+      <button 
+        type="button" 
+        (click)="buscarArtista()" 
+        class="btn-search"
+        [disabled]="artistName.invalid || isSearching">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        Search
       </button>
     </div>
+  </div>
+
+  <!-- Sección de resultados -->
+  <div class="results-section" *ngIf="allMatches && allMatches.length > 0">
+    <div class="results-header">
+      <h3 class="results-title">Found Artists</h3>
+      <span class="results-count">{{allMatches.length}} artists</span>
+    </div>
+    
+    <div class="artists-grid">
+      @for(artist of allMatches; track artist.name) {
+        <div class="artist-card" (click)="addArtistToList(artist)">
+          <div class="artist-image">
+            <img [src]="artist.imageUrl || '/assets/default-artist.png'" [alt]="artist.name">
+            <div class="artist-overlay">
+              <button class="add-btn" (click)="addArtistToList(artist); $event.stopPropagation()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                </svg>
+                Add
+              </button>
+            </div>
+          </div>
+          <div class="artist-info">
+            <h4 class="artist-name">{{artist.name}}</h4>
+            <p class="artist-genre">{{artist.genre || 'Unknown Genre'}}</p>
+            <div class="artist-stats">
+              <span class="stat-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+                {{artist.followers || '0'}} followers
+              </span>
+              <span class="stat-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                {{artist.popularity || '0'}} popularity
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Estado de carga -->
+  <div class="loading-state" *ngIf="isSearching">
+    <div class="loading-spinner"></div>
+    <p>Searching artists...</p>
+  </div>
+
+  <!-- Sin resultados -->
+  <div class="no-results" *ngIf="!isSearching && allMatches && allMatches.length === 0 && artistName.value">
+    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+      <path d="M8 11h6"></path>
+    </svg>
+    <h3>No artists found</h3>
+    <p>Try searching with different keywords</p>
+  </div>
+
+  <!-- Estado inicial -->
+  <div class="empty-state" *ngIf="!artistName.value && !isSearching">
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <h3>Start searching</h3>
+    <p>Enter an artist name to discover new music</p>
+  </div>
 </div>

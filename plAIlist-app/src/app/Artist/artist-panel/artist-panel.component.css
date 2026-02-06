@@ -167,10 +167,10 @@
     margin-right: 1rem;
   }
   
-  .btn-play {
+.btn-play {
     width: 40px;
     height: 40px;
-    background-color: #1db954;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     border: none;
     border-radius: 50%;
     display: flex;
@@ -178,13 +178,31 @@
     justify-content: center;
     cursor: pointer;
     opacity: 0;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: #000000;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .btn-play::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .btn-play:hover::before {
+    left: 100%;
   }
   
   .btn-play:hover {
-    background-color: #1ed760;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
     transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(29, 185, 84, 0.4);
   }
   
   /* ============================================
@@ -429,13 +447,49 @@
     background: #3e3e3e;
   }
 
-  .playlist-item:last-child {
-    border-bottom: none;
-  }
+.playlist-item:last-child {
+  border-bottom: none;
+}
 
-  .playlist-info {
-    flex: 1;
-  }
+.playlist-item.track-exists {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--surface-light);
+}
+
+.playlist-item.track-exists:hover {
+  background: var(--surface-light);
+}
+
+.playlist-info {
+  flex: 1;
+}
+
+.playlist-status {
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.track-exists-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--success);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.track-exists-indicator svg {
+  width: 16px;
+  height: 16px;
+}
+
+.exists-text {
+  color: var(--text-secondary);
+  font-size: 0.825rem;
+  font-weight: 500;
+}
 
   .playlist-name {
     color: #ffffff;
@@ -524,12 +578,41 @@
     }
   }
   /* ============================================
-     RESPONSIVE
-     ============================================ */
+      RESPONSIVE
+      ============================================ */
+  @media (max-width: 1024px) {
+    .artist-detail-panel {
+      padding: 1.5rem;
+    }
+    
+    .artist-header {
+      gap: 1.25rem;
+    }
+    
+    .artist-avatar {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .artist-name {
+      font-size: 1.75rem;
+    }
+    
+    .albums-grid {
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 0.875rem;
+    }
+  }
+
   @media (max-width: 768px) {
+    .artist-detail-panel {
+      padding: 1.25rem;
+    }
+    
     .artist-header {
       flex-direction: column;
       text-align: center;
+      gap: 1rem;
     }
   
     .artist-name {
@@ -538,13 +621,93 @@
   
     .artist-meta {
       justify-content: center;
+      gap: 1rem;
     }
   
     .detail-tabs {
       overflow-x: auto;
+      padding: 0 0.5rem;
     }
   
     .albums-grid {
       grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    
+    .track-item {
+      padding: 0.625rem 0.875rem;
+    }
+    
+    .btn-play {
+      width: 36px;
+      height: 36px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .artist-detail-panel {
+      padding: 1rem;
+    }
+    
+    .artist-header {
+      gap: 0.875rem;
+    }
+    
+    .artist-avatar {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .artist-name {
+      font-size: 1.375rem;
+    }
+    
+    .artist-meta {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .albums-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    
+    .album-cover {
+      margin-bottom: 0.5rem;
+    }
+    
+    .album-info {
+      gap: 0.125rem;
+    }
+    
+    .album-name {
+      font-size: 0.85rem;
+    }
+    
+    .album-year {
+      font-size: 0.75rem;
+    }
+    
+    .track-item {
+      padding: 0.5rem 0.75rem;
+    }
+    
+    .track-title {
+      font-size: 0.925rem;
+    }
+    
+    .track-artist {
+      font-size: 0.825rem;
+    }
+    
+    .btn-play {
+      width: 32px;
+      height: 32px;
+      opacity: 1;
+    }
+    
+    .playlist-dialog {
+      width: 95%;
+      margin: 1rem;
     }
   }

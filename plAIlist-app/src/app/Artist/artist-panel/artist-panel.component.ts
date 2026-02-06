@@ -2,7 +2,7 @@ import { Component, inject, Input, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SpotifyAPIService } from '../../services/spotify-api.service';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { DurationPipe } from '../../pipes/duration.pipes';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
@@ -26,6 +26,9 @@ export class ArtistPanelComponent implements OnInit{
   viewPlaylistList:boolean =  false;
   playlistList : any[] | undefined
   selectedTrack: any = null; 
+  finding: boolean | undefined;
+  tExists: boolean = false;
+  playlistSelected: Playlist | undefined;
 
 constructor( private translate: TranslateService){
 }
@@ -68,9 +71,9 @@ constructor( private translate: TranslateService){
 
     viewAlbums(id: number) {
       this.activeView = id;
-      console.log(id);
     }
     addTrackToPlaylistDialog(song: any) {
+ 
       this.selectedTrack = song;
       this.viewPlaylistList = true;
       console.log(song);
@@ -79,23 +82,30 @@ constructor( private translate: TranslateService){
     closePlaylistDialog() {
       this.viewPlaylistList = false;
       this.selectedTrack = null;
+      this.tExists = false;
+    }
+    trackExists(playlist: Playlist){
+
+      return playlist.tracks.some(track => track.id === this.selectedTrack.id);
     }
     addTrackToPlaylist(playlist: Playlist) {
-      if (this.selectedTrack && playlist) {
+      if (this.selectedTrack && playlist && !this.tExists) {
         console.log("Track:", this.selectedTrack.name);
         console.log("Added Successfully to:", playlist.playlistName);
-        // this.loadPlaylistsService.addTrackToPlaylist(this.selectedTrack, playlist);
+        
         this.loadPlaylistsService.addTrackToPlaylist(playlist._id,this.selectedTrack).subscribe({
           next: (response) => {
             if(response.success){
               console.log(response);
             }
+            this.closePlaylistDialog();
           },
           error: (error) => {
             console.error(error);
             }
         });
         // Cierra el diálogo después de agregar
+        
         this.closePlaylistDialog();
       }
     }

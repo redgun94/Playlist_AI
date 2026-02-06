@@ -15,17 +15,16 @@ import { SharedDataService } from '../../../services/shared-data.service';
 export class ArtistSearchComponent implements OnInit{
   ngOnInit(): void {
     // Observa reactivamente los cambios en la Signal y actualiza la variable
-    
-
   }
-    artistName = new FormControl('', [Validators.required, Validators.minLength(1)]);
-
-    @Output() artistsEmmiter = new EventEmitter<any>();
-    responseSearch:any= null;
-    artist:any = null;
-    allMatches:any[] = [];
-    artistsSignals!: any[];
-    @Input() artists:any[] = [];
+  
+  artistName = new FormControl('', [Validators.required, Validators.minLength(1)]);
+  isSearching: boolean = false;
+  @Output() artistsEmmiter = new EventEmitter<any>();
+  responseSearch:any= null;
+  artist:any = null;
+  allMatches:any[] = [];
+  artistsSignals!: any[];
+  @Input() artists:any[] = [];
     
     
     
@@ -35,14 +34,23 @@ export class ArtistSearchComponent implements OnInit{
       ) {}
 
   
-    buscarArtista(): void {
+buscarArtista(): void {
       if(this.artistName.invalid && this.artistName.touched){return;}
+      this.isSearching = true;
       console.log(this.artistName.invalid);
-      this.spotifyService.searchArtists(this.artistName.value!).subscribe(response => {
-      this.responseSearch = response.artists.items.length > 1 ? response.artists.items[0] : false ;
-      this.allMatches = response.artists.items;
-      console.log("Artista",response.artists.items,"  Search: ", this.responseSearch);}
-    )}
+      this.spotifyService.searchArtists(this.artistName.value!).subscribe({
+        next: (response) => {
+          this.responseSearch = response.artists.items.length > 1 ? response.artists.items[0] : false ;
+          this.allMatches = response.artists.items;
+          this.isSearching = false;
+          console.log("Artista",response.artists.items,"  Search: ", this.responseSearch);
+        },
+        error: (error) => {
+          console.error('Error searching artists:', error);
+          this.isSearching = false;
+        }
+      });
+    }
     
     addArtistToList(artist:any = this.responseSearch): void {
       console.log("agreagndo artista: ",artist, "Que hay en artists: ", this.artists);

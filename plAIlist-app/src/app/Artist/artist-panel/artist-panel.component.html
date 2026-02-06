@@ -100,7 +100,7 @@
       </div>
     </div>
 <!-- Diálogo flotante para seleccionar playlist -->
-    @if(viewPlaylistList){
+    @if(viewPlaylistList) {
       <div class="playlist-dialog-overlay" (click)="closePlaylistDialog()">
         <div class="playlist-dialog" (click)="$event.stopPropagation()">
           <div class="dialog-header">
@@ -112,29 +112,37 @@
               </svg>
             </button>
           </div>
+          
           <div class="dialog-content">
-            @if(playlistList && playlistList.length > 0) {
-              <div class="playlist-list">
-                @for(playlist of playlistList; track playlist) {
-                  <div class="playlist-item" (click)="addTrackToPlaylist(playlist)">
-                    <div class="playlist-info">
-                      <div class="playlist-name">{{playlist.playlistName}}</div>
-                      <div class="playlist-tracks">{{playlist.tracks?.length || 0}} tracks</div>
-                    </div>
-                    <div class="playlist-arrow">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </div>
+            <div class="playlist-list">
+              @for(playlist of playlistList; track playlist) {
+                @let tExists = trackExists(playlist);
+                <div class="playlist-item" 
+                     [class.track-exists]="tExists"
+                     (click)="addTrackToPlaylist(playlist)">
+                  <div class="playlist-info">
+                    <div class="playlist-name">{{playlist.playlistName}}</div>
+                    <div class="playlist-tracks">{{playlist.tracks?.length || 0}} tracks</div>
                   </div>
-                }
-              </div>
-            } @else {
-              <div class="no-playlists">
-                <p>No playlists available</p>
-                <button class="create-playlist-btn">Create New Playlist</button>
-              </div>
-            }
+                  <div class="playlist-status">
+                    @if (tExists) {
+                      <div class="track-exists-indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                        <span class="exists-text">Already added</span>
+                      </div>
+                    } @else {
+                      <div class="playlist-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
           </div>
         </div>
       </div>
