@@ -19,7 +19,8 @@ import { json } from 'node:stream/consumers';
 })
 
 export class SavePlaylistService {
-  private apiUrl;
+
+  private  apiUrl;
 
   //Estado central de playlists
   private playlistsSubject = new BehaviorSubject<Playlist[]>([]);
@@ -96,7 +97,7 @@ export class SavePlaylistService {
           });
           
           // Actualizar ambos subjects
-          console.log(updatedPlaylists)
+          console.log(updatedPlaylists);
           this.playlistsSubject.next(updatedPlaylists);
           
           // Actualizar currentPlaylist con la versión actualizada
@@ -111,7 +112,7 @@ export class SavePlaylistService {
   //Actualizar playlist existente
   updatePlaylist(playlistId: string, playlistData: Playlist): Observable<PlaylistsResponse> {
     
-    return this.http.put<PlaylistsResponse>(`${this.apiUrl}/updatePlaylist`, playlistData)
+    return this.http.put<PlaylistsResponse>(`${this.apiUrl}/updatePlaylist`, {playlistData})
       .pipe(
         tap(response => {
           console.log(response);
@@ -143,7 +144,6 @@ export class SavePlaylistService {
             if (response) {
             // Eliminar la playlist del estado local
             const updatedPlaylists = this.currentPlaylists.filter(playlist => playlist._id !== playlistData._id);
-            console.log(this.currentPlaylists);
             this.playlistsSubject.next(updatedPlaylists);
             console.log(playlistData._id + " has been deleted successfully")
             // Limpiar la playlist actual si es la que se eliminó
@@ -160,6 +160,28 @@ export class SavePlaylistService {
     console.log("tirando el error que viene del servidor :", error.error.message);
     //  throwError(() => error.error.message || 'Unexpected error');
      return throwError(() => error.error.message) ;
+  }
+
+   removeTrack(track: any, playlistId : string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${track.id}/removeTrack`, {body : {playlistId}}).pipe(
+      tap(response => {
+        if(response.success){
+          let updatedPlaylist: Playlist | null = null;
+          const updatedPlaylists = this.currentPlaylists.map(playlist => {
+            if (playlist._id === playlistId){
+              const tempTracks = playlist.tracks.filter( item => item.id != track.id)
+              updatedPlaylist = {...playlist, tracks: [...tempTracks]};
+              return updatedPlaylist;
+            } else {
+              return playlist;
+            }
+
+          });
+          this.playlistsSubject.next(updatedPlaylists);
+          this.currentPlaylistSubject.next(updatedPlaylist);
+        }
+      })
+    )
   }
   
 }

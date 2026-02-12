@@ -44,7 +44,7 @@
       </button>
     </div>
     @if(playlistSelected){
-      <app-playlist-track [tracks]="currentPlaylist?.tracks || []">
+      <app-playlist-track [tracks]="currentPlaylist?.tracks || []" [playlistId] = 'currentPlaylist?._id || ""'>
   
       </app-playlist-track>}
       

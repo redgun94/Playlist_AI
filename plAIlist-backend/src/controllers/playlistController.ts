@@ -194,5 +194,54 @@ export const addTrackToPlaylist = async(req: Request, res: Response):Promise<voi
             success : false,
             messages : "Server Error : " + error
         })
-    };
     }
+
+   
+
+}
+export const removeTrack = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const trackId = req.params.trackId;
+        const { playlistId } = req.body;
+
+        if (!playlistId) {
+            res.status(400).json({
+                success: false,
+                message: "Playlist ID is required"
+            });
+            return;
+        }
+
+        const subjectPlaylist = await Playlist.findById(playlistId);
+
+        if (!subjectPlaylist) {
+            res.status(404).json({
+                success: false,
+                message: "Playlist not found"
+            });
+            return;
+        }
+
+        const trackExists = subjectPlaylist.tracks.some(track => track.id === trackId);
+        if (!trackExists) {
+            res.status(404).json({
+                success: false,
+                message: "Track not found in playlist"
+            });
+            return;
+        }
+
+        subjectPlaylist.tracks = subjectPlaylist.tracks.filter(track => track.id !== trackId);
+        await subjectPlaylist.save();
+        
+        res.status(200).json({
+            success: true,
+            message: "Track removed successfully"
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+}
