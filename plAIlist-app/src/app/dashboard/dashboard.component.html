@@ -108,7 +108,15 @@
                 </button>
               </div>
             </div>
+            <div *ngIf="isSearching" class="loading">
+              <div class="spinner"></div>
+              <p>{{ 'dashboard.search.thinking' | translate }}</p>
+            </div>
+            @if(selectedArtist === artist && !isSearching){
+              <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
+            }
           }
+
         </div>
       </div>
 
@@ -118,9 +126,7 @@
       </div>
       
       <!-- Panel de artista seleccionado -->
-      @if(selectedArtist){
-        <app-artist-panel [artistDetail]="selectedArtist"></app-artist-panel>
-      }
+      
     </section>
   </main>
 </div>

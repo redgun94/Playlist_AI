@@ -16,7 +16,7 @@ input:-internal-autofill-selected {
 }
 
 .sidebar {
-  /* height: 100vh; */
+  height: 100%;
   width: 25vw;
   min-width: 15vw;
   background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);

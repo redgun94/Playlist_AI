@@ -6,15 +6,17 @@ import { firstValueFrom, of } from 'rxjs';
 import { DurationPipe } from '../../pipes/duration.pipes';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
+import { AlbumPanelComponent } from "./album-panel/album-panel/album-panel.component";
 
 
 @Component({
   selector: 'app-artist-panel',
-  imports: [TranslateModule, CommonModule, DurationPipe],
+  imports: [TranslateModule, CommonModule, DurationPipe, AlbumPanelComponent],
   templateUrl: './artist-panel.component.html',
   styleUrl: './artist-panel.component.css'
 })
 export class ArtistPanelComponent implements OnInit{
+
 
 
 @Input() artistDetail:any;
@@ -29,29 +31,32 @@ export class ArtistPanelComponent implements OnInit{
   finding: boolean | undefined;
   tExists: boolean = false;
   playlistSelected: Playlist | undefined;
+  isLoading: boolean = true;
+  selectedAlbum: any ;
+  albumDetail: boolean = false;
+
 
 constructor( private translate: TranslateService){
 }
   async ngOnInit(): Promise<void>{
   if(this.artistDetail){
+    this.isLoading = true;
     this.artistDetail = this.artistDetail;
     this.songs = await this.getSongsByArtist(this.artistDetail?.name);
     this.albums = await this.getAlbumsByArtist(this.artistDetail?.id);
     this.activeView = 1;
     this.loadPlaylistsService.playlists$.subscribe(value=>this.playlistList = value);
-
+    this.isLoading = false;
     console.log( "albums: "+ this.albums );
   }
   }
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes['artistDetail'] && changes['artistDetail'].currentValue) {
-        // El artista ha cambiado (ej. el usuario hizo clic en otro artista)
-        // Puedes disparar llamadas a API aquí si fuera necesario
+      this.isLoading = true;
       this.artistDetail = changes['artistDetail'].currentValue;
       this.songs = await this.getSongsByArtist(this.artistDetail.name);
       this.albums = await this.getAlbumsByArtist(this.artistDetail.id);
-
-
+      this.isLoading = false;
     }}
   
     private async getSongsByArtist(artist: String): Promise<any[]> {
@@ -112,5 +117,11 @@ constructor( private translate: TranslateService){
     addToPlaylist() {
     throw new Error('Method not implemented.');
     }
+    showAlbumPanel(album:any) {
+      
+      this.albumDetail = true;
+      this.selectedAlbum = album;
+      console.log(this.selectedAlbum);
+      }
 
 }

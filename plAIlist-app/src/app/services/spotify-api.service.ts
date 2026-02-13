@@ -63,7 +63,7 @@ export class SpotifyAPIService {
    // Método para buscar artistas
   searchArtists(name:string): Observable<any> {
     console.log("Hola",this.token);
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(name)}&type=artist&limit=4`;
+    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(name)}&type=artist&limit=5`;
     const headers = new HttpHeaders({
       'Authorization': (`Bearer ${this.token}`)
     });

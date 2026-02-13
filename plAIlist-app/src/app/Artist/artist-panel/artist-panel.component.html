@@ -1,4 +1,10 @@
 <div class="artist-detail-panel">
+    @if (isLoading) {
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading artist details...</p>
+      </div>
+    } @else {
     <!-- Header del artista -->
     <div class="artist-header">
       <div class="artist-avatar">
@@ -57,11 +63,15 @@
   
     <!-- Sección de Álbumes -->
     <div *ngIf="activeView === 2" class="albums-section">
-      <h3 class="section-title">Albums</h3>
+   
+      <h3 class="section-title">{{selectedAlbum?.name || "Album"}} </h3>
       <div class="albums-grid">
-        @if( albums.length > 0){
+        @if(albumDetail){
+          <app-album-panel [albumSelected] = "selectedAlbum"></app-album-panel>
+        }
+        @if( albums.length > 0 && !albumDetail){
           @for(album of albums; track album.name ){
-          <div class="album-card">
+          <div class="album-card" (click)="showAlbumPanel(album)">
             <div class="album-cover">
               <img [src]="album.images[0].url" alt="Album">
               <button class="album-play-btn">
@@ -147,4 +157,6 @@
         </div>
       </div>
     }
-  
+    }
+   
+

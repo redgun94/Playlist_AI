@@ -115,6 +115,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onSearch() {
     if (this.searchQuery) {
       this.spotifyAPIService.searchArtists(this.searchQuery).subscribe((data) => {
+        this.isSearching = false;
         console.log('Artistas encontrados:', data);
         this.artists = data.artists.items;
         console.log('Artistas encontrados:', this.artists);
@@ -151,7 +152,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['./login']);
   }
   selectArtist(artist:any){
+    if(artist === this.selectedArtist){
+      this.selectedArtist = null;
+      return
+    }
     this.selectedArtist = artist;
+    //this.isSearching = true;
   }
 
 }
