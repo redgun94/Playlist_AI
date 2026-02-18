@@ -114,14 +114,17 @@ constructor( private translate: TranslateService){
         this.closePlaylistDialog();
       }
     }
-    addToPlaylist() {
-    throw new Error('Method not implemented.');
-    }
+ 
     showAlbumPanel(album:any) {
       
       this.albumDetail = true;
       this.selectedAlbum = album;
-      console.log(this.selectedAlbum);
+      console.log(this.selectedAlbum.id);
       }
+
+    backToAlbums(): void {
+      this.albumDetail = false;
+      this.selectedAlbum = null;
+    }
 
 }

@@ -67,7 +67,7 @@
       <h3 class="section-title">{{selectedAlbum?.name || "Album"}} </h3>
       <div class="albums-grid">
         @if(albumDetail){
-          <app-album-panel [albumSelected] = "selectedAlbum"></app-album-panel>
+          <app-album-panel [albumSelected]="selectedAlbum" (goBackEvent)="backToAlbums()"></app-album-panel>
         }
         @if( albums.length > 0 && !albumDetail){
           @for(album of albums; track album.name ){

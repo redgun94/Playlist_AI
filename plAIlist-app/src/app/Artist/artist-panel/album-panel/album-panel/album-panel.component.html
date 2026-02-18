@@ -1,5 +1,66 @@
-<section>
-    <div class="album-cover">
-        <img [src]="albumSelected?.images[0]?.url" alt="Album cover">
+<section class="album-panel-container">
+    <!-- Botón Volver -->
+    <button class="back-button" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Back to Albums
+    </button>
+
+    <!-- Header del Álbum -->
+    <div class="album-header">
+        <div class="album-cover">
+            <img [src]="albumSelected?.images[1]?.url" alt="Album cover">
+        </div>
+        <div class="album-info">
+            <span class="album-type">ALBUM</span>
+            <h1 class="album-title">{{albumSelected?.name || 'Unknown Album'}}</h1>
+            <div class="album-meta">
+                <span class="album-artist">{{albumSelected?.artists?.[0]?.name || 'Unknown Artist'}}</span>
+                <span class="album-dot">•</span>
+                <span class="album-year">{{albumSelected?.release_date?.split('-')[0] || 'N/A'}}</span>
+                <span class="album-dot">•</span>
+                <span class="album-tracks-count">{{items?.length || 0}} songs</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Tracks -->
+    <div class="album-tracks-container">
+        <div class="tracks-header">
+            <h3 class="tracks-title">Tracks</h3>
+        </div>
+
+        <!-- Lista de Tracks -->
+        <div class="tracks-list">
+            @for(track of items; track track.id; let i = $index) {
+                <div class="track-item">
+                    <div class="track-info">
+                        <span class="track-number">{{i + 1}}</span>
+                        <div class="track-details">
+                            <h4 class="track-name">{{track.name || 'Unknown Track'}}</h4>
+                            <p class="track-artist">{{track.artists?.[0]?.name || 'Unknown Artist'}}</p>
+                        </div>
+                    </div>
+                    <div class="track-actions">
+                        <span class="track-duration">{{formatDuration(track.duration_ms)}}</span>
+                        <button class="btn-track-action" title="Play">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            } @empty {
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 6v6l4 2"></path>
+                    </svg>
+                    <p class="empty-text">No tracks in this album</p>
+                    <p class="empty-subtext">Tracks will appear here</p>
+                </div>
+            }
+        </div>
     </div>
 </section>
