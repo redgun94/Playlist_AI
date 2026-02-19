@@ -9,6 +9,7 @@ import { response } from 'express';
 })
 export class SpotifyAPIService {
 
+
   private clientId:string = "c74e5ceefe234e1995a0df05e9991948";
   private clientSecret:string = "a52a61c5919843b6bbacd03bde74c823";
   private url = 'https://accounts.spotify.com/api/token';
@@ -85,8 +86,15 @@ export class SpotifyAPIService {
     const headers = new HttpHeaders({
       'Authorization': (`Bearer ${this.token}`)
     });
-    console.log("getting albums");
       return this.httpRqst.get(url, { headers });
+  }
+
+  getTracksByAlbums(id: string ):Observable<any>{
+    const url = `https://api.spotify.com/v1/albums/${id}/tracks`;
+    const headers = new HttpHeaders({
+      'Authorization':(`Bearer ${this.token}`)
+    });
+      return this.httpRqst.get(url,{headers});
   }
 }
 
