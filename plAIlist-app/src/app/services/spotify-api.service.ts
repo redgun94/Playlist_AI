@@ -82,7 +82,7 @@ export class SpotifyAPIService {
   }
 
   getAlbumsByArtist(artistId : string){
-    const url =  `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&market=US&limit=10`;
+    const url =  `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&market=US&limit=50`;
     const headers = new HttpHeaders({
       'Authorization': (`Bearer ${this.token}`)
     });

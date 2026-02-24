@@ -54,12 +54,12 @@ export class AlbumPanelComponent {
     this.goBackEvent.emit();
   }
 
-  addToPlaylist(playlistId : string, trExists:boolean) {
+  addToPlaylist(playlistId : string, trExists:boolean, track : any) {
     if(trExists){
       this.closePlaylistMenu();
       return;
     }
-    this.playlists.addTrackToPlaylist(playlistId ,this.selectedTrack.id).subscribe({
+    this.playlists.addTrackToPlaylist(playlistId ,track).subscribe({
       next : response => {
         if(response){
           this.addedTrack  = true;

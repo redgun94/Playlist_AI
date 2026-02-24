@@ -9,10 +9,11 @@ import { Router } from '@angular/router';
 import { SpotifyAPIService } from '../services/spotify-api.service';
 import { ArtistPanelComponent } from '../Artist/artist-panel/artist-panel.component';
 import { SidebarComponent } from "../Artist/sidebar/sidebar.component";
+import { AgenteAiComponent } from "./agente-ai/agente-ai.component";
 
 @Component({
   selector: 'app-dashboard',
-  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent, SidebarComponent],
+  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent, SidebarComponent, AgenteAiComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   encapsulation: ViewEncapsulation.None

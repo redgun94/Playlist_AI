@@ -80,6 +80,7 @@ export class SavePlaylistService {
 
 //Add track a la playlist
   addTrackToPlaylist(playlistId: string, track: any): Observable<any>{
+    console.log(track);
     return this.http.post<any>(`${this.apiUrl}/${playlistId}/track`,{ track }).pipe(
       tap(response => {
         if(response.success){

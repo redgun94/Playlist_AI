@@ -72,7 +72,7 @@
                     <div class="playlist-menu-list">
                         @for(playlist of playlistsArray; track playlist._id; let i = $index){
                             @let trExists = trackExists(playlist, track);
-                            <div class="playlist-menu-item" [class.track-exists]="trExists" (click)="addToPlaylist(playlist._id, trExists)">
+                            <div class="playlist-menu-item" [class.track-exists]="trExists" (click)="addToPlaylist(playlist._id, trExists, track)">
                                 <div class="playlist-menu-item-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M9 18V5l12-2v13"></path>
