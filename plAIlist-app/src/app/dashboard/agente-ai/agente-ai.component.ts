@@ -4,9 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { GeminiServicesService } from '../../services/gemini-services.service';
 
+
+interface gemini_resp{
+  message : string,
+  playlist_name : string,
+  description: string,
+  tracks : any[],
+  resp_api : false 
+}
 interface ChatMessage {
   role: 'user' | 'assistant';
-  content: string;
+  content: gemini_resp;
   timestamp: Date;
 }
 
@@ -21,17 +29,23 @@ export class AgenteAiComponent implements AfterViewChecked {
   geminiServices : GeminiServicesService = inject(GeminiServicesService);
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
-  messages: ChatMessage[] = [
+   messages: ChatMessage[] = [
     {
       role: 'assistant',
-      content: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
+      content: {
+        message: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
+        playlist_name: '',
+        description: '',
+        tracks: [],
+        resp_api: false
+      },
       timestamp: new Date()
     }
   ];
 
   userInput: string = '';
   isLoading: boolean = false;
-  apiKey: string = 'AIzaSyD2azlyyRwEGePRBw7CXozzzK_o9U9wgJ4';
+  apiKey: string = '';
 
   constructor(private http: HttpClient) {
    
@@ -52,7 +66,13 @@ export class AgenteAiComponent implements AfterViewChecked {
 
     const userMessage: ChatMessage = {
       role: 'user',
-      content: this.userInput,
+      content:{
+        message: this.userInput,
+        playlist_name: '',
+        description: '',
+        tracks: [],
+        resp_api: false
+      },
       timestamp: new Date()
     };
 
@@ -69,7 +89,13 @@ export class AgenteAiComponent implements AfterViewChecked {
       }*/
 
       const response = await this.callAI(currentInput);
-      console.log(response);
+      if(response.success){
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: response,
+          timestamp: new Date()
+        };
+      }
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response,
@@ -80,7 +106,13 @@ export class AgenteAiComponent implements AfterViewChecked {
       console.log(error);
       const errorMessage: ChatMessage = {
         role: 'assistant',
-        content: 'Lo siento, ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo.',
+        content:{
+          message: 'Lo siento, ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo.',
+          playlist_name: '',
+          description: '',
+          tracks: [],
+          resp_api: false
+        }, 
         timestamp: new Date()
       };
       this.messages.push(errorMessage);
@@ -103,7 +135,7 @@ Responde de manera útil, amigable y concisa. Si el usuario pregunta sobre algo 
 Mensaje del usuario: ${prompt}`;
 
     return new Promise((resolve, reject) => {
-        this.geminiServices.geminiServices(prompt, "asfafaf").subscribe({
+        this.geminiServices.geminiServices(context, "asfafaf").subscribe({
             next: (response) => {
                 if (response.success) {
                     resolve(response.data);
@@ -134,17 +166,23 @@ Mensaje del usuario: ${prompt}`;
     });
   }*/
 
-  /*saveApiKey(): void {
+  saveApiKey(): void {
     if (this.apiKey.trim() && typeof localStorage !== 'undefined') {
       localStorage.setItem('gemini_api_key', this.apiKey.trim());
       this.apiKey = '';
     }
-  }*/
+  }
 
   showApiKeyPrompt(): void {
     const apiKeyPrompt: ChatMessage = {
       role: 'assistant',
-      content: 'Para usar el asistente de IA, necesito una clave API de Google Gemini. Por favor, ingresa tu API key en el campo correspondiente arriba y guarda. Si no tienes una, puedes obtenerla en https://aistudio.google.com/app/apikey',
+      content: {
+        message: 'Para usar el asistente de IA, necesito una clave API de Google Gemini. Por favor, ingresa tu API key en el campo correspondiente arriba y guarda. Si no tienes una, puedes obtenerla en https://aistudio.google.com/app/apikey',
+        playlist_name: '',
+        description: '',
+        tracks: [],
+        resp_api: false
+      },
       timestamp: new Date()
     };
     this.messages.push(apiKeyPrompt);
@@ -154,7 +192,13 @@ Mensaje del usuario: ${prompt}`;
     this.messages = [
       {
         role: 'assistant',
-        content: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
+        content: {
+          message: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
+          playlist_name: '',
+          description: '',
+          tracks: [],
+          resp_api: false
+        },
         timestamp: new Date()
       }
     ];
