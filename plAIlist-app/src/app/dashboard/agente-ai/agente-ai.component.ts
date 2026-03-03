@@ -1,7 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { GeminiServicesService } from '../../services/gemini-services.service';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -17,6 +18,7 @@ interface ChatMessage {
   styleUrl: './agente-ai.component.css'
 })
 export class AgenteAiComponent implements AfterViewChecked {
+  geminiServices : GeminiServicesService = inject(GeminiServicesService);
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
   messages: ChatMessage[] = [
@@ -29,13 +31,10 @@ export class AgenteAiComponent implements AfterViewChecked {
 
   userInput: string = '';
   isLoading: boolean = false;
-  apiKey: string = '';
-  selectedModel: string = 'gemini-2.0-flash';
+  apiKey: string = 'AIzaSyD2azlyyRwEGePRBw7CXozzzK_o9U9wgJ4';
 
   constructor(private http: HttpClient) {
-    if (typeof localStorage !== 'undefined') {
-      this.apiKey = localStorage.getItem('gemini_api_key') || '';
-    }
+   
   }
 
   ngAfterViewChecked(): void {
@@ -63,14 +62,14 @@ export class AgenteAiComponent implements AfterViewChecked {
     this.isLoading = true;
 
     try {
-      if (!this.apiKey) {
+      /* if (!this.apiKey) {
         this.showApiKeyPrompt();
         this.isLoading = false;
         return;
-      }
+      }*/
 
       const response = await this.callAI(currentInput);
-      
+      console.log(response);
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response,
@@ -78,6 +77,7 @@ export class AgenteAiComponent implements AfterViewChecked {
       };
       this.messages.push(assistantMessage);
     } catch (error) {
+      console.log(error);
       const errorMessage: ChatMessage = {
         role: 'assistant',
         content: 'Lo siento, ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo.',
@@ -89,7 +89,7 @@ export class AgenteAiComponent implements AfterViewChecked {
     }
   }
 
-  private async callAI(prompt: string): Promise<string> {
+  private async callAI(prompt: string): Promise<any> {
     const context = `Eres un asistente musical experto llamado "PlAIlist". 
 Tu función principal es ayudar a los usuarios a:
 1. Crear y gestionar playlists de música
@@ -102,21 +102,26 @@ Responde de manera útil, amigable y concisa. Si el usuario pregunta sobre algo 
 
 Mensaje del usuario: ${prompt}`;
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${this.selectedModel}:generateContent?key=${this.apiKey}`;
-    
-    const body = {
-      contents: [{ parts: [{ text: context }] }],
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 1000
-      }
-    };
-
     return new Promise((resolve, reject) => {
+        this.geminiServices.geminiServices(prompt, "asfafaf").subscribe({
+            next: (response) => {
+                if (response.success) {
+                    resolve(response.data);
+                } else {
+                    reject(response.message);
+                }
+            },
+            error: (err) => reject(err)
+        });
+    });
+}
+     
+    /*new Promise((resolve, reject) => {
       this.http.post<any>(url, body).subscribe({
         next: (response) => {
           if (response.candidates && response.candidates[0]?.content?.parts[0]?.text) {
             resolve(response.candidates[0].content.parts[0].text);
+            console.log(resolve(response.candidates[0].content.parts[0].text));
           } else {
             reject(new Error('Invalid response'));
           }
@@ -127,14 +132,14 @@ Mensaje del usuario: ${prompt}`;
         }
       });
     });
-  }
+  }*/
 
-  saveApiKey(): void {
+  /*saveApiKey(): void {
     if (this.apiKey.trim() && typeof localStorage !== 'undefined') {
       localStorage.setItem('gemini_api_key', this.apiKey.trim());
       this.apiKey = '';
     }
-  }
+  }*/
 
   showApiKeyPrompt(): void {
     const apiKeyPrompt: ChatMessage = {

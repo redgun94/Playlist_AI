@@ -1,42 +1,37 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { tap, Observable } from 'rxjs';
+import { User } from '../models/auth.model';
+import { GeminiResponse } from '../models/gemini.model';
+import { AuthService } from './auth.service';
 
-export interface GeminiRequest {
-  prompt: string;
-  userId: string;
-}
-
-export interface GeminiResponse {
-  success: boolean;
-  data?: any;
-  error?: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeminiServicesService {
 
-  private apiUrl = 'http://localhost:3000/api/gemini';
+    authServices: AuthService = inject(AuthService);
+    apiUrl: string = 'http://localhost:3000/api/gemini';
+    userId: string | undefined= '';
+    user!: User | null;
+    private genAI = "AIzaSyD2azlyyRwEGePRBw7CXozzzK_o9U9wgJ4";
     
-  constructor(private http: HttpClient) { }
-
-  generateContent(prompt: string, userId: string): Observable<GeminiResponse> {
-    const request: GeminiRequest = { prompt, userId };
-    return this.http.post<GeminiResponse>(`${this.apiUrl}/generate`, request);
+  constructor(private http : HttpClient) {
+    this.authServices.currentUser.subscribe(user => this.user = user);
+    this.userId = this.user?.id;
   }
 
-  setApiKey(apiKey: string): void {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('gemini_api_key', apiKey);
-    }
+  geminiServices(prompt: string, userId: string): Observable<GeminiResponse> {
+    console.log(prompt);
+    return this.http.post<GeminiResponse>(`${this.apiUrl}/call`, { prompt }).pipe(
+      tap(response => {
+        if (response.success) {
+           console.log(response.message);
+           return response.data;
+        }
+      })
+    );
   }
 
-  getApiKey(): string {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem('gemini_api_key') || '';
-    }
-    return '';
-  }
 }
