@@ -3,14 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { GeminiServicesService } from '../../services/gemini-services.service';
+import { SavePlaylistService } from '../../services/save-playlist-service.service';
+import { Playlist } from '../../models/playlist.models';
 
 
 interface gemini_resp{
   message : string,
-  playlist_name : string,
+  playlist : {
+    playlist_name : string,
   description: string,
   tracks : any[],
-  resp_api : false 
+  },
+  type : 'playlist' | 'text'
 }
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -27,17 +31,25 @@ interface ChatMessage {
 })
 export class AgenteAiComponent implements AfterViewChecked {
   geminiServices : GeminiServicesService = inject(GeminiServicesService);
+  private playlistsService: SavePlaylistService = inject(SavePlaylistService);
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
+
+  userPlaylists: Playlist[] = [];
+  showPlaylistDialog: boolean = false;
+  selectedTrack: any = null;
+  pendingPlaylist: any = null;
 
    messages: ChatMessage[] = [
     {
       role: 'assistant',
       content: {
         message: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
-        playlist_name: '',
-        description: '',
-        tracks: [],
-        resp_api: false
+        playlist : {
+          playlist_name: '',
+          description: '',
+          tracks: [],
+        },
+        type: "text"
       },
       timestamp: new Date()
     }
@@ -68,10 +80,12 @@ export class AgenteAiComponent implements AfterViewChecked {
       role: 'user',
       content:{
         message: this.userInput,
+       playlist : {
         playlist_name: '',
         description: '',
         tracks: [],
-        resp_api: false
+       },
+        type: "text"
       },
       timestamp: new Date()
     };
@@ -108,10 +122,12 @@ export class AgenteAiComponent implements AfterViewChecked {
         role: 'assistant',
         content:{
           message: 'Lo siento, ocurrió un error al procesar tu solicitud. Por favor, intenta de nuevo.',
+         playlist : {
           playlist_name: '',
           description: '',
           tracks: [],
-          resp_api: false
+         },
+          type : "text"
         }, 
         timestamp: new Date()
       };
@@ -135,7 +151,7 @@ Responde de manera útil, amigable y concisa. Si el usuario pregunta sobre algo 
 Mensaje del usuario: ${prompt}`;
 
     return new Promise((resolve, reject) => {
-        this.geminiServices.geminiServices(context, "asfafaf").subscribe({
+        this.geminiServices.geminiServices(context).subscribe({
             next: (response) => {
                 if (response.success) {
                     resolve(response.data);
@@ -178,29 +194,102 @@ Mensaje del usuario: ${prompt}`;
       role: 'assistant',
       content: {
         message: 'Para usar el asistente de IA, necesito una clave API de Google Gemini. Por favor, ingresa tu API key en el campo correspondiente arriba y guarda. Si no tienes una, puedes obtenerla en https://aistudio.google.com/app/apikey',
+       playlist : {
         playlist_name: '',
         description: '',
         tracks: [],
-        resp_api: false
+       },
+        type : "text"
       },
       timestamp: new Date()
     };
     this.messages.push(apiKeyPrompt);
   }
 
-  clearChat(): void {
+clearChat(): void {
     this.messages = [
       {
         role: 'assistant',
         content: {
           message: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
+         playlist : {
           playlist_name: '',
           description: '',
           tracks: [],
-          resp_api: false
-        },
+         },
+          type : "text"
+      },
         timestamp: new Date()
       }
     ];
+  }
+
+  savePlaylist(playlist: any): void {
+    this.pendingPlaylist = playlist;
+    this.playlistsService.playlists$.subscribe(playlists => {
+      this.userPlaylists = playlists;
+    });
+    this.showPlaylistDialog = true;
+  }
+
+  addTrackToPlaylist(track: any): void {
+    this.selectedTrack = track;
+    this.playlistsService.playlists$.subscribe(playlists => {
+      this.userPlaylists = playlists;
+    });
+    this.showPlaylistDialog = true;
+  }
+
+  selectPlaylistForTrack(playlistId: string): void {
+    if (this.selectedTrack) {
+      this.playlistsService.addTrackToPlaylist(playlistId, this.selectedTrack).subscribe({
+        next: () => {
+          this.showNotification('Track agregado a la playlist');
+        },
+        error: () => {
+          this.showNotification('Error al agregar track');
+        }
+      });
+    } else if (this.pendingPlaylist) {
+      const tracks = this.pendingPlaylist.tracks || [];
+      let addedCount = 0;
+      
+      tracks.forEach((track: any) => {
+        this.playlistsService.addTrackToPlaylist(playlistId, track).subscribe({
+          next: () => {
+            addedCount++;
+            if (addedCount === tracks.length) {
+              this.showNotification(`Playlist guardada con ${tracks.length} tracks`);
+            }
+          },
+          error: () => {
+            addedCount++;
+            if (addedCount === tracks.length) {
+              this.showNotification(`Playlist guardada (${addedCount} tracks)`);
+            }
+          }
+        });
+      });
+    }
+    this.closeDialog();
+  }
+
+  closeDialog(): void {
+    this.showPlaylistDialog = false;
+    this.selectedTrack = null;
+    this.pendingPlaylist = null;
+  }
+
+  private showNotification(message: string): void {
+    const notification: ChatMessage = {
+      role: 'assistant',
+      content: {
+        message: message,
+        playlist: { playlist_name: '', description: '', tracks: [] },
+        type: 'text'
+      },
+      timestamp: new Date()
+    };
+    this.messages.push(notification);
   }
 }
