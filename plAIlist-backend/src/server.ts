@@ -6,6 +6,7 @@ import authRoutes from './routes/authRoutes';
 import playlistRoutes from './routes/playlistRoutes';
 import mongoose from 'mongoose';
 import geminiServicesRoutes from './routes/geminiServicesRoutes';
+import spotifyServicesRoutes from './routes/spotifyServicesRoutes';
 
 const app: Application = express();
 
@@ -17,14 +18,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
-  console.log(`📥 ${req.method} ${req.url}`);
-  next();
-});
 // Ruta
 app.use('/api/auth', authRoutes);
 app.use('/api/playlist', playlistRoutes);
 app.use('/api/gemini', geminiServicesRoutes);
+app.use('/api/spotifySer',spotifyServicesRoutes)
 // Ruta de prueba
 app.get('/', (req, res) => {
   res.json({ message: '🎵 PlAIlist Backend API funcionando con TypeScript!' });

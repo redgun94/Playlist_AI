@@ -22,12 +22,12 @@ export class GeminiServicesService {
     this.userId = this.user?.id;
   }
 
-  geminiServices(prompt: string, userId: string): Observable<GeminiResponse> {
+  geminiServices(prompt: string, userId: any = this.userId): Observable<GeminiResponse> {
     console.log(prompt);
-    return this.http.post<GeminiResponse>(`${this.apiUrl}/call`, { prompt }).pipe(
+    return this.http.post<GeminiResponse>(`${this.apiUrl}/call`, { prompt, userId }).pipe(
       tap(response => {
         if (response.success) {
-           console.log(response.message);
+           console.log(response.data);
            return response.data;
         }
       })

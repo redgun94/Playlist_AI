@@ -1,33 +1,24 @@
 import { Request, Response } from 'express';
-import { GoogleGenAI, Type } from '@google/genai';
-
+import { FunctionCallingConfigMode, GoogleGenAI, Type } from '@google/genai';
+import ChatUserSession from '../models/chatSession';
+import { PLAILIST_RESPONSE_SCHEMA, PLAILIST_SYSTEM_INSTRUCTION } from '../config/aiConfig';
 
 export const geminiCall = async (req: Request, res: Response): Promise<void> => {
     console.log('🔥 geminiCall called');
     console.log('Body:', req.body);
-    const schema_res = {
-        type: "OBJECT",
-        properties: {
-            playlist_name: { type: "STRING" },
-            description: { type: "STRING" },
-            tracks: {
-                type: "ARRAY",
-                items: {
-                    type: "OBJECT",
-                    properties: {
-                        title: { type: "STRING" },
-                        artist: { type: "STRING" },
-                        year: { type: "STRING" },
-                    },
-                    required: ["title", "artist"]
-                }
-            }
-        },
-        required: ["playlist_name", "tracks"]
-    };
+
     try {
-        const { prompt } = req.body;
-        console.log(prompt);
+        const { prompt, userId } = req.body;
+        let chatSession = await ChatUserSession.findOne({ userId });
+        if(!chatSession){
+            console.log('Chat session not found, creating new one');
+            chatSession = new ChatUserSession({
+                userId,
+                history: []
+            });
+            await chatSession.save();
+        }
+        console.log("Chat session created or found");
         if (!prompt || typeof prompt !== 'string') {
             res.status(400).json({
                 success: false,
@@ -36,7 +27,7 @@ export const geminiCall = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
-        const genApy = "AIzaSyAI7FlKs1ACLx7vlOqIBtva1HrYgzvLIiw";
+        const genApy = process.env.GEMINI_API_KEY;
         if (!genApy) {
             res.status(500).json({
                 success: false,
@@ -45,16 +36,38 @@ export const geminiCall = async (req: Request, res: Response): Promise<void> => 
             });
             return;
         }
-        
+    
         const ai = new GoogleGenAI({ apiKey: genApy });
-        const result = await ai.models.generateContent({
+        const history = chatSession.history.map(entry => ({
+            role: entry.role,
+            parts: entry.parts.map(part => ({ text: part.text }))
+        }));
+        const chat = ai.chats.create({
+            model: 'gemini-2.5-flash-lite',
+            history: history,
+            config:{
+                systemInstruction: PLAILIST_SYSTEM_INSTRUCTION ,
+                responseMimeType: 'application/json',   
+                responseSchema: PLAILIST_RESPONSE_SCHEMA  
+            }
+        });
+        const result = await chat.sendMessage({message: prompt});
+    
+        chatSession.history = (await chat.getHistory()).map(content => ({
+            role: content.role || '',
+            parts: content.parts?.filter(part => part.text !== undefined).map(part => ({ text: part.text || '' })) || []
+        }));
+        await chatSession.save();
+
+
+      /*  const result = await ai.models.generateContent({
             model: 'gemini-2.5-flash-lite',
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
             config:{
                 responseMimeType: 'application/json',
-                responseSchema: schema_res
+                responseSchema: schema_res 
             }
-        });
+        });*/
 
         const response = result.candidates?.[0];
         console.log(response);
