@@ -118,8 +118,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.spotifyAPIService.searchArtists(this.searchQuery).subscribe((data) => {
         this.isSearching = false;
         console.log('Artistas encontrados:', data);
-        this.artists = data.artists.items;
-        console.log('Artistas encontrados:', this.artists);
+        this.artists = data.data.artists.items;
       });
       return;
     }

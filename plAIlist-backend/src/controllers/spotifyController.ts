@@ -47,6 +47,7 @@ const fetchSpotifyToken  = async (): Promise<string> => {
 };
 
 const getValidToken = async (): Promise<string> => {
+    console.log("Corriendo getValid")
     if (!tokenData || Date.now() >= tokenData.expiresAt) {
       console.log('Token expirado o inexistente, renovando...');
       return await fetchSpotifyToken();
@@ -78,7 +79,7 @@ export const getTokenSpotify = async (req: Request, res:Response):Promise<void>=
  function createSpotifyClient() {
     const spotifyClient = axios.create({
       baseURL: 'https://api.spotify.com/v1',
-      timeout: 8000,
+      timeout: 5000,
     });
   
     // Interceptor de request: inserta siempre un token válido
@@ -105,3 +106,32 @@ export const getTokenSpotify = async (req: Request, res:Response):Promise<void>=
   
     return spotifyClient;
   }
+
+  export const searchArtists = async (req: Request, res: Response) => {
+    const name = req.query.q;
+    console.log('Iniciando búsqueda:', name);
+    
+    try {
+      const response = await spotifyClient.get('/search', {
+        params: {
+          q: name,
+          type: 'artist',
+          limit: 5,
+        }
+      });
+      
+      console.log('Respuesta recibida:', response.status, response.data);
+        res.status(200).json({
+            success : true,
+            message: "Artits",
+            data: response.data
+
+      });
+      
+    } catch (error: any) {
+      console.error('Error en searchArtists:', error.message);
+      console.error('Status:', error.response?.status);
+      console.error('Data:', error.response?.data);
+      throw error;
+    }
+  };

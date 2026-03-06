@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { response } from 'express';
 
 
@@ -12,7 +12,7 @@ export class SpotifyAPIService {
 
   private clientId:string = "c74e5ceefe234e1995a0df05e9991948";
   private clientSecret:string = "a52a61c5919843b6bbacd03bde74c823";
-  private url = 'https://accounts.spotify.com/api/token';
+  private url = 'http://localhost:3000/api/spotifySer';
   private token: string = "";
 
   
@@ -63,13 +63,9 @@ export class SpotifyAPIService {
 
    // Método para buscar artistas
   searchArtists(name:string): Observable<any> {
-    console.log("Hola",this.token);
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(name)}&type=artist&limit=5`;
-    const headers = new HttpHeaders({
-      'Authorization': (`Bearer ${this.token}`)
-    });
-
-    return this.httpRqst.get(url, { headers });
+    const url = `${this.url}/searchArtists`;
+    console.log("Pidiendo artistas al backend", name);
+    return this.httpRqst.get(url,{params:{q : name}});
   }
 
   //Metodo para buscar canciones por artista
