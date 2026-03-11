@@ -109,7 +109,6 @@ export const getTokenSpotify = async (req: Request, res:Response):Promise<void>=
 
   export const searchArtists = async (req: Request, res: Response) => {
     const name = req.query.q;
-    console.log('Iniciando búsqueda:', name);
     
     try {
       const response = await spotifyClient.get('/search', {
@@ -120,7 +119,6 @@ export const getTokenSpotify = async (req: Request, res:Response):Promise<void>=
         }
       });
       
-      console.log('Respuesta recibida:', response.status, response.data);
         res.status(200).json({
             success : true,
             message: "Artits",
@@ -135,3 +133,74 @@ export const getTokenSpotify = async (req: Request, res:Response):Promise<void>=
       throw error;
     }
   };
+  export const searchSongsByArtist = async(req:Request, res:Response):Promise<void>=>{
+    const artist = req.query.q;
+    console.log(artist);
+    try{
+      const response = await spotifyClient.get('/search', {
+        params: {
+          q: artist,
+          type: 'track',
+          limit: 15
+        }
+      });
+      if(response){
+        res.status(200).json({
+          success: true,
+          message: "Popular Tracks ",
+          data : response.data
+        })
+      }
+    } catch (error: any){
+        console.error('Error en searchArtists:', error.message);
+        console.error('Status:', error.response?.status);
+        console.error('Data:', error.response?.data);
+        throw error;
+    }
+    }
+    export const getAlbumsByArtist = async(req:Request, res:Response):Promise<void>=>{
+      const artistId = req.query.id;
+      try{
+        const response = await spotifyClient.get(`/artists/${artistId}/albums`,{params : {
+          include_groups : '',
+          market: 'US',
+          limit : '50',
+      
+        }});
+        if(response){
+          res.status(200).json({
+            success : true,
+            message : "Artists's Albums ",
+            data: response.data
+          })
+        }
+      }catch (error: any){
+        console.error('Error en searchArtists:', error.message);
+        console.error('Status:', error.response?.status);
+        console.error('Data:', error.response?.data);
+        throw error;
+    }
+    }
+    export const getTracksByAlbums = async(req:Request, res:Response):Promise<void>=>{
+      const albumId = req.query.id;
+      try{
+        console.log(albumId);
+
+        const response = await spotifyClient.get(`/albums/${albumId}/tracks`,{params:{
+          limit : '50'
+        }});
+        console.log(response.data);
+        if(response){
+          res.status(200).json({
+            success: true,
+            message: "Tracks by Albums",
+            data: response.data
+          })
+        }
+      }catch (error: any){
+        console.error('Error en searchArtists:', error.message);
+        console.error('Status:', error.response?.status);
+        console.error('Data:', error.response?.data);
+        throw error;
+    }
+    }

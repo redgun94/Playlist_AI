@@ -70,27 +70,21 @@ export class SpotifyAPIService {
 
   //Metodo para buscar canciones por artista
   getSongsByArtist(artist: string){
-    const url = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artist)}&type=track&limit=10`;
-    const headers = new HttpHeaders({
-      'Authorization': (`Bearer ${this.token}`)
-    });
-    return this.httpRqst.get(url, { headers });
+    const url = `${this.url}/getTracksByArtist`;
+    console.log(artist);
+    return this.httpRqst.get(url, { params: {q : artist}});
   }
 
   getAlbumsByArtist(artistId : string){
-    const url =  `https://api.spotify.com/v1/artists/${artistId}/albums?include_groups=album&market=US&limit=50`;
-    const headers = new HttpHeaders({
-      'Authorization': (`Bearer ${this.token}`)
-    });
-      return this.httpRqst.get(url, { headers });
+    const url =  `${this.url}/getAlbumsByArtist`;
+
+      return this.httpRqst.get(url, { params: {id:artistId} });
   }
 
   getTracksByAlbums(id: string ):Observable<any>{
-    const url = `https://api.spotify.com/v1/albums/${id}/tracks`;
-    const headers = new HttpHeaders({
-      'Authorization':(`Bearer ${this.token}`)
-    });
-      return this.httpRqst.get(url,{headers});
+    const url = `${this.url}/getTracksByAlbums`;
+
+      return this.httpRqst.get(url,{params : { id : id}});
   }
 }
 

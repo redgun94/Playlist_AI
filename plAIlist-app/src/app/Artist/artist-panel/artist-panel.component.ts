@@ -63,15 +63,16 @@ constructor( private translate: TranslateService){
       const response: any = await firstValueFrom(
         this.spotifyAPIService.getSongsByArtist(this.artistDetail.name)
       );
-      console.log("Songs",response.tracks.items);
-      return response.tracks.items;
+      console.log("Songs",response.data.tracks.items);
+      return response.data.tracks.items;
     }
 
     private async getAlbumsByArtist( artistDetail : string): Promise<any[]>{
       const response: any = await firstValueFrom(
+        
         this.spotifyAPIService.getAlbumsByArtist(this.artistDetail?.id));
-        console.log(response.items);
-        return response.items;
+        console.log(response.data.items);
+        return response.data.items;
     }
 
     viewAlbums(id: number) {

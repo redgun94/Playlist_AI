@@ -34,7 +34,7 @@ export class AlbumPanelComponent {
         this.playlistsArray = value;
       });
       const album = this.loadAlbun.getTracksByAlbums(this.albumSelected.id).subscribe(response => {
-        this.items =[...response.items];
+        this.items =[...response.data.items];
     });
   }
   addTrack(event:Event ,track: any) {
