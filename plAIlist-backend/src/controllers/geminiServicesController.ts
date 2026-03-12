@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { FunctionCallingConfigMode, GoogleGenAI, Type } from '@google/genai';
 import ChatUserSession from '../models/chatSession';
 import { PLAILIST_RESPONSE_SCHEMA, PLAILIST_SYSTEM_INSTRUCTION } from '../config/aiConfig';
+import { getTrackByName } from './spotifyController';
 
 export const geminiCall = async (req: Request, res: Response): Promise<void> => {
     console.log('🔥 geminiCall called');
@@ -59,18 +60,7 @@ export const geminiCall = async (req: Request, res: Response): Promise<void> => 
         }));
         await chatSession.save();
 
-
-      /*  const result = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-lite',
-            contents: [{ role: 'user', parts: [{ text: prompt }] }],
-            config:{
-                responseMimeType: 'application/json',
-                responseSchema: schema_res 
-            }
-        });*/
-
-        const response = result.candidates?.[0];
-        console.log(response);
+        const response = result.candidates?.[0] as any;
         const response_string = result.text || "";
 
         if (!response_string) {
@@ -93,9 +83,19 @@ export const geminiCall = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
-        console.log(response_json);
+        const tracksBySpotify = [];
 
         if (response?.finishReason === "STOP") {
+            if(response_json.type === 'playlist'){
+                const tracks = response_json.playlist.tracks;
+                console.log("Tracks ", tracks);
+                for(let track of  tracks){
+                    const response = await getTrackByName(track);
+                    console.log(response?.data.tracks.items);
+                    tracksBySpotify.push(response?.data.tracks.items);
+                }
+                
+            }
             res.status(200).json({
                 success: true,
                 message: "Successfully Response from GeminiAI api",

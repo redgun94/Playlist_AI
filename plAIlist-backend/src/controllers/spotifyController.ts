@@ -204,3 +204,24 @@ export const getTokenSpotify = async (req: Request, res:Response):Promise<void>=
         throw error;
     }
     }
+
+export async function getTrackByName(track: any) {
+  try{
+    const trackName = track.title;
+    const response = await spotifyClient.get('/search',{params:{
+      q : trackName,
+      type: "track",
+      market: "US",
+      limit: 1
+    }});
+    if(response.status === 200){
+      return response;
+    }
+  }catch (error: any){
+    console.error('Error en searchArtists:', error.message);
+    console.error('Status:', error.response?.status);
+    console.error('Data:', error.response?.data);
+    throw error;
+}
+}
+
