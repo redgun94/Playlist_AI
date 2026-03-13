@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
+import UserSpotifyAuth from '../models/userSpotifyAuth';
 
 interface TokenData {
     accessToken: string;
@@ -223,5 +224,43 @@ export async function getTrackByName(track: any) {
     console.error('Data:', error.response?.data);
     throw error;
 }
+}
+
+export const exportPlaylist = async(req:Request, res:Response):Promise<void>=>{
+  const { userId, playlistName, trackUris } = req.body;
+  try{
+    const userSpotifyAuth = await UserSpotifyAuth.findOne({ userId });
+    if(!userSpotifyAuth){
+      res.status(404).json({ success: false, message: 'Usuario no autenticado con Spotify' });
+      return;
+    }
+    const response = await axios.post('https://api.spotify.com/v1/users/' + userSpotifyAuth.spotifyUserId + '/playlists', 
+      {
+        name: playlistName,
+        description: 'Playlist creada desde plAIlist',
+        public: false
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${userSpotifyAuth.accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    const playlistId = response.data.id;
+    await axios.post(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      { uris: trackUris },
+      {
+        headers: {
+          'Authorization': `Bearer ${userSpotifyAuth.accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    res.status(200).json({ success: true, message: 'Playlist exportada exitosamente', playlistId });
+  } catch(error: any){
+    console.error('Error exportando playlist:', error.message);
+    res.status(500).json({ success: false, message: 'Error al exportar playlist' });
+  }
 }
 

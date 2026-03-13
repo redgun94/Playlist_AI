@@ -88,14 +88,13 @@ export const geminiCall = async (req: Request, res: Response): Promise<void> => 
         if (response?.finishReason === "STOP") {
             if(response_json.type === 'playlist'){
                 const tracks = response_json.playlist.tracks;
-                console.log("Tracks ", tracks);
                 for(let track of  tracks){
                     const response = await getTrackByName(track);
-                    console.log(response?.data.tracks.items);
-                    tracksBySpotify.push(response?.data.tracks.items);
+                    tracksBySpotify.push(response?.data.tracks.items[0]);
                 }
                 
             }
+            response_json.playlist.tracks = tracksBySpotify;
             res.status(200).json({
                 success: true,
                 message: "Successfully Response from GeminiAI api",

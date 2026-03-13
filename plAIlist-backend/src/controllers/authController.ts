@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
+import UserSpotifyAuth from '../models/userSpotifyAuth';
 
 // Interface para el body del registro
 interface RegisterRequestBody {
@@ -151,5 +153,58 @@ export const login = async (req : Request<{},{}, LoginRequestBody>, res: Respons
       message : "Error found, try later"
     });
   }
+}
 
+export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
+    const userId = req.query.userId as string;
+    const params = new URLSearchParams({
+      client_id : process.env.SPOTIFY_CLIENT_ID!,
+      response_type: "code",
+      redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
+      scope: "playlist-modify-public playlist-modify-private user-read-email",
+      state: userId
+    });
+    res.redirect(`https://accounts.spotify.com/authorize?${params.toString()}`);
+}
+
+export const callbackSpotify = async(req: Request, res: Response):Promise<void>=>{
+  const { code, state } = req.query;
+  try{
+    const response = await axios.post('https://accounts.spotify.com/api/token', 
+      new URLSearchParams({
+        grant_type: 'authorization_code',
+        code: code as string,
+        redirect_uri: process.env.SPOTIFY_REDIRECT_URI!
+      }),{
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`
+        }
+      }
+    );
+    const { access_token, refresh_token, expires_in } = response.data;
+    const userProfile = await axios.get('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': `Bearer ${access_token}` }
+    });
+    const spotifyUserId = userProfile.data.id;
+    const expiresAt = new Date(Date.now() + expires_in * 1000);
+    if(state){
+      const userId = state as string;
+      await UserSpotifyAuth.findOneAndUpdate(
+        { userId },
+        { 
+          userId, 
+          spotifyUserId, 
+          accessToken: access_token, 
+          refreshToken: refresh_token, 
+          expiresAt 
+        },
+        { upsert: true, new: true }
+      );
     }
+    res.redirect(`http://localhost:4200/dashboard?spotify_connected=true`);
+  } catch(error){
+    console.error('Error en callbackSpotify:', error);
+    res.status(500).json({ success: false, message: 'Error en autenticación con Spotify' });
+  }
+}

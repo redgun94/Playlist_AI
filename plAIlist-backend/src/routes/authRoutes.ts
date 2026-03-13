@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { login, register } from '../controllers/authController';
+import { callbackSpotify, login, loginSpotify, register } from '../controllers/authController';
 import { createPlaylist } from '../controllers/playlistController';
 const router: Router = express.Router();
 
@@ -7,5 +7,7 @@ const router: Router = express.Router();
 
 router.post('/register', register);
 router.post('/login', login);
+router.get('/spotify/login', loginSpotify);
+router.get('/spotify/callback',callbackSpotify)
 
 export default router;
