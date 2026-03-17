@@ -156,7 +156,9 @@ export const login = async (req : Request<{},{}, LoginRequestBody>, res: Respons
 }
 
 export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
+  
     const userId = req.query.userId as string;
+    console.log(userId);
     const params = new URLSearchParams({
       client_id : process.env.SPOTIFY_CLIENT_ID!,
       response_type: "code",
@@ -207,4 +209,70 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
     console.error('Error en callbackSpotify:', error);
     res.status(500).json({ success: false, message: 'Error en autenticación con Spotify' });
   }
+}
+export const refreshTokenUser = async(refreshToken:string)=>{
+
+   const body = new URLSearchParams({
+    grant_type: 'refresh_token',
+    refresh_token: refreshToken
+  });
+
+  const headers = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': `Basic ${Buffer.from(
+      `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+    ).toString('base64')}`
+  };
+
+  try{
+
+    const response = await axios.post(
+      'https://accounts.spotify.com/api/token',
+      body,
+      { headers }
+    );
+  return response.data;
+  }catch(error){
+    console.error('Error refreshing token:', error);
+    throw error;
+  }
+
+}
+export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
+  
+  const userId = req.query.q;
+  console.log(userId);
+  const userSpotifyactive = await UserSpotifyAuth.findOne({userId});
+
+  if(!userSpotifyactive?.spotifyUserId){
+      return res.status(200).json({
+        success: true,
+        message : "User not Authenticated in Spotify",
+        userAuthenticated : false
+    })
+  }
+  if(userSpotifyactive?.expiresAt.getTime()! < Date.now()){
+    const dataTokens = await refreshTokenUser(userSpotifyactive.refreshToken);
+    if(!dataTokens){
+      return res.status(404).json({
+        success : false,
+        message : "Error: expired or unauthorized user.",
+        userAuthenticated : false
+      })
+    };
+    userSpotifyactive.accessToken = dataTokens.access_token;
+    userSpotifyactive.expiresAt = new Date(Date.now() + dataTokens.expires_in * 1000);
+    userSpotifyactive.save();
+    return res.status(200).json({
+      success: true,
+      message: "User Authenticated and access token renewed",
+      userAuthenticated : true
+    });
+  };
+  res.status(200).json({
+    success: true,
+    message : "User Authenticated",
+    userAuthenticated : true
+  })
+
 }

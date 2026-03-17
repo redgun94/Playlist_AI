@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { map, Observable, of, switchMap, tap } from 'rxjs';
 import { response } from 'express';
+import { Playlist } from '../models/playlist.models';
 
 
 @Injectable({
@@ -13,6 +14,7 @@ export class SpotifyAPIService {
   private clientId:string = "c74e5ceefe234e1995a0df05e9991948";
   private clientSecret:string = "a52a61c5919843b6bbacd03bde74c823";
   private url = 'http://localhost:3000/api/spotifySer';
+  private urlA = 'http://localhost:3000/api/auth';
   private token: string = "";
 
   
@@ -86,5 +88,27 @@ export class SpotifyAPIService {
 
       return this.httpRqst.get(url,{params : { id : id}});
   }
-}
 
+  exportPlaylistToSpotify(playlist:Playlist){
+    console.log(playlist);
+    const url = `${this.urlA}/getUserSpotify`;
+    return this.httpRqst.get<any>(url, { params: { q: playlist.userId } }).pipe(
+      switchMap(user => {
+        if (!user.userAuthenticated) {
+          // Redirigir a Spotify login
+          console.log(user.userAuthenticated);
+          window.location.href = `${this.urlA}/spotify/login?userId=${playlist.userId}`;
+          return of(null);
+        }
+    
+      const url = `${this.url}/exportPlaylist`;
+      const body = {
+        userId: playlist.userId,
+        playlistName: playlist.playlistName,
+        trackUris : playlist.tracks
+      };
+      return this.httpRqst.post<any>(url,body);
+    
+  }));
+}
+}

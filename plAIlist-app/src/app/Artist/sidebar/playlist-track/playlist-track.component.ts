@@ -10,6 +10,7 @@ import { response } from 'express';
   styleUrl: './playlist-track.component.css'
 })
 export class PlaylistTrackComponent {
+
   @Input() tracks: any[] = [];
   @Input() playlistId : string = "";
   playlistServices : SavePlaylistService = inject(SavePlaylistService);

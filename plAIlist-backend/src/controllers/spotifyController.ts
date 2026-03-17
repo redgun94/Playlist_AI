@@ -227,6 +227,7 @@ export async function getTrackByName(track: any) {
 }
 
 export const exportPlaylist = async(req:Request, res:Response):Promise<void>=>{
+  console.log("Exportando Playlist en el back");
   const { userId, playlistName, trackUris } = req.body;
   try{
     const userSpotifyAuth = await UserSpotifyAuth.findOne({ userId });
@@ -263,4 +264,5 @@ export const exportPlaylist = async(req:Request, res:Response):Promise<void>=>{
     res.status(500).json({ success: false, message: 'Error al exportar playlist' });
   }
 }
+
 

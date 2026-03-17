@@ -550,27 +550,51 @@ textarea {
 }
 
 .btn-edit {
-  color: #ff0000 !important;
-  background: rgba(255, 0, 0, 0.1) !important;
-  border: 1px solid #ff0000 !important;
+  color: #1DB954 !important;
+  background: rgba(29, 185, 84, 0.1) !important;
+  border: 1px solid #1DB954 !important;
 }
 
 .btn-edit:hover {
-  background: rgba(255, 0, 0, 0.3) !important;
-  color: #ff0000 !important;
+  background: rgba(29, 185, 84, 0.3) !important;
+  color: #1DB954 !important;
   transform: scale(1.1);
 }
 
 .btn-delete-playlist {
-  color: #ff0000 !important;
-  background: rgba(255, 0, 0, 0.1) !important;
-  border: 1px solid #ff0000 !important;
+  color: #1DB954 !important;
+  background: rgba(29, 185, 84, 0.1) !important;
+  border: 1px solid #1DB954 !important;
 }
 
 .btn-delete-playlist:hover {
-  background: rgba(255, 0, 0, 0.3) !important;
-  color: #ff0000 !important;
+  background: rgba(29, 185, 84, 0.3) !important;
+  color: #1DB954 !important;
   transform: scale(1.1);
+}
+
+.btn-spotify-export {
+  background: none;
+  border: none;
+  padding: 0.375rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #1DB954 !important;
+  background: rgba(29, 185, 84, 0.1) !important;
+  border: 1px solid #1DB954 !important;
+}
+
+.btn-spotify-export:hover {
+  background: #1ed760 !important;
+  color: #ffffff !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(29, 185, 84, 0.5);
 }
 
 .li-playlist:hover {

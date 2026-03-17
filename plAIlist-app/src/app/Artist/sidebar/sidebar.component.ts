@@ -1,10 +1,11 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, inject, OnChanges, SimpleChanges } from '@angular/core';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
 import { User } from '../../models/auth.model';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from "@angular/forms";
 import { OnInit } from '@angular/core';
 import { PlaylistTrackComponent } from "./playlist-track/playlist-track.component";
+import { SpotifyAPIService } from '../../services/spotify-api.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,6 +15,7 @@ import { PlaylistTrackComponent } from "./playlist-track/playlist-track.componen
 })
 export class SidebarComponent implements OnInit{
 
+
   newPlaylistclicked : boolean = false;
   errorfound: boolean = false;
   editingPlaylist: Playlist | null = null;
@@ -21,6 +23,7 @@ export class SidebarComponent implements OnInit{
   currentPlaylist : Playlist | null = null;
   currentUser!: User;
   playlistSelected: boolean = false;
+  spotifyServices : SpotifyAPIService = inject(SpotifyAPIService);
 
 
   constructor(private playlistService: SavePlaylistService){
@@ -177,5 +180,12 @@ editPlaylist(playlist: Playlist) {
       this.playlistSelected = true;
       this.playlistService.currentSubjectPlaylist = playlist;
     }
+}
+exportPlaylistToSpotify(playlist: Playlist) {
+  console.log("entrando a exportar");
+  const resPlaylistExported = this.spotifyServices.exportPlaylistToSpotify(playlist).subscribe({
+    next: (res)=> console.log("Playlist exportada :",res),
+    error:(error)=> console.log('Error al exportar :', error)
+  });
 }
 }
