@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
@@ -10,20 +11,22 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent implements OnInit {
-  currentLanguage: string = 'es';
+  currentLanguage: string = 'en';
   currentUser: any = null;
   mobileMenuOpen: boolean = false;
+  langDropdownOpen: boolean = false;
 
-  constructor() {}
+  constructor(private translate: TranslateService) {}
 
   ngOnInit() {
-    // Cargar idioma guardado
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) {
       this.currentLanguage = savedLanguage;
+    } else {
+      const browserLang = this.translate.getBrowserLang();
+      this.currentLanguage = ['en', 'es'].includes(browserLang || '') ? browserLang || 'en' : 'en';
     }
 
-    // Cargar usuario actual
     const userObject = localStorage.getItem('currentUser');
     if (userObject) {
       this.currentUser = JSON.parse(userObject);
@@ -51,5 +54,9 @@ export class HeaderComponent implements OnInit {
 
   closeMobileMenu() {
     this.mobileMenuOpen = false;
+  }
+
+  toggleLangDropdown() {
+    this.langDropdownOpen = !this.langDropdownOpen;
   }
 }

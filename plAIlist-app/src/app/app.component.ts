@@ -15,11 +15,12 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AppComponent {
   title = 'plAIlist-app';
-  currentLanguage: string = 'es';
+  currentLanguage: string;
   
   constructor(private translate: TranslateService) {
-    // Establecer el idioma por defecto y luego el idioma actual
-    // En v17, necesitamos establecer ambos
+    const browserLang = translate.getBrowserLang();
+    this.currentLanguage = ['en', 'es'].includes(browserLang || '') ? browserLang || 'en' : 'en';
+    
     this.translate.setDefaultLang('en');
     this.translate.use(this.currentLanguage).subscribe({
       next: (translations) => {

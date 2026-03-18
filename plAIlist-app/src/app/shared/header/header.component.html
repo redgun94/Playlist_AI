@@ -29,11 +29,12 @@
     <!-- Controles y usuario -->
     <div class="header-right">
       <!-- Selector de idioma -->
-      <div class="language-selector">
-        <select [(ngModel)]="currentLanguage" (change)="changeLanguage(currentLanguage)" class="lang-select">
-          <option value="es">🇪🇸</option>
-          <option value="en">🇺🇸</option>
-        </select>
+      <div class="lang-dropdown" (click)="toggleLangDropdown()" [class.open]="langDropdownOpen">
+        <span class="lang-current">{{currentLanguage.toUpperCase()}}</span>
+        <div class="lang-options" *ngIf="langDropdownOpen">
+          <div class="lang-option" (click)="changeLanguage('en'); langDropdownOpen = false">EN</div>
+          <div class="lang-option" (click)="changeLanguage('es'); langDropdownOpen = false">ES</div>
+        </div>
       </div>
 
       <!-- Información de usuario -->

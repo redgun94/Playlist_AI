@@ -24,6 +24,9 @@ export class SidebarComponent implements OnInit{
   currentUser!: User;
   playlistSelected: boolean = false;
   spotifyServices : SpotifyAPIService = inject(SpotifyAPIService);
+  loading: boolean = false;
+  showSuccess: boolean = false;
+  exportingPlaylistName: string = '';
 
 
   constructor(private playlistService: SavePlaylistService){
@@ -120,6 +123,7 @@ onCreatePlaylist() {
   }
   
 editPlaylist(playlist: Playlist) {
+    console.log(playlist);
     this.editingPlaylist = playlist;
     this.createPlaylistForm.patchValue({
       playlistName: playlist.playlistName,
@@ -183,9 +187,23 @@ editPlaylist(playlist: Playlist) {
 }
 exportPlaylistToSpotify(playlist: Playlist) {
   console.log("entrando a exportar");
-  const resPlaylistExported = this.spotifyServices.exportPlaylistToSpotify(playlist).subscribe({
-    next: (res)=> console.log("Playlist exportada :",res),
-    error:(error)=> console.log('Error al exportar :', error)
+  this.loading = true;
+  this.exportingPlaylistName = playlist.playlistName;
+  this.spotifyServices.exportPlaylistToSpotify(playlist).subscribe({
+    next: (res) => {
+      console.log("Playlist exportada :", res);
+      this.loading = false;
+      this.showSuccess = true;
+      setTimeout(() => {
+        this.showSuccess = false;
+        this.exportingPlaylistName = '';
+      }, 3000);
+    },
+    error: (error) => {
+      console.log('Error al exportar :', error);
+      this.loading = false;
+      this.exportingPlaylistName = '';
+    }
   });
 }
 }

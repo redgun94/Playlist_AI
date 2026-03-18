@@ -113,13 +113,12 @@ export class SavePlaylistService {
   //Actualizar playlist existente
   updatePlaylist(playlistId: string, playlistData: Playlist): Observable<PlaylistsResponse> {
     
-    return this.http.put<PlaylistsResponse>(`${this.apiUrl}/updatePlaylist`, {playlistData})
+    return this.http.put<PlaylistsResponse>(`${this.apiUrl}/updatePlaylist`, playlistData)
       .pipe(
         tap(response => {
-          console.log(response);
+          console.log(response.success, response.message);
           if (response.success) {
             // Actualizar la playlist en el estado local
-            console.log("Status : ",response.playlist);
             const updatedPlaylists = this.currentPlaylists.map(playlist => 
               playlist._id === playlistId ? playlistData : playlist
             );
@@ -129,7 +128,7 @@ export class SavePlaylistService {
             if (this.currentPlaylistSubject.value?._id === playlistId) {
               this.currentPlaylistSubject.next(response.playlist);
             }
-          }
+          return }
         }),
         catchError(this.handleError)
       );
