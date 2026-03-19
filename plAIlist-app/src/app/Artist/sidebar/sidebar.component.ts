@@ -6,6 +6,7 @@ import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } 
 import { OnInit } from '@angular/core';
 import { PlaylistTrackComponent } from "./playlist-track/playlist-track.component";
 import { SpotifyAPIService } from '../../services/spotify-api.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -20,8 +21,9 @@ export class SidebarComponent implements OnInit{
   errorfound: boolean = false;
   editingPlaylist: Playlist | null = null;
   playlists: Playlist[] = [];
+  noPlaylistsMessage: boolean = false;
   currentPlaylist : Playlist | null = null;
-  currentUser!: User;
+  currentUser: User | null = null;
   playlistSelected: boolean = false;
   spotifyServices : SpotifyAPIService = inject(SpotifyAPIService);
   loading: boolean = false;
@@ -29,9 +31,8 @@ export class SidebarComponent implements OnInit{
   exportingPlaylistName: string = '';
 
 
-  constructor(private playlistService: SavePlaylistService){
-    const userObject : string = localStorage.getItem("currentUser")!;
-    this.currentUser = JSON.parse(userObject);
+  constructor(private playlistService: SavePlaylistService, private authService: AuthService){
+    this.currentUser = this.authService.currentUserValue;
   }
   // ngOnChanges(changes: SimpleChanges): void {
   //   this.playlistService.playlists$.subscribe(value => {
@@ -80,6 +81,7 @@ resetForm() {
     //subscribirse a cambios en playlists 
     this.playlistService.playlists$.subscribe(value => {
       this.playlists = value;
+      this.noPlaylistsMessage = value.length === 0;
     });
   
     //subscribirse a la playlist actual
@@ -88,25 +90,14 @@ resetForm() {
 
     })
   }
-  ngOnchange(){
-    //subscribirse a cambios en playlists 
-    this.playlistService.playlists$.subscribe(value => {
-      this.playlists = value;
-    });
-  
-    //subscribirse a la playlist actual
-    this.playlistService.currentPlaylist$.subscribe(playlist => {
-      this.currentPlaylist = playlist;
 
-    })
-  }
-onCreatePlaylist() {
+  onCreatePlaylist() {
     const newPlaylist: Playlist = {
       playlistName: this.createPlaylistForm.value.playlistName ?? '',
       _id: '', // You'll likely need to generate or leave blank depending on model
       tracks: [],
       memoDescription: this.createPlaylistForm.value.playlistDescription ?? "Optional",
-      userId: this.currentUser.id
+      userId: this.currentUser?.id
     };
 
     this.playlistService.createPlaylist(newPlaylist).subscribe({
@@ -184,26 +175,27 @@ editPlaylist(playlist: Playlist) {
       this.playlistSelected = true;
       this.playlistService.currentSubjectPlaylist = playlist;
     }
-}
-exportPlaylistToSpotify(playlist: Playlist) {
-  console.log("entrando a exportar");
-  this.loading = true;
-  this.exportingPlaylistName = playlist.playlistName;
-  this.spotifyServices.exportPlaylistToSpotify(playlist).subscribe({
-    next: (res) => {
-      console.log("Playlist exportada :", res);
-      this.loading = false;
-      this.showSuccess = true;
-      setTimeout(() => {
-        this.showSuccess = false;
+  }
+
+  exportPlaylistToSpotify(playlist: Playlist) {
+    console.log("entrando a exportar");
+    this.loading = true;
+    this.exportingPlaylistName = playlist.playlistName;
+    this.spotifyServices.exportPlaylistToSpotify(playlist).subscribe({
+      next: (res) => {
+        console.log("Playlist exportada :", res);
+        this.loading = false;
+        this.showSuccess = true;
+        setTimeout(() => {
+          this.showSuccess = false;
+          this.exportingPlaylistName = '';
+        }, 3000);
+      },
+      error: (error) => {
+        console.log('Error al exportar :', error);
+        this.loading = false;
         this.exportingPlaylistName = '';
-      }, 3000);
-    },
-    error: (error) => {
-      console.log('Error al exportar :', error);
-      this.loading = false;
-      this.exportingPlaylistName = '';
-    }
-  });
-}
+      }
+    });
+  }
 }

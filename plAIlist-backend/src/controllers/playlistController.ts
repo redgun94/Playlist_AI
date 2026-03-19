@@ -87,18 +87,12 @@ export const createPlaylist = async (req: Request< {}, {}, PlaylistRequestBody>,
 export const loadPlaylists = async(req: Request, res: Response): Promise<void> => {
 
     try{
-        const userPlaylists = await Playlist.find();
-        if(!userPlaylists.length){
-            res.status(400).json({
-                success : false,
-                message: "You haven't saved any playlists"
-                
-            });
-            return;
-        }
+        const userId = req.params.userId;
+        console.log(userId);
+        const userPlaylists = await Playlist.find({userId});
         res.status(200).json({
             success : true,
-            message: "User's playlists loaded",
+            message: userPlaylists.length === 0 ? "No playlists saved" : "User's playlists loaded",
             playlists : userPlaylists
         });
        
@@ -143,6 +137,7 @@ export const deletePlaylist = async(req:Request, res:Response):Promise<void> =>{
 export const updatePlaylist = async(req:Request, res:Response):Promise<void>=>{
     try{
         const playlist = req.body;
+        console.log(playlist);
         const subjectPlaylist = await Playlist.updateOne({_id: playlist._id }, playlist);
         console.log('Update result:', subjectPlaylist);
         if (subjectPlaylist?.matchedCount === 0) {

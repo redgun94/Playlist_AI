@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { deletedResponse, Playlist, PlaylistsResponse } from '../models/playlist.models';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { response } from 'express';
-import { json } from 'node:stream/consumers';
+import { AuthService } from './auth.service';
 
 
 // interface Playlist {
@@ -31,10 +30,17 @@ export class SavePlaylistService {
   private messageError!: String;
   private error: String = "";
   
-  constructor(private http: HttpClient) { 
+  constructor(private http: HttpClient, private authService: AuthService) { 
     this.apiUrl = 'http://localhost:3000/api/playlist';
-    //Cargar playlists al inicializar
-    this.loadPlaylists().subscribe();
+    
+    this.authService.currentUser.subscribe(user => {
+      if (!user) {
+        this.playlistsSubject.next([]);
+        this.currentPlaylistSubject.next(null);
+      } else {
+        this.loadPlaylists().subscribe();
+      }
+    });
   }
 
   get currentPlaylists(): Playlist[] {
@@ -45,13 +51,22 @@ export class SavePlaylistService {
   }
 
   loadPlaylists(): Observable<any>{
-    const url = `${this.apiUrl}/loadPlaylists`;
+    const currentUser = this.authService.currentUserValue;
+    const userId = currentUser?.id || null;
+    
+    if (!userId) {
+      return new Observable(observer => {
+        observer.next({ success: false, message: 'No user logged in' });
+        observer.complete();
+      });
+    }
+
+    const url = `${this.apiUrl}/loadPlaylists/${userId}`;
     return this.http.get<PlaylistsResponse>(url).pipe(
       tap(response => {
         if (response.success){
           this.playlistsSubject.next(response.playlists);
           console.log("Message", this.playlistsSubject.getValue);
-         // console.log(response.playlists);
         }
       })
     );

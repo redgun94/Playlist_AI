@@ -4,7 +4,7 @@ export interface Playlist{
     playlistName: string;
     memoDescription: string;
     tracks: any[];
-    userId: string;
+    userId: string | undefined;
 }
 
 // Respuesta del backend cuando se crea la playlist en la BD

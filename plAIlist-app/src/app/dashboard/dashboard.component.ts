@@ -1,15 +1,16 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewEncapsulation, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../services/language.service';
 import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { SpotifyAPIService } from '../services/spotify-api.service';
 import { ArtistPanelComponent } from '../Artist/artist-panel/artist-panel.component';
 import { SidebarComponent } from "../Artist/sidebar/sidebar.component";
 import { AgenteAiComponent } from "./agente-ai/agente-ai.component";
+import { Playlist } from '../models/playlist.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,6 +20,8 @@ import { AgenteAiComponent } from "./agente-ai/agente-ai.component";
   encapsulation: ViewEncapsulation.None
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+
+  @ViewChild(SidebarComponent) sidebarComponent!: SidebarComponent;
 
   currentLanguage: string = 'es';
   currentUser: any = null;
@@ -38,7 +41,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private authService: AuthService, 
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private spotifyAPIService: SpotifyAPIService
+    private spotifyAPIService: SpotifyAPIService,
+    private route: ActivatedRoute
   ){
     // El idioma por defecto ya está configurado en app.config.ts
     // Establecer el idioma y esperar a que se carguen las traducciones
@@ -91,6 +95,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
       // Forzar detección de cambios
       this.cdr.detectChanges();
+    });
+
+    // Reintentar exportación pendiente si volvió de autorización Spotify
+    this.route.queryParams.subscribe(params => {
+      if (params['spotify_connected'] === 'true') {
+        const pending = sessionStorage.getItem('pendingSpotifyExport');
+        if (pending) {
+          try {
+            const playlist: Playlist = JSON.parse(pending);
+            sessionStorage.removeItem('pendingSpotifyExport');
+            this.sidebarComponent?.exportPlaylistToSpotify(playlist);
+          } catch {
+            sessionStorage.removeItem('pendingSpotifyExport');
+          }
+        }
+      }
     });
   }
 
@@ -145,10 +165,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   logout(){
-    localStorage.removeItem('token');
-    localStorage.removeItem('currentUser');
-    this.currentUser = null;
-    // Redirigir al login después del logout
+    this.authService.logout();
     this.router.navigate(['./login']);
   }
   selectArtist(artist:any){

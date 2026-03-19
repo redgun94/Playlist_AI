@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { map, Observable, of, switchMap, tap } from 'rxjs';
-import { response } from 'express';
 import { Playlist } from '../models/playlist.models';
+
+interface SpotifyAuthResponse {
+  success: boolean;
+  message: string;
+  userAuthenticated: boolean;
+}
 
 
 @Injectable({
@@ -19,7 +24,7 @@ export class SpotifyAPIService {
 
   
   constructor(private httpRqst: HttpClient) {
-    this.getToken();
+
    };
 
    getStringToken(){
@@ -29,39 +34,7 @@ export class SpotifyAPIService {
     throw new Error('Method not implemented.');
   }
 
-  //  private getToken(){
-      
-  //     const headers = new HttpHeaders({
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //       'Authorization': 'Basic ' + btoa(`${this.clientId}:${this.clientSecret}`)
 
-  //     })
-  //     const body = 'grant_type=client_credentials';
-  //     this.httpRqst.post<any>(this.url, body, { headers }).subscribe(
-  //       response =>{
-  //         this.token = response.access_token; 
-  //       }
-  //     );
-  //  }
-   private getToken() {
-    const body = 'grant_type=client_credentials' +
-                 `&client_id=${this.clientId}` +
-                 `&client_secret=${this.clientSecret}`;
-
-    const headers = new HttpHeaders({ 
-      'Content-Type': 'application/x-www-form-urlencoded'
-    });
-
-    this.httpRqst.post<any>(this.url, body, { headers }).subscribe(
-      response => {
-        this.token = response.access_token;
-        console.log('Token recibido:', this.token);
-      },
-      error => {
-        console.error('Error obteniendo el token', error);
-      }
-    );
-  }
 
    // Método para buscar artistas
   searchArtists(name:string): Observable<any> {
@@ -89,26 +62,27 @@ export class SpotifyAPIService {
       return this.httpRqst.get(url,{params : { id : id}});
   }
 
-  exportPlaylistToSpotify(playlist:Playlist){
+  exportPlaylistToSpotify(playlist:Playlist):Observable<any>{
     console.log(playlist);
     const url = `${this.urlA}/getUserSpotify`;
-    return this.httpRqst.get<any>(url, { params: { q: playlist.userId } }).pipe(
-      switchMap(user => {
-        if (!user.userAuthenticated) {
-          // Redirigir a Spotify login
-          console.log(user.userAuthenticated);
+    const urlPlay = `${this.url}/exportPlaylist`;
+    const body = {
+      userId: playlist.userId,
+      playlistName: playlist.playlistName,
+      tracks: playlist.tracks,
+    };
+
+    return this.httpRqst.get<SpotifyAuthResponse>(url, { params: { q: playlist.userId || '' } }).pipe(
+      switchMap((user) => {
+        console.log(user);
+        if (!user) {
+          sessionStorage.setItem('pendingSpotifyExport', JSON.stringify(playlist));
           window.location.href = `${this.urlA}/spotify/login?userId=${playlist.userId}`;
           return of(null);
         }
-    
-      const url = `${this.url}/exportPlaylist`;
-      const body = {
-        userId: playlist.userId,
-        playlistName: playlist.playlistName,
-        trackUris : playlist.tracks
-      };
-      return this.httpRqst.post<any>(url,body);
-    
-  }));
+
+        return this.httpRqst.post<any>(urlPlay, body);
+      })
+    );
 }
 }
