@@ -25,6 +25,65 @@
       "album": "Album",
       "listen": "Listen on Spotify"
     }
+  },
+  "login": {
+    "title": "Welcome back",
+    "subtitle": "Sign in to continue",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "password": "Password",
+    "passwordPlaceholder": "••••••••",
+    "passwordRequired": "Password is required",
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "backToHome": "Back to home"
+  },
+  "signup": {
+    "title": "Create your account",
+    "subtitle": "Start creating amazing playlists",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "John Doe",
+    "fullNameRequired": "Name is required",
+    "fullNameMinLength": "Name must be at least 3 characters",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "password": "Password",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "acceptTerms": "I accept the",
+    "termsAndConditions": "terms and conditions",
+    "privacyPolicy": "privacy policy",
+    "termsRequired": "You must accept the terms and conditions",
+    "passwordStrength": {
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong"
+    },
+    "submit": "Create account",
+    "alreadyHaveAccount": "Already have an account?",
+    "signInHere": "Sign in here",
+    "backToHome": "Back to home",
+    "sso": {
+      "title": "Sign up with",
+      "subtitle": "Connect your favorite music account",
+      "spotify": "Continue with Spotify",
+      "google": "Continue with Google",
+      "facebook": "Continue with Facebook",
+      "youtube": "Continue with YouTube",
+      "features": {
+        "syncPlaylists": "Sync your playlists",
+        "quickAccess": "Quick access to your music",
+        "personalized": "Personalized experience"
+      }
+    }
   }
 }
-

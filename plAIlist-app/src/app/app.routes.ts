@@ -10,13 +10,25 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 export const routes: Routes = [
-    {path: '', component: LandingComponent},  // Ruta raíz muestra landing
-    {path: 'landing', component: LandingComponent},  // Ruta explícita para landing
+    {path: '', component: LandingComponent},
+    {path: 'landing', component: LandingComponent},
     {
         path: 'home', 
         component: HomeComponent,
         canActivate : [authGuard]
     },
+    // Spanish routes
+    {
+        path: 'iniciar-sesion',
+        component: LoginComponent,
+        canActivate: [noAuthGuard]
+    },
+    {
+        path: 'registro', 
+        component: SignupComponent,
+        canActivate: [noAuthGuard]
+    },
+    // English routes
     {
         path: 'login',
         component: LoginComponent,
@@ -32,5 +44,5 @@ export const routes: Routes = [
         component: DashboardComponent,
         canActivate: [authGuard]
     },
-    {path: '**', redirectTo: '', pathMatch: 'full'}  // Wildcard SIEMPRE al final
+    {path: '**', redirectTo: '', pathMatch: 'full'}
 ];

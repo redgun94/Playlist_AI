@@ -178,10 +178,20 @@ editPlaylist(playlist: Playlist) {
   }
 
   exportPlaylistToSpotify(playlist: Playlist) {
+    if (!this.currentUser || !this.currentUser.id) {
+      alert('Debes iniciar sesión en plAIlist para exportar playlists');
+      return;
+    }
+
+    const playlistToExport: Playlist = {
+      ...playlist,
+      userId: this.currentUser.id
+    };
+
     console.log("entrando a exportar");
     this.loading = true;
     this.exportingPlaylistName = playlist.playlistName;
-    this.spotifyServices.exportPlaylistToSpotify(playlist).subscribe({
+    this.spotifyServices.exportPlaylistToSpotify(playlistToExport).subscribe({
       next: (res) => {
         console.log("Playlist exportada :", res);
         this.loading = false;

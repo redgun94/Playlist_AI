@@ -24,6 +24,65 @@
       "album": "Álbum",
       "listen": "Escuchar en Spotify"
     }
+  },
+  "login": {
+    "title": "Bienvenido de nuevo",
+    "subtitle": "Inicia sesión para continuar",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "emailRequired": "Email requerido",
+    "emailInvalid": "Por favor ingresa un email válido",
+    "password": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "passwordRequired": "Contraseña requerida",
+    "submit": "Iniciar Sesión",
+    "noAccount": "¿No tienes cuenta?",
+    "registerHere": "Regístrate aquí",
+    "backToHome": "Volver al inicio"
+  },
+  "signup": {
+    "title": "Crea tu cuenta",
+    "subtitle": "Comienza a crear playlists increíbles",
+    "fullName": "Nombre completo",
+    "fullNamePlaceholder": "Juan Pérez",
+    "fullNameRequired": "El nombre es requerido",
+    "fullNameMinLength": "El nombre debe tener al menos 3 caracteres",
+    "email": "Email",
+    "emailPlaceholder": "tu@email.com",
+    "emailRequired": "El email es requerido",
+    "emailInvalid": "Ingresa un email válido",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Mínimo 8 caracteres",
+    "passwordRequired": "La contraseña es requerida",
+    "passwordMinLength": "La contraseña debe tener al menos 8 caracteres",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Confirma tu contraseña",
+    "passwordsDoNotMatch": "Las contraseñas no coinciden",
+    "acceptTerms": "Acepto los",
+    "termsAndConditions": "términos y condiciones",
+    "privacyPolicy": "política de privacidad",
+    "termsRequired": "Debes aceptar los términos y condiciones",
+    "passwordStrength": {
+      "weak": "Débil",
+      "medium": "Media",
+      "strong": "Fuerte"
+    },
+    "submit": "Crear cuenta",
+    "alreadyHaveAccount": "¿Ya tienes cuenta?",
+    "signInHere": "Inicia sesión aquí",
+    "backToHome": "Volver al inicio",
+    "sso": {
+      "title": "Regístrate con",
+      "subtitle": "Conecta tu cuenta de música favorita",
+      "spotify": "Continuar con Spotify",
+      "google": "Continuar con Google",
+      "facebook": "Continuar con Facebook",
+      "youtube": "Continuar con YouTube",
+      "features": {
+        "syncPlaylists": "Sincroniza tus playlists",
+        "quickAccess": "Acceso rápido a tu música",
+        "personalized": "Experiencia personalizada"
+      }
+    }
   }
 }
-

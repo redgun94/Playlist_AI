@@ -64,20 +64,24 @@ export class SpotifyAPIService {
 
   exportPlaylistToSpotify(playlist:Playlist):Observable<any>{
     console.log(playlist);
+    const userId = playlist.userId;
+    console.log('UserId para exportar:', userId);
+    
     const url = `${this.urlA}/getUserSpotify`;
     const urlPlay = `${this.url}/exportPlaylist`;
     const body = {
-      userId: playlist.userId,
+      userId: userId,
       playlistName: playlist.playlistName,
       tracks: playlist.tracks,
     };
 
-    return this.httpRqst.get<SpotifyAuthResponse>(url, { params: { q: playlist.userId || '' } }).pipe(
+    return this.httpRqst.get<SpotifyAuthResponse>(url, { params: { q: userId || '' } }).pipe(
       switchMap((user) => {
         console.log(user);
-        if (!user) {
-          sessionStorage.setItem('pendingSpotifyExport', JSON.stringify(playlist));
-          window.location.href = `${this.urlA}/spotify/login?userId=${playlist.userId}`;
+        if (!user.userAuthenticated) {
+          const playlistWithUserId = { ...playlist, userId };
+          sessionStorage.setItem('pendingSpotifyExport', JSON.stringify(playlistWithUserId));
+          window.location.href = `${this.urlA}/spotify/login?userId=${userId}`;
           return of(null);
         }
 

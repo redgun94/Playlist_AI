@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
@@ -158,20 +159,23 @@ export const login = async (req : Request<{},{}, LoginRequestBody>, res: Respons
 export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
   
     const userId = req.query.userId as string;
-    console.log(userId);
+    console.log("LLamando al login de Spotify",userId);
     const params = new URLSearchParams({
       client_id : process.env.SPOTIFY_CLIENT_ID!,
       response_type: "code",
       redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
       scope: "playlist-modify-public playlist-modify-private user-read-email",
-      state: userId
+      state: userId,
+      show_dialog: "true"
     });
+    console.log("Redirigiendo a Spotify ")
     res.redirect(`https://accounts.spotify.com/authorize?${params.toString()}`);
 }
 
 export const callbackSpotify = async(req: Request, res: Response):Promise<void>=>{
   const { code, state } = req.query;
   try{
+    console.log("Llamada del callback de Spotify")
     const response = await axios.post('https://accounts.spotify.com/api/token', 
       new URLSearchParams({
         grant_type: 'authorization_code',
@@ -190,12 +194,19 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
     });
     const spotifyUserId = userProfile.data.id;
     const expiresAt = new Date(Date.now() + expires_in * 1000);
-    if(state){
-      const userId = state as string;
+    const userId = state as string;
+    
+    if(!userId || userId.trim() === ''){
+      console.error('Error: userId (state) no proporcionado en el callback');
+      res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=no_user_id`);
+      return;
+    }
+
+    try {
       await UserSpotifyAuth.findOneAndUpdate(
-        { userId },
+        { userId: new mongoose.Types.ObjectId(userId) },
         { 
-          userId, 
+          userId: new mongoose.Types.ObjectId(userId), 
           spotifyUserId, 
           accessToken: access_token, 
           refreshToken: refresh_token, 
@@ -203,8 +214,11 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
         },
         { upsert: true, new: true }
       );
+      res.redirect(`http://localhost:4200/dashboard?spotify_connected=true`);
+    } catch(dbError) {
+      console.error('Error guardando en DB:', dbError);
+      res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=db_error`);
     }
-    res.redirect(`http://localhost:4200/dashboard?spotify_connected=true`);
   } catch(error){
     console.error('Error en callbackSpotify:', error);
     res.status(500).json({ success: false, message: 'Error en autenticación con Spotify' });
@@ -241,10 +255,11 @@ export const refreshTokenUser = async(refreshToken:string)=>{
 export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
   
   const userId = req.query.q;
-  console.log(userId);
+  console.log("Obteniendo usuario spotify",userId);
   const userSpotifyactive = await UserSpotifyAuth.findOne({userId});
 
   if(!userSpotifyactive?.spotifyUserId){
+      console.log("USuario no auntenticado");
       return res.status(200).json({
         success: true,
         message : "User not Authenticated in Spotify",
@@ -274,5 +289,37 @@ export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
     message : "User Authenticated",
     userAuthenticated : true
   })
+}
 
+export const ssoGoogle = async(req: Request, res: Response):Promise<void>=>{
+    const redirect_uri = process.env.GOOGLE_REDIRECT_URI;
+    const ssoGoogleUrl = process.env.GOOGLE_URL_AUTH;
+
+    // Ensure env vars are defined so TypeScript (and runtime) don't receive `undefined`.
+    if (!redirect_uri) {
+      res.status(500).json({
+        success: false,
+        message: 'Missing env var: GOOGLE_REDIRECT_URI',
+      });
+      return;
+    }
+
+    if (!ssoGoogleUrl) {
+      res.status(500).json({
+        success: false,
+        message: 'Missing env var: GOOGLE_URL_AUTH',
+      });
+      return;
+    }
+
+    const params = new URLSearchParams({
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      redirect_uri,
+      response_type: "code",
+      scope: "openid email profile",
+      access_type: "offline",
+      prompt: "consent"
+    });
+
+    res.redirect(`${ssoGoogleUrl}?${params.toString()}`);
 }

@@ -5,13 +5,11 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { RegisterRequest } from '../models/auth.model';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-
-
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-signup',
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink, TranslateModule],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css'
 })
@@ -21,10 +19,16 @@ export class SignupComponent {
   passwordStrengthCat : string = "Fuerte";
   errorMessage: string | null = null; 
 
-  constructor(private authService: AuthService, private router: Router){
- 
+  constructor(
+    private authService: AuthService, 
+    private router: Router,
+    private translate: TranslateService
+  ) {
+    this.translate.get('signup.passwordStrength.strong').subscribe((res: string) => {
+      this.passwordStrengthCat = res;
+    });
+  }
 
-}
   signupForm = new FormGroup({
     fullName : new FormControl('',[Validators.required,Validators.minLength(3)]),
     email: new FormControl('',[Validators.required,Validators.email]),
@@ -38,26 +42,29 @@ export class SignupComponent {
   }
   get passwordStrength(): string{
     if(this.passwordLength < 8){
-      this.passwordStrengthCat = "Débil";
+      this.translate.get('signup.passwordStrength.weak').subscribe((res: string) => {
+        this.passwordStrengthCat = res;
+      });
       return "weak";
     } 
     if(this.passwordLength < 12){
-      this.passwordStrengthCat = "Media";
+      this.translate.get('signup.passwordStrength.medium').subscribe((res: string) => {
+        this.passwordStrengthCat = res;
+      });
       return "medium";
     } 
-    this.passwordStrengthCat = "Fuerte";
+    this.translate.get('signup.passwordStrength.strong').subscribe((res: string) => {
+      this.passwordStrengthCat = res;
+    });
     return "strong"; 
   }
 
- togglePasswordVisibility(): void {
+  togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
 
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
-    console.log(typeof(this.signupForm.get('confirmPassword')?.value));
-    console.log(this.signupForm.get('confirmPassword')?.value?.length);
-
   }
 
   passwordsMatch(): boolean {
@@ -67,39 +74,26 @@ export class SignupComponent {
   }
 
   onSubmit(): void {
-    console.log('🎯 onSubmit() EJECUTADO!');
-    
     if (this.signupForm.invalid) {
-      console.log('❌ Formulario inválido');
       this.signupForm.markAllAsTouched();
       return;
     }
 
     if (!this.passwordsMatch()) {
-      console.log('❌ Las contraseñas no coinciden');
       return;
     }
-
-    console.log('✅ Formulario válido!');
-    console.log('📝 Datos:', this.signupForm.value);
     
-    // Aquí llamarías a tu AuthService
     const userData = this.signupForm.value as RegisterRequest;
     this.authService.register(userData).subscribe({
       next: (response) => { 
         if(response.success){
           this.errorMessage = null;
-          console.log("Welcome: ",response.user.fullName);
           this.router.navigate(['/dashboard']);
-
         }
     },
       error: (err) => {
         this.errorMessage = err.message;
-        console.error(this.errorMessage);
       }
-    
     })
-
   }
 }

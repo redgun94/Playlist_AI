@@ -2,21 +2,24 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { LoginRequest } from '../../models/auth.model';
-import { response } from 'express';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, FormsModule],
+  imports: [ReactiveFormsModule, FormsModule, RouterModule, TranslateModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-onFocus: any;
+  onFocus: any;
 
-  constructor(private authService : AuthService, private route : Router ){
-  }
+  constructor(
+    private authService: AuthService, 
+    private route: Router,
+    private translate: TranslateService
+  ) {}
 
   loginForm = new FormGroup({
     email: new FormControl('',[Validators.required, Validators.email]),
@@ -24,16 +27,12 @@ onFocus: any;
   });
 
 onSubmit(){
-console.log(this.loginForm.get("email")?.errors?.['email']);
-
   if(this.loginForm.invalid){
-    alert("Data Invalid or Incorrect");
     this.loginForm.markAsTouched;
     return;
   }
   const isUserActive = this.authService.isAuthenticated();
   if(isUserActive){
-    console.log(this.loginForm.invalid)
     this.route.navigate(['/dashboard']);
   }
 
@@ -46,9 +45,7 @@ console.log(this.loginForm.get("email")?.errors?.['email']);
       }
     },
     error: err =>{ alert("Error found : " + err.error.message)}
-  }
-    
-  )
+  })
 
 }
 }

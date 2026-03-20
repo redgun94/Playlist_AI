@@ -228,7 +228,13 @@ export async function getTrackByName(track: any) {
 
 export const exportPlaylist = async(req:Request, res:Response):Promise<void>=>{
   console.log("Exportando Playlist en el back");
-  const { userId, playlistName, trackUris } = req.body;
+  const { userId, playlistName, tracks } = req.body as {
+    userId: string;
+    playlistName: string;
+    tracks: { uri: string }[];
+  };
+  const trackUris = tracks.map((track: { uri: string }) => track.uri);
+  console.log(trackUris);
   try{
     const userSpotifyAuth = await UserSpotifyAuth.findOne({ userId });
     if(!userSpotifyAuth){
