@@ -7,6 +7,7 @@ import { SignupComponent } from './signup/signup.component';
 import { authGuard } from './guards/auth.guard';
 import { noAuthGuard } from './guards/no-auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthComponent } from './auth/auth/auth.component';
 
 
 export const routes: Routes = [
@@ -43,6 +44,10 @@ export const routes: Routes = [
         path: 'dashboard', 
         component: DashboardComponent,
         canActivate: [authGuard]
+    },
+    {
+        path:'auth/callback',
+        component: AuthComponent,
     },
     {path: '**', redirectTo: '', pathMatch: 'full'}
 ];

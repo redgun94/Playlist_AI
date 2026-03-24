@@ -320,6 +320,79 @@ export const ssoGoogle = async(req: Request, res: Response):Promise<void>=>{
       access_type: "offline",
       prompt: "consent"
     });
-
+    console.log("redirigiendo para google sso");
     res.redirect(`${ssoGoogleUrl}?${params.toString()}`);
 }
+export const callbackGoogle = async(req: Request, res: Response): Promise<void> => {
+  const { code } = req.query;
+
+  if (!code) {
+    res.redirect(`http://127.0.0.1:4200/auth?error=no_code`);
+    return;
+  }
+  console.log("estamos en callback intercambiando tokens");
+  try {
+    // Paso 1 — Intercambia el code por tokens con Google
+    const tokenResponse = await axios.post('https://oauth2.googleapis.com/token', new URLSearchParams({
+      code: code as string,
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+      redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
+      grant_type: 'authorization_code'
+    }), {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+
+    const { id_token } = tokenResponse.data;
+
+    // Paso 2 — Decodifica el id_token (es un JWT, no necesitas verificarlo con Google
+    //           porque viene directamente de su endpoint seguro)
+    const decoded = JSON.parse(
+      Buffer.from(id_token.split('.')[1], 'base64').toString('utf-8')
+    ) as {
+      sub: string;    // googleId único
+      email: string;
+      name: string;
+      picture: string;
+    };
+
+    const { sub: googleId, email, name, picture } = decoded;
+
+    // Paso 3 — findOrCreate: busca por googleId → por email → crea nuevo
+    let user = await User.findOne({ googleId });
+
+    if (!user) {
+      // No existe con ese googleId, ¿existe con ese email? (cuenta local preexistente)
+      user = await User.findOne({ email });
+
+      if (user) {
+        // Vincula el googleId a la cuenta existente
+        user.googleId = googleId;
+        user.picture = picture;
+        await user.save();
+      } else {
+        // Usuario completamente nuevo, lo crea
+        user = await User.create({
+          fullName: name,
+          email,
+          googleId,
+          picture,
+          authProvider: 'google'
+          // sin password
+        });
+      }
+    }
+
+    // Paso 4 — Redirigir al frontend con el userId igual que el login normal
+    const token = jwt.sign(
+      {userId : user._id, email: user.email, fullName: user.fullName },
+      process.env.JWT_SECRET as string,
+      { expiresIn : '7d'}
+    );
+    res.redirect(`http://localhost:4200/auth/callback?userId=${token}`);
+
+  } catch (error) {
+    console.error('Error en callbackGoogle:', error);
+    res.redirect(`http://127.0.0.1:4200/auth?error=google_auth_failed`);
+  }
+};

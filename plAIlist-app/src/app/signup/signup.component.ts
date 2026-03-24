@@ -96,4 +96,11 @@ export class SignupComponent {
       }
     })
   }
+
+  loginWithGoogle() {
+      console.log("Entrando en el sso de google");
+      this.authService.loginSSOGoogle()   
+        }
+
+
 }

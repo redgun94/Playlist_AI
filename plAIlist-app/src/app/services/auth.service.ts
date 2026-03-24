@@ -10,6 +10,7 @@ import { RegisterRequest, LoginRequest, AuthResponse, User } from '../models/aut
 })
 export class AuthService {
 
+
   private apiUrl = 'http://localhost:3000/api/auth';
 
     // BehaviorSubject para mantener el estado del usuario actual
@@ -120,5 +121,11 @@ export class AuthService {
   
   console.error('Error en AuthService:', errorMessage);
   return throwError(() => new Error(errorMessage));
+}
+
+
+ loginSSOGoogle(): void {
+  console.log("Google SSo login");
+  window.location.href = 'http://localhost:3000/api/auth/ssoGoogle';
 }
 }
