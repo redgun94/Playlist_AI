@@ -1,4 +1,21 @@
 {
+  "login": {
+    "subtitle": "Your AI-powered music experience",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRequired": "Password is required",
+    "submit": "Sign In",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "backToHome": "Back to home",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithSpotify": "Continue with Spotify",
+    "or": "or"
+  },
   "dashboard": {
     "welcome": "Welcome",
     "logout": "Logout",

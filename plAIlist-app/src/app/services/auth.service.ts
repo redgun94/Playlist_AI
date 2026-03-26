@@ -128,4 +128,10 @@ export class AuthService {
   console.log("Google SSo login");
   window.location.href = 'http://localhost:3000/api/auth/ssoGoogle';
 }
+
+loginSSOSpotify():void{
+  console.log("ENtrando al servicio del login de spotify");
+  window.location.href = 'http://localhost:3000/api/auth/spotify/login';
+} 
+
 }

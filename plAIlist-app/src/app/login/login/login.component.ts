@@ -13,6 +13,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+
+
   onFocus: any;
 
   constructor(
@@ -48,4 +50,17 @@ onSubmit(){
   })
 
 }
+
+loginWithGoogle() {
+  console.log("Entrando en el sso de google desde el login ");
+  this.authService.loginSSOGoogle();
+}
+
+loginWithSpotify() {
+  console.log("Entrando en el sso de spotify  desde el login ");
+  this.authService.loginSSOSpotify();
+  console.log("terminado el login con spotify");
+}
+
+
 }

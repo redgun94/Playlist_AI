@@ -1,4 +1,21 @@
 {
+  "login": {
+    "subtitle": "Tu experiencia musical con IA",
+    "email": "Email",
+    "emailPlaceholder": "Ingresa tu email",
+    "emailRequired": "El email es requerido",
+    "emailInvalid": "Por favor ingresa un email válido",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "passwordRequired": "La contraseña es requerida",
+    "submit": "Iniciar Sesión",
+    "noAccount": "¿No tienes cuenta?",
+    "registerHere": "Regístrate aquí",
+    "backToHome": "Volver al inicio",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithSpotify": "Continuar con Spotify",
+    "or": "o"
+  },
   "dashboard": {
     "welcome": "Bienvenido",
     "logout": "Cerrar Sesión",

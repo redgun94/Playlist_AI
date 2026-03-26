@@ -38,7 +38,10 @@
     "submit": "Iniciar Sesión",
     "noAccount": "¿No tienes cuenta?",
     "registerHere": "Regístrate aquí",
-    "backToHome": "Volver al inicio"
+    "backToHome": "Volver al inicio",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithSpotify": "Continuar con Spotify",
+    "or": "o"
   },
   "signup": {
     "title": "Crea tu cuenta",

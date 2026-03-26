@@ -39,7 +39,10 @@
     "submit": "Sign In",
     "noAccount": "Don't have an account?",
     "registerHere": "Register here",
-    "backToHome": "Back to home"
+    "backToHome": "Back to home",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithSpotify": "Continue with Spotify",
+    "or": "or"
   },
   "signup": {
     "title": "Create your account",
