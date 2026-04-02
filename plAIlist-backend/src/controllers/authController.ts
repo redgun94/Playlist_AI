@@ -4,6 +4,9 @@ import User from '../models/User';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import UserSpotifyAuth from '../models/userSpotifyAuth';
+import crypto from 'crypto';
+import {decodeState, encodeState} from '../utils/spotifyState'
+
 
 // Interface para el body del registro
 interface RegisterRequestBody {
@@ -157,15 +160,27 @@ export const login = async (req : Request<{},{}, LoginRequestBody>, res: Respons
 }
 
 export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
-  
-    const userId = req.query.userId as string;
-    console.log("LLamando al login de Spotify",userId);
+  //let userId = "";
+  const userId = typeof req.query.userId === 'string' ? req.query.userId : undefined;
+  const state = encodeState(userId);
+    
+  /*if (typeof req.query.userId === "string") {
+    userId = Buffer.from(JSON.stringify({ userId: req.query.userId })).toString('base64');
+    console.log("state:  "+userId, "userId : " + req.query.userId);
+
+  //  userId = req.query.userId; // usuario logueado
+  } else {
+    userId = Buffer.from(JSON.stringify({ userId: req.query.userId })).toString('base64url');//crypto.randomBytes(16).toString("hex"); // usuario NO logueado
+    console.log(userId);
+  }*/
+
+    console.log("LLamando al login de Spotify",state);
     const params = new URLSearchParams({
       client_id : process.env.SPOTIFY_CLIENT_ID!,
       response_type: "code",
       redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
       scope: "playlist-modify-public playlist-modify-private user-read-email",
-      state: userId,
+      state: state,
       show_dialog: "true"
     });
     console.log("Redirigiendo a Spotify ")
@@ -173,7 +188,7 @@ export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
 }
 
 export const callbackSpotify = async(req: Request, res: Response):Promise<void>=>{
-  const { code, state } = req.query;
+  const { code, state:rawState } = req.query;
   try{
     console.log("Llamada del callback de Spotify")
     const response = await axios.post('https://accounts.spotify.com/api/token', 
@@ -192,29 +207,56 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
     const userProfile = await axios.get('https://api.spotify.com/v1/me', {
       headers: { 'Authorization': `Bearer ${access_token}` }
     });
-    const spotifyUserId = userProfile.data.id;
+    const { id: spotifyUserId, email: spotifyEmail } = userProfile.data;
+    console.log(userProfile.data);
     const expiresAt = new Date(Date.now() + expires_in * 1000);
-    const userId = state as string;
+    let statePayload;
+    try{
+     statePayload = decodeState(rawState as string);
+    }catch{
+      return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=invalid_state`);
+    }
+    //const userId = rawState as string;
     
-    if(!userId || userId.trim() === ''){
+   /* if(!statePayload.userId || statePayload.userId.trim() === ''){
       console.error('Error: userId (state) no proporcionado en el callback');
       res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=no_user_id`);
       return;
-    }
+    }*/
 
     try {
-      await UserSpotifyAuth.findOneAndUpdate(
-        { userId: new mongoose.Types.ObjectId(userId) },
+      //const decoded = JSON.parse(Buffer.from(userId, 'base64').toString('utf-8'));
+      let userId = statePayload.userId;
+      if( statePayload.context === "dashboard" && statePayload.userId){
+        if (!mongoose.Types.ObjectId.isValid(statePayload.userId)) {
+          return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=invalid_user`);
+        }
+      }else{
+        const existingAuth = await UserSpotifyAuth.findOne({ spotifyUserId }).populate('userId');
+        if( existingAuth){
+          userId = existingAuth.userId.toString();
+        }else{
+          const user = await User.findOne({email : spotifyEmail});
+          if(user){
+            userId = user._id!.toString();
+          }else{
+            return res.redirect(`http://localhost:4200`);
+          }
+        }
+      }
+    /*  await UserSpotifyAuth.findOneAndUpdate(
+        { userId: new mongoose.Types.ObjectId(decoUserId) },
         { 
-          userId: new mongoose.Types.ObjectId(userId), 
+          userId: new mongoose.Types.ObjectId(decoUserId), 
           spotifyUserId, 
           accessToken: access_token, 
           refreshToken: refresh_token, 
           expiresAt 
         },
         { upsert: true, new: true }
-      );
-      res.redirect(`http://localhost:4200/dashboard?spotify_connected=true`);
+      );*/
+      console.log('✅ Guardado en DB, redirigiendo al frontend...');
+      res.redirect(`http://localhost:4200/dashboard`);
     } catch(dbError) {
       console.error('Error guardando en DB:', dbError);
       res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=db_error`);
@@ -284,6 +326,7 @@ export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
       userAuthenticated : true
     });
   };
+  const userData = getProfile(userSpotifyactive.accessToken);
   res.status(200).json({
     success: true,
     message : "User Authenticated",
@@ -323,6 +366,18 @@ export const ssoGoogle = async(req: Request, res: Response):Promise<void>=>{
     console.log("redirigiendo para google sso");
     res.redirect(`${ssoGoogleUrl}?${params.toString()}`);
 }
+export const getProfile = async (accessToken : string)=>{
+  console.log("Getting user data profile", accessToken);
+  const url = 'https://api.spotify.com/v1/me';
+  const response = await axios.get(url,{
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }}
+  );
+  const userData =  response.data;
+  console.log(userData);
+  return userData;
+}
 export const callbackGoogle = async(req: Request, res: Response): Promise<void> => {
   const { code } = req.query;
 
@@ -345,8 +400,7 @@ export const callbackGoogle = async(req: Request, res: Response): Promise<void> 
 
     const { id_token } = tokenResponse.data;
 
-    // Paso 2 — Decodifica el id_token (es un JWT, no necesitas verificarlo con Google
-    //           porque viene directamente de su endpoint seguro)
+    // Paso 2 — Decodifica el id_token 
     const decoded = JSON.parse(
       Buffer.from(id_token.split('.')[1], 'base64').toString('utf-8')
     ) as {
@@ -396,3 +450,19 @@ export const callbackGoogle = async(req: Request, res: Response): Promise<void> 
     res.redirect(`http://127.0.0.1:4200/auth?error=google_auth_failed`);
   }
 };
+export const getMe = (req: Request, res: Response)=>{
+  const token = req.cookies?.token;
+
+  if(!token){
+    return res.status(401).json({ authenticated: false });
+  }
+  try{
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { _id: string; email: string };
+    res.status(200).json({ 
+      authenticated: true, 
+      user: { _id: decoded._id, email: decoded.email } });
+  } catch {
+    res.status(401).json({ authenticated: false });
+  }
+  
+}

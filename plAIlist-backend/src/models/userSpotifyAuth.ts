@@ -5,6 +5,7 @@ export interface IUserSpotifyAuth extends Document{
     id : string;
     userId: Types.ObjectId;
     spotifyUserId: string;
+    spotifyEmail: string,
     accessToken: string;
     refreshToken: string;
     expiresAt: Date;
@@ -21,6 +22,7 @@ const UserSpotifyAuthSchema = new Schema<IUserSpotifyAuth>({
       unique: true,
     },
     spotifyUserId: { type: String, required: true },
+    spotifyEmail: { type: String, required : true},
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
     expiresAt: { type: Date, required: true },

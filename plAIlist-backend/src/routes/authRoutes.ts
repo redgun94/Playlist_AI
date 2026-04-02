@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { callbackGoogle, callbackSpotify, getUserSpotify, login, loginSpotify, register, ssoGoogle } from '../controllers/authController';
+import { callbackGoogle, callbackSpotify, getUserSpotify, login, loginSpotify, register, ssoGoogle,getMe } from '../controllers/authController';
 import { createPlaylist } from '../controllers/playlistController';
 const router: Router = express.Router();
 
@@ -12,6 +12,7 @@ router.get('/spotify/callback',callbackSpotify);
 router.get('/getUserSpotify',getUserSpotify);
 router.get('/ssoGoogle',ssoGoogle);
 router.get('/ssoGoogle/callback',callbackGoogle);
+router.get('/me',getMe);
 
 
 

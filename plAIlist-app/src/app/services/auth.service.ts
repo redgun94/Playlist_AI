@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';;
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { RegisterRequest, LoginRequest, AuthResponse, User } from '../models/auth.model';
 
@@ -134,4 +134,12 @@ loginSSOSpotify():void{
   window.location.href = 'http://localhost:3000/api/auth/spotify/login';
 } 
 
+verifySession(): Observable<boolean> {
+  return this.http.get<{ authenticated: boolean }>(`${this.apiUrl}/me`, {
+    withCredentials: true  // envia la cookie httpOnly al backend
+  }).pipe(
+    map(res => res.authenticated),
+    catchError(() => of(false))
+  );
+}
 }

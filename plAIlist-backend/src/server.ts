@@ -7,6 +7,8 @@ import playlistRoutes from './routes/playlistRoutes';
 import mongoose from 'mongoose';
 import geminiServicesRoutes from './routes/geminiServicesRoutes';
 import spotifyServicesRoutes from './routes/spotifyServicesRoutes';
+import { cookie } from 'express-validator';
+import cookieParser from 'cookie-parser';
 
 const app: Application = express();
 
@@ -17,6 +19,13 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(
+  cors({
+    origin: 'http://localhost:4200',
+    credentials: true
+  })
+)
 
 // Ruta
 app.use('/api/auth', authRoutes);
@@ -46,3 +55,4 @@ async function gracefulShutdown(signal:string):Promise<void> {
     }
     process.exit(0);
 }
+
