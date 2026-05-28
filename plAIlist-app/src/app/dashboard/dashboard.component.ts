@@ -99,6 +99,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // Reintentar exportación pendiente si volvió de autorización Spotify
     this.route.queryParams.subscribe(params => {
+      const token = params['token'];
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          localStorage.setItem('spotify_token', token);
+          if (payload.spotifyUserId) {
+            localStorage.setItem('spotifyUserId', payload.spotifyUserId);
+          }
+          if (payload.spotifyEmail) {
+            localStorage.setItem('spotifyEmail', payload.spotifyEmail);
+          }
+          window.history.replaceState({}, '', '/dashboard');
+        } catch (e) {
+          console.error('Error decodificando token de Spotify:', e);
+        }
+      }
+
       if (params['spotify_connected'] === 'true') {
         const pending = sessionStorage.getItem('pendingSpotifyExport');
         if (pending) {
@@ -162,6 +179,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.errorMessage = null;
     this.selectedArtist = null;
 
+  }
+
+  get spotifyConnected(): boolean {
+    return !!localStorage.getItem('spotify_token');
+  }
+
+  get spotifyEmail(): string | null {
+    return localStorage.getItem('spotifyEmail');
+  }
+
+  get spotifyUserId(): string | null {
+    return localStorage.getItem('spotifyUserId');
   }
 
   logout(){

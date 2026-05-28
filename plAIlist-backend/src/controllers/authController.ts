@@ -256,7 +256,12 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
         { upsert: true, new: true }
       );*/
       console.log('✅ Guardado en DB, redirigiendo al frontend...');
-      res.redirect(`http://localhost:4200/dashboard`);
+      const spotifyToken = jwt.sign(
+        { userId, spotifyUserId, spotifyEmail },
+        process.env.JWT_SECRET as string,
+        { expiresIn: '7d' }
+      );
+      res.redirect(`http://localhost:4200/dashboard?token=${encodeURIComponent(spotifyToken)}`);
     } catch(dbError) {
       console.error('Error guardando en DB:', dbError);
       res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=db_error`);
