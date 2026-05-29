@@ -244,17 +244,18 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
           }
         }
       }
-    /*  await UserSpotifyAuth.findOneAndUpdate(
-        { userId: new mongoose.Types.ObjectId(decoUserId) },
-        { 
-          userId: new mongoose.Types.ObjectId(decoUserId), 
-          spotifyUserId, 
-          accessToken: access_token, 
-          refreshToken: refresh_token, 
-          expiresAt 
+      await UserSpotifyAuth.findOneAndUpdate(
+        { userId: new mongoose.Types.ObjectId(userId) },
+        {
+          userId: new mongoose.Types.ObjectId(userId),
+          spotifyUserId,
+          spotifyEmail,
+          accessToken: access_token,
+          refreshToken: refresh_token,
+          expiresAt
         },
         { upsert: true, new: true }
-      );*/
+      );
       console.log('✅ Guardado en DB, redirigiendo al frontend...');
       const spotifyToken = jwt.sign(
         { userId, spotifyUserId, spotifyEmail },
@@ -324,7 +325,7 @@ export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
     };
     userSpotifyactive.accessToken = dataTokens.access_token;
     userSpotifyactive.expiresAt = new Date(Date.now() + dataTokens.expires_in * 1000);
-    userSpotifyactive.save();
+    await userSpotifyactive.save();
     return res.status(200).json({
       success: true,
       message: "User Authenticated and access token renewed",

@@ -22,7 +22,7 @@ const UserSpotifyAuthSchema = new Schema<IUserSpotifyAuth>({
       unique: true,
     },
     spotifyUserId: { type: String, required: true },
-    spotifyEmail: { type: String, required : true},
+    spotifyEmail: { type: String },
     accessToken: { type: String, required: true },
     refreshToken: { type: String, required: true },
     expiresAt: { type: Date, required: true },
