@@ -103,12 +103,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (token) {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
-          localStorage.setItem('spotify_token', token);
           if (payload.spotifyUserId) {
             localStorage.setItem('spotifyUserId', payload.spotifyUserId);
           }
           if (payload.spotifyEmail) {
             localStorage.setItem('spotifyEmail', payload.spotifyEmail);
+          }
+          if (payload.spotifyAvatar) {
+            localStorage.setItem('spotifyAvatar', payload.spotifyAvatar);
+          }
+          if (payload.fullName && payload.email) {
+            this.authService.saveAuthData(token, {
+              id: payload.userId || payload._id,
+              fullName: payload.fullName,
+              email: payload.email,
+              picture: payload.picture || undefined
+            });
           }
           window.history.replaceState({}, '', '/dashboard');
         } catch (e) {

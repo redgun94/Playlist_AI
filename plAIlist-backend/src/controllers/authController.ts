@@ -207,7 +207,15 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
     const userProfile = await axios.get('https://api.spotify.com/v1/me', {
       headers: { 'Authorization': `Bearer ${access_token}` }
     });
-    const { id: spotifyUserId, email: spotifyEmail } = userProfile.data;
+    const {
+      id: spotifyUserId,
+      email: spotifyEmail,
+      display_name: spotifyDisplayName,
+      country: spotifyCountry,
+      product: spotifyProduct,
+      images: spotifyImages
+    } = userProfile.data;
+    const spotifyAvatar = spotifyImages?.[0]?.url || null;
     console.log(userProfile.data);
     const expiresAt = new Date(Date.now() + expires_in * 1000);
     let statePayload;
@@ -232,7 +240,7 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
           return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=invalid_user`);
         }
       }else{
-        const existingAuth = await UserSpotifyAuth.findOne({ spotifyUserId }).populate('userId');
+        const existingAuth = await UserSpotifyAuth.findOne({ spotifyUserId });
         if( existingAuth){
           userId = existingAuth.userId.toString();
         }else{
@@ -244,12 +252,21 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
           }
         }
       }
+      const appUser = await User.findById(userId).select('fullName email picture');
+      if (!appUser) {
+        return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=user_not_found`);
+      }
+
       await UserSpotifyAuth.findOneAndUpdate(
         { userId: new mongoose.Types.ObjectId(userId) },
         {
           userId: new mongoose.Types.ObjectId(userId),
           spotifyUserId,
           spotifyEmail,
+          spotifyDisplayName,
+          spotifyCountry,
+          spotifyProduct,
+          spotifyAvatar,
           accessToken: access_token,
           refreshToken: refresh_token,
           expiresAt
@@ -258,7 +275,16 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
       );
       console.log('✅ Guardado en DB, redirigiendo al frontend...');
       const spotifyToken = jwt.sign(
-        { userId, spotifyUserId, spotifyEmail },
+        {
+          userId,
+          fullName: appUser.fullName,
+          email: appUser.email,
+          picture: appUser.picture || null,
+          spotifyUserId,
+          spotifyEmail,
+          spotifyDisplayName,
+          spotifyAvatar
+        },
         process.env.JWT_SECRET as string,
         { expiresIn: '7d' }
       );

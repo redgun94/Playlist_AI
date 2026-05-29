@@ -42,7 +42,15 @@ export const callbackSpotify = async (req: Request, res: Response) => {
         headers: { Authorization: `Bearer ${access_token}` },
       });
   
-      const { id: spotifyUserId, email: spotifyEmail } = profileRes.data;
+      const {
+        id: spotifyUserId,
+        email: spotifyEmail,
+        display_name: spotifyDisplayName,
+        country: spotifyCountry,
+        product: spotifyProduct,
+        images: spotifyImages
+      } = profileRes.data;
+      const spotifyAvatar = spotifyImages?.[0]?.url || null;
   
       // 4. Resolver userId según contexto
       let userId: string | null = null;
@@ -56,7 +64,7 @@ export const callbackSpotify = async (req: Request, res: Response) => {
   
       } else {
         // Viene del login SSO — buscar usuario existente
-        const existingAuth = await UserSpotifyAuth.findOne({ spotifyUserId }).populate('userId');
+        const existingAuth = await UserSpotifyAuth.findOne({ spotifyUserId });
   
         if (existingAuth) {
           // Ya conectó Spotify antes
@@ -83,6 +91,10 @@ export const callbackSpotify = async (req: Request, res: Response) => {
           userId: new mongoose.Types.ObjectId(userId),
           spotifyUserId,
           spotifyEmail,
+          spotifyDisplayName,
+          spotifyCountry,
+          spotifyProduct,
+          spotifyAvatar,
           accessToken: access_token,
           refreshToken: refresh_token,
           expiresAt,
@@ -90,21 +102,37 @@ export const callbackSpotify = async (req: Request, res: Response) => {
         { upsert: true, new: true }
       );
   
-      // 6. Generar JWT y setearlo como httpOnly cookie
-      const jwtToken = jwt.sign({ _id: userId }, process.env.JWT_SECRET!, { expiresIn: '7d' });
-  
+      // 6. Obtener datos del usuario en la app
+      const appUser = await User.findById(userId).select('fullName email picture');
+
+      // 7. Generar JWT con datos del usuario
+      const jwtToken = jwt.sign(
+        {
+          _id: userId,
+          fullName: appUser?.fullName,
+          email: appUser?.email,
+          picture: appUser?.picture || null,
+          spotifyUserId,
+          spotifyDisplayName,
+          spotifyAvatar
+        },
+        process.env.JWT_SECRET!,
+        { expiresIn: '7d' }
+      );
+
       res.cookie('token', jwtToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
-  
-      // 7. Redirigir según contexto
+
+      // 8. Redirigir al frontend con token en la URL
+      const tokenParam = encodeURIComponent(jwtToken);
       const redirectUrl = statePayload.context === 'dashboard'
-        ? `${FRONT_URL}/dashboard?spotify_connected=true`
-        : `${FRONT_URL}/dashboard`;
-  
+        ? `${FRONT_URL}/dashboard?token=${tokenParam}`
+        : `${FRONT_URL}/dashboard?token=${tokenParam}`;
+
       res.redirect(redirectUrl);
   
     } catch (err) {
