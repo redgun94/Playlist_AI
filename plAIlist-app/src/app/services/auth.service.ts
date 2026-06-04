@@ -19,10 +19,14 @@ export class AuthService {
 
   constructor(private http: HttpClient) {
     
-    // Recuperar usuario del localStorage
-    const storedUser = localStorage.getItem('currentUser');
     let parsedUser: User | null = null;
-    
+    if (typeof localStorage === 'undefined') {
+      this.currentUserSubject = new BehaviorSubject<User | null>(null);
+      this.currentUser = this.currentUserSubject.asObservable();
+      return;
+    }
+
+    const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       try {
         // Intentar parsear el JSON

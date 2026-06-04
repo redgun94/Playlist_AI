@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   standalone: true,
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
@@ -19,6 +20,9 @@ export class HeaderComponent implements OnInit {
   constructor(private translate: TranslateService) {}
 
   ngOnInit() {
+    if (typeof localStorage === 'undefined') {
+      return;
+    }
     const savedLanguage = localStorage.getItem('language');
     if (savedLanguage) {
       this.currentLanguage = savedLanguage;

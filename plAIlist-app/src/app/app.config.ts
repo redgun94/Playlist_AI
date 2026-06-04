@@ -16,8 +16,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(),
-    provideHttpClient(withInterceptors([authInterceptor])),  // ← IMPORTANTE: debe estar ANTES de TranslateModule
+    provideHttpClient(withInterceptors([authInterceptor])),
     importProvidersFrom(
       TranslateModule.forRoot({
         defaultLanguage: 'en',

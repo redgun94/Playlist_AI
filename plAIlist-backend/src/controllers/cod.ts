@@ -1,3 +1,11 @@
+import { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import User from '../models/User';
+import jwt from 'jsonwebtoken';
+import axios from 'axios';
+import UserSpotifyAuth from '../models/userSpotifyAuth';
+import { decodeState } from '../utils/spotifyState';
+
 export const callbackSpotify = async (req: Request, res: Response) => {
     const FRONT_URL = process.env.FRONTEND_URL || 'http://localhost:4200';
   
@@ -74,7 +82,7 @@ export const callbackSpotify = async (req: Request, res: Response) => {
           const user = await User.findOne({ email: spotifyEmail });
   
           if (user) {
-            userId = user._id.toString();
+            userId = String(user._id);
           } else {
             // Usuario nuevo — redirigir a registro con datos de Spotify
             return res.redirect(
@@ -85,6 +93,9 @@ export const callbackSpotify = async (req: Request, res: Response) => {
       }
   
       // 5. Guardar/actualizar tokens de Spotify
+      if (!userId) {
+        return res.redirect(`${FRONT_URL}/auth/login?error=missing_user`);
+      }
       await UserSpotifyAuth.findOneAndUpdate(
         { userId: new mongoose.Types.ObjectId(userId) },
         {

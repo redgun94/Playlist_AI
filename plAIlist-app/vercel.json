@@ -1,0 +1,8 @@
+{
+    "buildCommand": "ng build --configuration production",
+    "outputDirectory": "dist/pl-ailist-app/browser",
+    "framework": "angular",
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/index.html" }
+    ]
+  }

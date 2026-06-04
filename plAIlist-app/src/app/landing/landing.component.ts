@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 interface Feature {
@@ -9,7 +10,7 @@ interface Feature {
 
 @Component({
   selector: 'app-landing',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
