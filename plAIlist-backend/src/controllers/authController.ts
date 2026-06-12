@@ -222,7 +222,7 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
     try{
      statePayload = decodeState(rawState as string);
     }catch{
-      return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=invalid_state`);
+      return res.redirect(`${process.env.FRONTEND_URL}/dashboard?spotify_connected=false&error=invalid_state`);
     }
     //const userId = rawState as string;
     
@@ -237,7 +237,7 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
       let userId = statePayload.userId;
       if( statePayload.context === "dashboard" && statePayload.userId){
         if (!mongoose.Types.ObjectId.isValid(statePayload.userId)) {
-          return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=invalid_user`);
+          return res.redirect(`${process.env.FRONTEND_URL}/dashboard?spotify_connected=false&error=invalid_user`);
         }
       }else{
         const existingAuth = await UserSpotifyAuth.findOne({ spotifyUserId });
@@ -254,7 +254,7 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
       }
       const appUser = await User.findById(userId).select('fullName email picture');
       if (!appUser) {
-        return res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=user_not_found`);
+        return res.redirect(`${process.env.FRONTEND_URL}/dashboard?spotify_connected=false&error=user_not_found`);
       }
 
       await UserSpotifyAuth.findOneAndUpdate(
@@ -288,10 +288,10 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
         process.env.JWT_SECRET as string,
         { expiresIn: '7d' }
       );
-      res.redirect(`http://localhost:4200/dashboard?token=${encodeURIComponent(spotifyToken)}`);
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${encodeURIComponent(spotifyToken)}`);
     } catch(dbError) {
       console.error('Error guardando en DB:', dbError);
-      res.redirect(`http://localhost:4200/dashboard?spotify_connected=false&error=db_error`);
+      res.redirect(`${process.env.FRONTEND_URL}/dashboard?spotify_connected=false&error=db_error`);
     }
   } catch(error){
     console.error('Error en callbackSpotify:', error);
@@ -414,7 +414,7 @@ export const callbackGoogle = async(req: Request, res: Response): Promise<void> 
   const { code } = req.query;
 
   if (!code) {
-    res.redirect(`http://127.0.0.1:4200/auth?error=no_code`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth?error=no_code`);
     return;
   }
   console.log("estamos en callback intercambiando tokens");
@@ -475,11 +475,11 @@ export const callbackGoogle = async(req: Request, res: Response): Promise<void> 
       process.env.JWT_SECRET as string,
       { expiresIn : '7d'}
     );
-    res.redirect(`http://localhost:4200/auth/callback?userId=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?userId=${token}`);
 
   } catch (error) {
     console.error('Error en callbackGoogle:', error);
-    res.redirect(`http://127.0.0.1:4200/auth?error=google_auth_failed`);
+    res.redirect(`${process.env.FRONTEND_URL}/auth?error=google_auth_failed`);
   }
 };
 export const getMe = (req: Request, res: Response)=>{
