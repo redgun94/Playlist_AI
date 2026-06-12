@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { environment } from '../../environments/enviroment';
 import { map, Observable, of, switchMap, tap } from 'rxjs';
 import { Playlist } from '../models/playlist.models';
 
@@ -18,8 +19,8 @@ export class SpotifyAPIService {
 
   private clientId:string = "c74e5ceefe234e1995a0df05e9991948";
   private clientSecret:string = "a52a61c5919843b6bbacd03bde74c823";
-  private url = 'http://localhost:3000/api/spotifySer';
-  private urlA = 'http://localhost:3000/api/auth';
+  private url = `${environment.apiUrl}/api/spotifySer`;
+  private urlA = `${environment.apiUrl}/api/auth`;
   private token: string = "";
 
   

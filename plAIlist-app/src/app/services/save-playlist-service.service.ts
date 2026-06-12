@@ -3,6 +3,7 @@ import { deletedResponse, Playlist, PlaylistsResponse } from '../models/playlist
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/enviroment';
 
 
 // interface Playlist {
@@ -31,7 +32,7 @@ export class SavePlaylistService {
   private error: String = "";
   
   constructor(private http: HttpClient, private authService: AuthService) { 
-    this.apiUrl = 'http://localhost:3000/api/playlist';
+    this.apiUrl = `${environment.apiUrl}/api/playlist`;
     
     this.authService.currentUser.subscribe(user => {
       if (!user) {

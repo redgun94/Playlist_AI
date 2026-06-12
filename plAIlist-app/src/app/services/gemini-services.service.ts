@@ -4,6 +4,7 @@ import { tap, Observable } from 'rxjs';
 import { User } from '../models/auth.model';
 import { GeminiResponse } from '../models/gemini.model';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/enviroment';
 
 
 @Injectable({
@@ -12,7 +13,7 @@ import { AuthService } from './auth.service';
 export class GeminiServicesService {
 
     authServices: AuthService = inject(AuthService);
-    apiUrl: string = 'http://localhost:3000/api/gemini';
+    apiUrl: string = `${environment.apiUrl}/api/gemini`;
     userId: string | undefined= '';
     user!: User | null;
     private genAI = "AIzaSyD2azlyyRwEGePRBw7CXozzzK_o9U9wgJ4";

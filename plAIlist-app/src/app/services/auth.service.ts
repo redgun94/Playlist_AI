@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';;
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../environments/enviroment';
 import { Observable, BehaviorSubject, throwError, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
 import { RegisterRequest, LoginRequest, AuthResponse, User } from '../models/auth.model';
@@ -11,7 +12,7 @@ import { RegisterRequest, LoginRequest, AuthResponse, User } from '../models/aut
 export class AuthService {
 
 
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = `${environment.apiUrl}/api/auth`;
 
     // BehaviorSubject para mantener el estado del usuario actual
   private currentUserSubject: BehaviorSubject<User | null>;
@@ -130,12 +131,12 @@ export class AuthService {
 
  loginSSOGoogle(): void {
   console.log("Google SSo login");
-  window.location.href = 'http://localhost:3000/api/auth/ssoGoogle';
+  window.location.href = `${environment.apiUrl}/api/auth/ssoGoogle`;
 }
 
 loginSSOSpotify():void{
   console.log("ENtrando al servicio del login de spotify");
-  window.location.href = 'http://localhost:3000/api/auth/spotify/login';
+  window.location.href = `${environment.apiUrl}/api/auth/spotify/login`;
 } 
 
 verifySession(): Observable<boolean> {
