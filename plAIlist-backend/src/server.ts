@@ -16,13 +16,17 @@ const app: Application = express();
 connectDB();
 
 // Middlewares
-app.use(cors());
+//app.use(cors());
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:4200',
+  'http://localhost:4200'
+];
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: 'http://localhost:4200',
+    origin: allowedOrigins,
     credentials: true
   })
 )
