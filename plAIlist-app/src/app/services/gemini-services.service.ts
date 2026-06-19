@@ -14,18 +14,17 @@ export class GeminiServicesService {
 
     authServices: AuthService = inject(AuthService);
     apiUrl: string = `${environment.apiUrl}/api/gemini`;
-    userId: string | undefined= '';
-    user!: User | null;
-    private genAI = "AIzaSyD2azlyyRwEGePRBw7CXozzzK_o9U9wgJ4";
-    
+    userId: string = '';
+
   constructor(private http : HttpClient) {
-    this.authServices.currentUser.subscribe(user => this.user = user);
-    this.userId = this.user?.id;
+    this.authServices.currentUser.subscribe(user => {
+      this.userId = user?.id || '';
+    });
   }
 
-  geminiServices(prompt: string, userId: any = this.userId): Observable<GeminiResponse> {
-    console.log(prompt);
-    return this.http.post<GeminiResponse>(`${this.apiUrl}/call`, { prompt, userId }).pipe(
+  geminiServices(prompt: string, userId?: string): Observable<GeminiResponse> {
+    const uid = userId || this.userId;
+    return this.http.post<GeminiResponse>(`${this.apiUrl}/call`, { prompt, userId: uid }).pipe(
       tap(response => {
         if (response.success) {
            console.log(response.data);
