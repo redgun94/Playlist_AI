@@ -5,61 +5,62 @@
     <div class="navbar-left">
       <h1 class="logo">🎵 PlAIlist</h1>
     </div>
-    <div class="tabs">
-      <button 
-        [class.active]="searchType === 'artist'"
-        (click)="changeSearchType('artist')">
-        {{ 'dashboard.search.tabs.artists' | translate }}
-      </button>
-      <button 
-      [class.active]="searchType === 'track'"
-      (click)="changeSearchType('track')">
-      {{ 'dashboard.search.tabs.tracks' | translate }}
-    </button>
-  </div>
-  
-  <!-- Barra de búsqueda -->
-  <div class="search-container">
-    <div class="search-box">
-      <input 
-      type="text"
-      [(ngModel)]="searchQuery"
-      [placeholder]="'dashboard.search.placeholder' | translate"
-      (keyup.enter)="onSearch()"
-      class="search-input">
-      <button 
-      (click)="onSearch()" 
-      class="btn-search"
-      [disabled]="isSearching || !searchQuery">
-      🔍 {{ 'dashboard.search.button' | translate }}
-    </button>
-    <button 
-    *ngIf="searchQuery"
-    (click)="clearSearch()" 
-    class="btn-clear">
-    ✖
-  </button>
-</div>
-</div>
-
+    
+    <div class="navbar-center">
+      <div class="tabs">
+        <button 
+          [class.active]="searchType === 'artist'"
+          (click)="changeSearchType('artist')">
+          {{ 'dashboard.search.tabs.artists' | translate }}
+        </button>
+        <button 
+          [class.active]="searchType === 'track'"
+          (click)="changeSearchType('track')">
+          {{ 'dashboard.search.tabs.tracks' | translate }}
+        </button>
+      </div>
+      
+      <div class="search-container">
+        <div class="search-box">
+          <input 
+            type="text"
+            [(ngModel)]="searchQuery"
+            [placeholder]="'dashboard.search.placeholder' | translate"
+            (keyup.enter)="onSearch()"
+            class="search-input">
+          <button 
+            (click)="onSearch()" 
+            class="btn-search"
+            [disabled]="isSearching || !searchQuery">
+            🔍
+          </button>
+          <button 
+            *ngIf="searchQuery"
+            (click)="clearSearch()" 
+            class="btn-clear">
+            ✖
+          </button>
+        </div>
+      </div>
+    </div>
     
     <div class="navbar-right">
-      <!-- Selector de idioma -->
-      <select [(ngModel)]="currentLanguage" (change)="changeLanguage(currentLanguage)">
-        <option value="es">🇪🇸 Español</option>
-        <option value="en">🇺🇸 English</option>
-      </select>
+      <div class="language-selector">
+        <select [(ngModel)]="currentLanguage" (change)="changeLanguage(currentLanguage)">
+          <option value="es">🇪🇸 Español</option>
+          <option value="en">🇺🇸 English</option>
+        </select>
+      </div>
       
-      <!-- Info del usuario -->
       <div class="user-info" *ngIf="currentUser">
+        <span *ngIf="spotifyConnected" class="spotify-badge" title="Spotify: {{ spotifyEmail || spotifyUserId }}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.34c-.24.36-.72.48-1.08.24-2.88-1.8-6.48-2.16-10.68-1.2-.42.12-.84-.12-.96-.54-.12-.42.12-.84.54-.96 4.56-1.08 8.52-.6 11.76 1.44.36.24.48.72.24 1.08zm1.44-3.24c-.3.42-.84.6-1.26.3-3.24-2.04-8.16-2.64-12-1.44-.48.12-1.02-.12-1.14-.6s.12-1.02.6-1.14c4.44-1.32 9.84-.6 13.56 1.68.42.24.6.84.24 1.2zm.12-3.36c-3.84-2.28-10.2-2.52-13.8-1.38-.54.18-1.14-.12-1.32-.66s.12-1.14.66-1.32c4.2-1.32 11.16-1.02 15.6 1.56.48.3.66.96.36 1.44-.3.36-.9.54-1.5.36z"/></svg>
+        </span>
         <img *ngIf="currentUser?.picture" [src]="currentUser.picture" class="user-avatar" alt="Avatar">
         <div class="user-details">
           <span class="user-name">{{ currentUser?.fullName }}</span>
           <span class="user-email">{{ currentUser?.email }}</span>
         </div>
-        <span *ngIf="spotifyConnected" class="spotify-badge" title="Spotify: {{ spotifyEmail || spotifyUserId }}">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.52 17.34c-.24.36-.72.48-1.08.24-2.88-1.8-6.48-2.16-10.68-1.2-.42.12-.84-.12-.96-.54-.12-.42.12-.84.54-.96 4.56-1.08 8.52-.6 11.76 1.44.36.24.48.72.24 1.08zm1.44-3.24c-.3.42-.84.6-1.26.3-3.24-2.04-8.16-2.64-12-1.44-.48.12-1.02-.12-1.14-.6s.12-1.02.6-1.14c4.44-1.32 9.84-.6 13.56 1.68.42.24.6.84.24 1.2zm.12-3.36c-3.84-2.28-10.2-2.52-13.8-1.38-.54.18-1.14-.12-1.32-.66s.12-1.14.66-1.32c4.2-1.32 11.16-1.02 15.6 1.56.48.3.66.96.36 1.44-.3.36-.9.54-1.5.36z"/></svg>
-        </span>
         <button (click)="logout()" class="btn-logout">
           {{ 'dashboard.logout' | translate }}
         </button>
