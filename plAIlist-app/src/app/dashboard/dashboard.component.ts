@@ -112,14 +112,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (payload.spotifyAvatar) {
             localStorage.setItem('spotifyAvatar', payload.spotifyAvatar);
           }
-          if (payload.fullName && payload.email) {
-            this.authService.saveAuthData(token, {
-              id: payload.userId || payload._id,
-              fullName: payload.fullName,
-              email: payload.email,
-              picture: payload.picture || undefined
-            });
-          }
+          this.authService.saveAuthData(token, {
+            id: payload.userId || payload._id || payload.spotifyUserId || '',
+            fullName: payload.fullName || payload.name || '',
+            email: payload.email || payload.spotifyEmail || '',
+            picture: payload.picture || payload.spotifyAvatar || undefined
+          });
           window.history.replaceState({}, '', '/dashboard');
         } catch (e) {
           console.error('Error decodificando token de Spotify:', e);
