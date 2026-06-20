@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { GeminiServicesService } from '../../services/gemini-services.service';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
@@ -57,11 +57,9 @@ export class AgenteAiComponent implements AfterViewChecked {
 
   userInput: string = '';
   isLoading: boolean = false;
-  apiKey: string = '';
+  isMinimized: boolean = false;
 
-  constructor(private http: HttpClient) {
-   
-  }
+  constructor() {}
 
   ngAfterViewChecked(): void {
     this.scrollToBottom();
@@ -182,28 +180,8 @@ Mensaje del usuario: ${prompt}`;
     });
   }*/
 
-  saveApiKey(): void {
-    if (this.apiKey.trim() && typeof localStorage !== 'undefined') {
-      localStorage.setItem('gemini_api_key', this.apiKey.trim());
-      this.apiKey = '';
-    }
-  }
-
-  showApiKeyPrompt(): void {
-    const apiKeyPrompt: ChatMessage = {
-      role: 'assistant',
-      content: {
-        message: 'Para usar el asistente de IA, necesito una clave API de Google Gemini. Por favor, ingresa tu API key en el campo correspondiente arriba y guarda. Si no tienes una, puedes obtenerla en https://aistudio.google.com/app/apikey',
-       playlist : {
-        playlist_name: '',
-        description: '',
-        tracks: [],
-       },
-        type : "text"
-      },
-      timestamp: new Date()
-    };
-    this.messages.push(apiKeyPrompt);
+  toggleMinimize(): void {
+    this.isMinimized = !this.isMinimized;
   }
 
 clearChat(): void {
