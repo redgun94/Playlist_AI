@@ -69,24 +69,6 @@
   box-shadow: 0 4px 12px rgba(29, 185, 84, 0.3);
 }
 
-.btn-clear-chat {
-  background: linear-gradient(135deg, var(--surface-light) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  color: var(--text-secondary);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-clear-chat:hover {
-  background: linear-gradient(135deg, var(--error) 0%, rgba(226, 33, 52, 0.8) 100%);
-  border-color: var(--error);
-  color: var(--text-primary);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(226, 33, 52, 0.3);
-}
-
 .chat-body {
   flex: 1;
   display: flex;

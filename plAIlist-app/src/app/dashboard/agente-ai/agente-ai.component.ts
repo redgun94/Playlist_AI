@@ -184,24 +184,6 @@ Mensaje del usuario: ${prompt}`;
     this.isMinimized = !this.isMinimized;
   }
 
-clearChat(): void {
-    this.messages = [
-      {
-        role: 'assistant',
-        content: {
-          message: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
-         playlist : {
-          playlist_name: '',
-          description: '',
-          tracks: [],
-         },
-          type : "text"
-      },
-        timestamp: new Date()
-      }
-    ];
-  }
-
   savePlaylist(playlist: any): void {
     this.pendingPlaylist = playlist;
     this.playlistsService.playlists$.subscribe(playlists => {
