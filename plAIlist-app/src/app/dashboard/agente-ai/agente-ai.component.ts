@@ -1,8 +1,9 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { GeminiServicesService } from '../../services/gemini-services.service';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
@@ -30,7 +31,7 @@ interface ChatMessage {
   templateUrl: './agente-ai.component.html',
   styleUrl: './agente-ai.component.css'
 })
-export class AgenteAiComponent implements AfterViewChecked, OnInit {
+export class AgenteAiComponent implements AfterViewChecked, OnInit, OnDestroy {
   geminiServices : GeminiServicesService = inject(GeminiServicesService);
   private playlistsService: SavePlaylistService = inject(SavePlaylistService);
   private translate: TranslateService = inject(TranslateService);
@@ -42,19 +43,33 @@ export class AgenteAiComponent implements AfterViewChecked, OnInit {
   pendingPlaylist: any = null;
 
   messages: ChatMessage[] = [];
+  private langSub?: Subscription;
 
   ngOnInit(): void {
-    this.translate.get('agente-ai.welcome').subscribe((msg: string) => {
-      this.messages = [{
-        role: 'assistant',
-        content: {
-          message: msg,
-          playlist: { playlist_name: '', description: '', tracks: [] },
-          type: "text"
-        },
-        timestamp: new Date()
-      }];
+    this.langSub = this.translate.stream('agente-ai.welcome').subscribe((msg: string) => {
+      if (this.messages.length === 0) {
+        this.messages = [this.buildWelcomeMessage(msg)];
+      } else {
+        this.messages[0].content.message = msg;
+        this.messages = [...this.messages];
+      }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
+  }
+
+  private buildWelcomeMessage(msg: string): ChatMessage {
+    return {
+      role: 'assistant',
+      content: {
+        message: msg,
+        playlist: { playlist_name: '', description: '', tracks: [] },
+        type: "text"
+      },
+      timestamp: new Date()
+    };
   }
 
   userInput: string = '';
