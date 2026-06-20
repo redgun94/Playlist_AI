@@ -1,7 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewChecked, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewChecked, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { GeminiServicesService } from '../../services/gemini-services.service';
 import { SavePlaylistService } from '../../services/save-playlist-service.service';
 import { Playlist } from '../../models/playlist.models';
@@ -25,13 +26,14 @@ interface ChatMessage {
 @Component({
   selector: 'app-agente-ai',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, TranslateModule],
   templateUrl: './agente-ai.component.html',
   styleUrl: './agente-ai.component.css'
 })
-export class AgenteAiComponent implements AfterViewChecked {
+export class AgenteAiComponent implements AfterViewChecked, OnInit {
   geminiServices : GeminiServicesService = inject(GeminiServicesService);
   private playlistsService: SavePlaylistService = inject(SavePlaylistService);
+  private translate: TranslateService = inject(TranslateService);
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
   userPlaylists: Playlist[] = [];
@@ -39,21 +41,21 @@ export class AgenteAiComponent implements AfterViewChecked {
   selectedTrack: any = null;
   pendingPlaylist: any = null;
 
-   messages: ChatMessage[] = [
-    {
-      role: 'assistant',
-      content: {
-        message: '¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?',
-        playlist : {
-          playlist_name: '',
-          description: '',
-          tracks: [],
+  messages: ChatMessage[] = [];
+
+  ngOnInit(): void {
+    this.translate.get('agente-ai.welcome').subscribe((msg: string) => {
+      this.messages = [{
+        role: 'assistant',
+        content: {
+          message: msg,
+          playlist: { playlist_name: '', description: '', tracks: [] },
+          type: "text"
         },
-        type: "text"
-      },
-      timestamp: new Date()
-    }
-  ];
+        timestamp: new Date()
+      }];
+    });
+  }
 
   userInput: string = '';
   isLoading: boolean = false;

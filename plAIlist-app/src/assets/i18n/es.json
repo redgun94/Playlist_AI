@@ -25,6 +25,9 @@
       "listen": "Escuchar en Spotify"
     }
   },
+  "agente-ai": {
+    "welcome": "¡Hola! Soy tu asistente de música IA. Puedo ayudarte a crear playlists, encontrar artistas, recomendarte canciones basadas en tu estado de ánimo, o responder cualquier pregunta sobre música. ¿En qué puedo ayudarte hoy?"
+  },
   "login": {
     "title": "Bienvenido de nuevo",
     "subtitle": "Inicia sesión para continuar",
