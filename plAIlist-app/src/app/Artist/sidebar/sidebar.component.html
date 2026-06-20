@@ -30,7 +30,15 @@
 
 @if(playlists && playlists.length > 0){
         <aside class="aside-playlists">
-          <div class="playlists-container">
+          <div class="playlists-header" (click)="playlistCollapsed = !playlistCollapsed">
+            <span class="playlists-header-title">My Playlists ({{playlists.length}})</span>
+            <button class="btn-collapse" [class.collapsed]="playlistCollapsed" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+          <div class="playlists-collapsible" [class.collapsed]="playlistCollapsed">
             <ul class="ul-playlists">
               @for( playlist of playlists; track playlist){
                 <li class="li-playlist" (click)="playlistClicked(playlist)">

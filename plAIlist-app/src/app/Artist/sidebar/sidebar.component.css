@@ -493,9 +493,75 @@ textarea {
   background: linear-gradient(135deg, #1a1a1a 0%, #242424 100%);
   color: #d0d0d0;
   border-radius: 12px;
-  padding: 1rem;
+  padding: 0.75rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.playlists-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem 0.5rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.playlists-header:hover {
+  color: #ffffff;
+}
+
+.playlists-header-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: inherit;
+}
+
+.btn-collapse {
+  background: transparent;
+  border: none;
+  color: #6a6a6a;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+}
+
+.btn-collapse:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-collapse svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-collapse.collapsed svg {
+  transform: rotate(-90deg);
+}
+
+.playlists-collapsible {
+  overflow: hidden;
+  max-height: 600px;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s ease;
+  opacity: 1;
+}
+
+.playlists-collapsible.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin: 0;
 }
 
 .ul-playlists {
@@ -504,7 +570,7 @@ textarea {
   gap: 0.5rem;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 0 0.25rem;
 }
 
 .li-playlist {

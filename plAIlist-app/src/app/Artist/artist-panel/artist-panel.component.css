@@ -349,6 +349,118 @@
   .artist-detail-panel::-webkit-scrollbar-thumb:hover {
     background: #3e3e3e;
   }
+  /* ============================================
+     ABOUT SECTION
+     ============================================ */
+  .about-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .albums-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #282828;
+  }
+
+  .albums-count {
+    font-size: 0.875rem;
+    color: #b3b3b3;
+    font-weight: 500;
+  }
+
+  .about-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-genres {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .about-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #b3b3b3;
+    margin: 0;
+  }
+
+  .genre-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .genre-tag {
+    padding: 0.375rem 0.875rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #d0d0d0;
+    transition: all 0.2s ease;
+  }
+
+  .genre-tag:hover {
+    background: rgba(29, 185, 84, 0.15);
+    border-color: rgba(29, 185, 84, 0.3);
+    color: #ffffff;
+  }
+
+  .about-stats {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .about-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .about-stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .about-stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #b3b3b3;
+  }
+
+  .about-spotify-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #1db954 0%, #1ed760 100%);
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 24px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    align-self: flex-start;
+    transition: all 0.3s ease;
+  }
+
+  .about-spotify-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(29, 185, 84, 0.4);
+  }
+
   .spotify-btn {
     /* Contenedor circular */
     width: 32px;
@@ -687,6 +799,21 @@
     }
   }
 
+  @media (max-width: 768px) {
+    .about-stats {
+      gap: 1.5rem;
+    }
+
+    .about-stat-value {
+      font-size: 1.25rem;
+    }
+
+    .about-spotify-link {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
   @media (max-width: 480px) {
     .artist-detail-panel {
       padding: 0.75rem;
@@ -714,6 +841,12 @@
 
     .meta-item {
       font-size: 0.8125rem;
+    }
+
+    .albums-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
     }
     
     .albums-grid {
@@ -749,6 +882,28 @@
 
     .section-title {
       font-size: 1.125rem;
+    }
+
+    .about-genres {
+      gap: 0.5rem;
+    }
+
+    .genre-tag {
+      font-size: 0.75rem;
+      padding: 0.3125rem 0.75rem;
+    }
+
+    .about-stats {
+      flex-direction: row;
+      gap: 1rem;
+    }
+
+    .about-stat-value {
+      font-size: 1.125rem;
+    }
+
+    .about-stat-label {
+      font-size: 0.6875rem;
     }
 
     .track-item {

@@ -29,6 +29,7 @@ export class SidebarComponent implements OnInit{
   loading: boolean = false;
   showSuccess: boolean = false;
   exportingPlaylistName: string = '';
+  playlistCollapsed: boolean = false;
 
 
   constructor(private playlistService: SavePlaylistService, private authService: AuthService){

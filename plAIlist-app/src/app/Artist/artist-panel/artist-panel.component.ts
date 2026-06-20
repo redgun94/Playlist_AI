@@ -91,29 +91,24 @@ constructor( private translate: TranslateService){
       this.tExists = false;
     }
     trackExists(playlist: Playlist){
-
-      return playlist.tracks.some(track => track.id === this.selectedTrack.id);
+      if (!this.selectedTrack) return false;
+      return playlist.tracks?.some(track => track.id === this.selectedTrack.id) ?? false;
     }
     addTrackToPlaylist(playlist: Playlist) {
-      if (this.selectedTrack && playlist && !this.tExists) {
-        console.log("Track:", this.selectedTrack.name);
-        console.log("Added Successfully to:", playlist.playlistName);
-        
-        this.loadPlaylistsService.addTrackToPlaylist(playlist._id,this.selectedTrack).subscribe({
-          next: (response) => {
-            if(response.success){
-              console.log(response);
-            }
-            this.closePlaylistDialog();
-          },
-          error: (error) => {
-            console.error(error);
-            }
-        });
-        // Cierra el diálogo después de agregar
-        
-        this.closePlaylistDialog();
-      }
+      if (!this.selectedTrack || !playlist || this.trackExists(playlist)) return;
+      console.log("Track:", this.selectedTrack.name);
+      console.log("Added Successfully to:", playlist.playlistName);
+      this.loadPlaylistsService.addTrackToPlaylist(playlist._id, this.selectedTrack).subscribe({
+        next: (response) => {
+          if(response.success){
+            console.log(response);
+          }
+          this.closePlaylistDialog();
+        },
+        error: (error) => {
+          console.error(error);
+        }
+      });
     }
  
     showAlbumPanel(album:any) {
