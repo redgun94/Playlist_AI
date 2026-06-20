@@ -334,10 +334,6 @@
 }
 
 @media (max-width: 768px) {
-  .chat-container.minimized {
-    display: none;
-  }
-
   .message {
     max-width: 100%;
   }
@@ -701,8 +697,6 @@
   transform: scale(0.95);
 }
 
-@media (min-width: 769px) {
-  .chat-container.minimized .chat-header {
-    border-bottom: none;
-  }
+.chat-container.minimized .chat-header {
+  border-bottom: none;
 }
