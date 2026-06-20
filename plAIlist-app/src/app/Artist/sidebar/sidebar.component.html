@@ -78,50 +78,50 @@
       <app-playlist-track [tracks]="currentPlaylist?.tracks || []" [playlistId] = 'currentPlaylist?._id || ""'>
   
       </app-playlist-track>}
-      
-@if(newPlaylistclicked){
-          <div class="overlay"> 
-            <div class="playlist-modal">
-              <h2 class="modal-title">{{editingPlaylist ? 'Edit Playlist' : 'Create New Playlist'}}</h2>
-              <form id="createPlaylistForm" class="playlistForm" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
-                <div>
-                  <label class="form-label" for="playlistName">Playlist Name</label>
-                  <input 
-                  type="text"
-                  id = "playlistName"
-                  formControlName = "playlistName"
-                  placeholder="Min 3 characters length"
-                  [class.validationError] = "errorfound" 
-                  />
-                </div>
-                <div class="form-group">
-                  <label class="form-label" for="playlistDescription">
-                    Playlist Description 
-                  </label>
-                  <textarea
-                  type = "text"
-                  id = "playlistDescription"
-                  formControlName = "playlistDescription"
-                  placeholder="Add an optional description" 
-                  ></textarea>
-                </div>
-              </form>
-              <div class="btn-container">
-                <button 
-                class="btn-close" 
-                type="button"
-                (click)="closeModal()">
-                  Cancel
-                </button>
-                <button id="createPlaylistForm" form="createPlaylistForm" class="btn-save" type="submit" [disabled]="createPlaylistForm.invalid">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5v14"></path>
-                  </svg>
-                  {{editingPlaylist ? 'Update' : 'Save'}}
-                </button>
-              </div>
-            </div>
-          </div>
-        }
   </aside>
+
+@if(newPlaylistclicked){
+  <div class="overlay"> 
+    <div class="playlist-modal">
+      <h2 class="modal-title">{{editingPlaylist ? 'Edit Playlist' : 'Create New Playlist'}}</h2>
+      <form id="createPlaylistForm" class="playlistForm" [formGroup]="createPlaylistForm" (ngSubmit)="onSubmit()">
+        <div>
+          <label class="form-label" for="playlistName">Playlist Name</label>
+          <input 
+          type="text"
+          id = "playlistName"
+          formControlName = "playlistName"
+          placeholder="Min 3 characters length"
+          [class.validationError] = "errorfound" 
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="playlistDescription">
+            Playlist Description 
+          </label>
+          <textarea
+          type = "text"
+          id = "playlistDescription"
+          formControlName = "playlistDescription"
+          placeholder="Add an optional description" 
+          ></textarea>
+        </div>
+      </form>
+      <div class="btn-container">
+        <button 
+        class="btn-close" 
+        type="button"
+        (click)="closeModal()">
+          Cancel
+        </button>
+        <button id="createPlaylistForm" form="createPlaylistForm" class="btn-save" type="submit" [disabled]="createPlaylistForm.invalid">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14"></path>
+            <path d="M12 5v14"></path>
+          </svg>
+          {{editingPlaylist ? 'Update' : 'Save'}}
+        </button>
+      </div>
+    </div>
+  </div>
+}
