@@ -164,6 +164,8 @@
   gap: 0.25rem;
   max-height: 400px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding-right: 0.25rem;
 }
 
@@ -725,7 +727,7 @@
   }
   
   .tracks-list {
-    max-height: 300px;
+    max-height: 50vh;
   }
   
   .empty-state {

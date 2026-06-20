@@ -437,6 +437,17 @@
   .hidden { display: none !important; }
   .block { display: block; }
   .inline-block { display: inline-block; }
+
+  .hide-mobile { display: revert; }
+  .hide-tablet { display: revert; }
+
+  @media (max-width: 768px) {
+    .hide-mobile { display: none !important; }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .hide-tablet { display: none !important; }
+  }
   
   /* ============================================
      ALERTS
@@ -584,6 +595,24 @@
   /* ============================================
      RESPONSIVE
      ============================================ */
+  @media (max-width: 1024px) {
+    .container {
+      padding: 0 var(--spacing-md);
+    }
+    
+    h1 {
+      font-size: var(--text-3xl);
+    }
+    
+    h2 {
+      font-size: var(--text-2xl);
+    }
+
+    .grid-cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
   @media (max-width: 768px) {
     :root {
       font-size: 14px;
@@ -600,17 +629,35 @@
     }
     
     h1 {
-      font-size: var(--text-3xl);
+      font-size: var(--text-2xl);
     }
     
     h2 {
-      font-size: var(--text-2xl);
+      font-size: var(--text-xl);
+    }
+
+    h3 {
+      font-size: var(--text-lg);
+    }
+
+    input,
+    textarea,
+    select {
+      padding: 0.875rem 1rem;
+    }
+
+    .btn {
+      padding: 0.875rem 1.25rem;
     }
   }
   
   @media (max-width: 480px) {
     :root {
       font-size: 13px;
+    }
+
+    .container {
+      padding: 0 var(--spacing-sm);
     }
   }
   

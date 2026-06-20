@@ -8,7 +8,9 @@
    ============================================ */
 .dashboard-container {
   height: 100vh;
+  height: 100dvh;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--background);
   color: var(--text-primary);
   display: flex;
@@ -249,6 +251,7 @@
   display: flex;
   flex: 1;
   height: calc(100vh - 72px);
+  height: calc(100dvh - 72px);
   overflow: hidden;
 }
 
@@ -265,6 +268,8 @@
   flex: 1;
   height: 100%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -764,6 +769,25 @@ app-artist-panel {
   .user-email {
     display: none;
   }
+
+  .sidebar-section {
+    min-width: 260px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar-section {
+    min-width: 240px;
+    width: 28vw;
+  }
+
+  .content-section {
+    padding: 1.5rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
@@ -845,8 +869,23 @@ app-artist-panel {
     font-size: 0.75rem;
   }
 
+  .main-content {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 56px);
+    min-height: calc(100dvh - 56px);
+  }
+
+  .sidebar-section {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto;
+    max-height: 40vh;
+  }
+
   .content-section {
     padding: 1rem;
+    height: auto;
   }
 
   .artist-list-item {
@@ -971,7 +1010,8 @@ app-artist-panel {
   }
 
   .page-title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
+    margin: 0 0 1.25rem 0;
   }
 
   .tabs button {
@@ -982,5 +1022,22 @@ app-artist-panel {
   .search-input {
     padding: 0.3125rem 0.625rem;
     font-size: 0.75rem;
+  }
+
+  .results-list {
+    padding: 0 0.5rem;
+  }
+
+  .card-image {
+    height: 160px;
+  }
+
+  .card-content {
+    padding: 1rem;
+  }
+
+  .error-message {
+    padding: 1rem;
+    margin: 1rem auto;
   }
 }
