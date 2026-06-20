@@ -338,10 +338,6 @@
     display: none;
   }
 
-  .chat-fab {
-    display: flex;
-  }
-
   .message {
     max-width: 100%;
   }
@@ -678,7 +674,7 @@
 }
 
 .chat-fab {
-  display: none;
+  display: flex;
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
