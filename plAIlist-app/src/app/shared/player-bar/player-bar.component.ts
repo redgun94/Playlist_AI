@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Subscription, firstValueFrom } from 'rxjs';
 import { PlaybackService } from '../../services/playback.service';
 import { SpotifyAPIService } from '../../services/spotify-api.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-player-bar',
@@ -22,7 +23,8 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
 
   constructor(
     private playbackService: PlaybackService,
-    private spotifyApi: SpotifyAPIService
+    private spotifyApi: SpotifyAPIService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -30,6 +32,14 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
       next: (res) => {
         this.spotifyLinked = res.userAuthenticated;
         this.isPremium = !!res.isPremium;
+
+        if (this.spotifyLinked && res.needsReauth) {
+          const user = this.authService.currentUserValue;
+          const userId = user?.id || '';
+          window.location.href = this.spotifyApi.getSpotifyLoginUrl(userId);
+          return;
+        }
+
         if (this.spotifyLinked && this.isPremium) {
           this.playbackService.initPlayer(() =>
             firstValueFrom(this.spotifyApi.getPlaybackToken()).then(r => r.accessToken!)

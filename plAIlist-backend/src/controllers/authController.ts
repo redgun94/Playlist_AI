@@ -179,7 +179,7 @@ export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
       client_id : process.env.SPOTIFY_CLIENT_ID!,
       response_type: "code",
       redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
-      scope: "playlist-modify-public playlist-modify-private user-read-email",
+      scope: "playlist-modify-public playlist-modify-private user-read-email streaming user-read-playback-state user-modify-playback-state user-read-currently-playing",
       state: state,
       show_dialog: "true"
     });
@@ -395,11 +395,29 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     await userSpotifyactive.save();
   }
 
+  // Detect if the user's access token lacks the streaming scopes needed for Web Playback SDK.
+  // Spotify doesn't expose token scopes directly, so we probe with GET /v1/me/player:
+  //   403 → missing scope → user needs to re-authorize with new scopes
+  //   200/204 → scope is fine
+  let needsReauth = false;
+  try {
+    const probe = await axios.get('https://api.spotify.com/v1/me/player', {
+      headers: { 'Authorization': `Bearer ${userSpotifyactive.accessToken}` },
+      validateStatus: () => true
+    });
+    if (probe.status === 403) {
+      needsReauth = true;
+    }
+  } catch {
+    needsReauth = true;
+  }
+
   res.status(200).json({
     success: true,
     userAuthenticated: true,
     accessToken: userSpotifyactive.accessToken,
-    isPremium: userSpotifyactive.spotifyProduct === 'premium'
+    isPremium: userSpotifyactive.spotifyProduct === 'premium',
+    needsReauth
   });
 };
 

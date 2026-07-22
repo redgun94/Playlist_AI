@@ -298,8 +298,13 @@ export const startPlayback = async (req: Request, res: Response): Promise<void> 
       await userSpotifyAuth.save();
     }
 
+    // Use device_id as query param to target the Web Playback SDK device.
+    // The body contains only { uris } — Spotify routes playback to the specified device.
+    const params = new URLSearchParams();
+    params.append('device_id', deviceId);
+
     await axios.put(
-      `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
+      `https://api.spotify.com/v1/me/player/play?${params.toString()}`,
       { uris },
       {
         headers: {
