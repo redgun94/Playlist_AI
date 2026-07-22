@@ -179,7 +179,7 @@ export const loginSpotify = async(req: Request, res: Response):Promise<void>=>{
       client_id : process.env.SPOTIFY_CLIENT_ID!,
       response_type: "code",
       redirect_uri: process.env.SPOTIFY_REDIRECT_URI!,
-      scope: "playlist-modify-public playlist-modify-private user-read-email streaming user-read-playback-state user-modify-playback-state user-read-currently-playing",
+      scope: "playlist-modify-public playlist-modify-private user-read-email user-read-private streaming user-read-playback-state user-modify-playback-state user-read-currently-playing",
       state: state,
       show_dialog: "true"
     });
@@ -410,10 +410,14 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     });
     const product = meRes.data?.product;
     console.log('[playback-token] Spotify /v1/me product:', product);
-    if (product && product !== userSpotifyactive.spotifyProduct) {
-      userSpotifyactive.spotifyProduct = product;
-      await userSpotifyactive.save();
-      console.log('[playback-token] spotifyProduct updated:', product);
+    if (product) {
+      if (product !== userSpotifyactive.spotifyProduct) {
+        userSpotifyactive.spotifyProduct = product;
+        await userSpotifyactive.save();
+        console.log('[playback-token] spotifyProduct updated:', product);
+      }
+    } else {
+      console.log('[playback-token] product field missing from /v1/me — user likely lacks user-read-private scope');
     }
   } catch (err) {
     console.error('[playback-token] Error fetching spotifyProduct:', err);
