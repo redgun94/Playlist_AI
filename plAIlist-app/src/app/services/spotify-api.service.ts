@@ -15,7 +15,6 @@ interface SpotifyPlaybackTokenResponse {
   userAuthenticated: boolean;
   accessToken?: string;
   isPremium?: boolean;
-  needsReauth?: boolean;
 }
 
 
@@ -49,6 +48,11 @@ export class SpotifyAPIService {
 
    getSpotifyLoginUrl(userId: string): string {
     return `${this.urlA}/spotify/login?userId=${userId}`;
+   }
+
+   checkPlaybackScopes(): Observable<{ needsReauth: boolean }> {
+    const url = `${this.urlA}/spotify/check-playback-scopes`;
+    return this.httpRqst.get<{ needsReauth: boolean }>(url);
    }
 
    // Inicia la reproducción de una o varias canciones en el device_id del Web Playback SDK.

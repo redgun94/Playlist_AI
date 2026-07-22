@@ -18,6 +18,7 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
   isPremium = false;
   deviceReady = false;
   playerState: Spotify.PlaybackState | null = null;
+  sdkError: string | null = null;
 
   private subs = new Subscription();
 
@@ -33,17 +34,8 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
         this.spotifyLinked = res.userAuthenticated;
         this.isPremium = !!res.isPremium;
 
-        if (this.spotifyLinked && res.needsReauth) {
-          const user = this.authService.currentUserValue;
-          const userId = user?.id || '';
-          window.location.href = this.spotifyApi.getSpotifyLoginUrl(userId);
-          return;
-        }
-
         if (this.spotifyLinked && this.isPremium) {
-          this.playbackService.initPlayer(() =>
-            firstValueFrom(this.spotifyApi.getPlaybackToken()).then(r => r.accessToken!)
-          );
+          this.checkScopesAndInit();
         }
       },
       error: () => {
@@ -53,10 +45,39 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
 
     this.subs.add(this.playbackService.deviceId$.subscribe(id => this.deviceReady = !!id));
     this.subs.add(this.playbackService.playerState$.subscribe(state => this.playerState = state));
+    this.subs.add(this.playbackService.sdkError$.subscribe(err => this.sdkError = err));
   }
 
   ngOnDestroy(): void {
     this.subs.unsubscribe();
+  }
+
+  private checkScopesAndInit(): void {
+    this.spotifyApi.checkPlaybackScopes().subscribe({
+      next: (scopeRes) => {
+        if (scopeRes.needsReauth) {
+          const user = this.authService.currentUserValue;
+          const userId = user?.id || '';
+          window.location.href = this.spotifyApi.getSpotifyLoginUrl(userId);
+          return;
+        }
+        this.initSdk();
+      },
+      error: () => {
+        this.sdkError = 'No se pudieron verificar los permisos de Spotify.';
+      }
+    });
+  }
+
+  private initSdk(): void {
+    this.playbackService.initPlayer(() =>
+      firstValueFrom(this.spotifyApi.getPlaybackToken()).then(r => {
+        if (!r.accessToken) {
+          throw new Error('No se obtuvo el token de Spotify');
+        }
+        return r.accessToken;
+      })
+    );
   }
 
   get currentTrack() {

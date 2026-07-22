@@ -368,7 +368,8 @@ export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
 
 // GET /api/auth/spotify/playback-token
 // Devuelve el access token de Spotify (para el Web Playback SDK) y si el usuario es Premium.
-// Requiere verifyToken: el userId sale del JWT propio, nunca de un query param.
+// Endpoint RÁPIDO: no hace probes. Solo retorna token cached + isPremium.
+// Requiere verifyToken: el userId sale del JWT propio.
 export const getSpotifyPlaybackToken = async (req: Request, res: Response): Promise<any> => {
   const userId = req.user?.userId;
 
@@ -395,10 +396,28 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     await userSpotifyactive.save();
   }
 
-  // Detect if the user's access token lacks the streaming scopes needed for Web Playback SDK.
-  // Spotify doesn't expose token scopes directly, so we probe with GET /v1/me/player:
-  //   403 → missing scope → user needs to re-authorize with new scopes
-  //   200/204 → scope is fine
+  res.status(200).json({
+    success: true,
+    userAuthenticated: true,
+    accessToken: userSpotifyactive.accessToken,
+    isPremium: userSpotifyactive.spotifyProduct === 'premium'
+  });
+};
+
+// GET /api/auth/spotify/check-playback-scopes
+// Verifica si el token del usuario tiene los scopes necesarios para el Web Playback SDK.
+// Se llama UNA SOLA VEZ al cargar el dashboard, no en cada refresh de token del SDK.
+export const checkPlaybackScopes = async (req: Request, res: Response): Promise<any> => {
+  const userId = req.user?.userId;
+
+  const userSpotifyactive = await UserSpotifyAuth.findOne({ userId });
+  if (!userSpotifyactive) {
+    return res.status(200).json({ needsReauth: true });
+  }
+
+  // Probe: GET /v1/me/player requires user-read-playback-state scope.
+  // 403 = token lacks the scope = user must re-authorize with new scopes.
+  // 200/204 = scope present = all good.
   let needsReauth = false;
   try {
     const probe = await axios.get('https://api.spotify.com/v1/me/player', {
@@ -412,13 +431,7 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     needsReauth = true;
   }
 
-  res.status(200).json({
-    success: true,
-    userAuthenticated: true,
-    accessToken: userSpotifyactive.accessToken,
-    isPremium: userSpotifyactive.spotifyProduct === 'premium',
-    needsReauth
-  });
+  res.status(200).json({ needsReauth });
 };
 
 export const ssoGoogle = async(req: Request, res: Response):Promise<void>=>{

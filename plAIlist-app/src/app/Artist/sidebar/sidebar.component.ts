@@ -4,6 +4,7 @@ import { Playlist } from '../../models/playlist.models';
 import { User } from '../../models/auth.model';
 import { FormControl, FormGroup, FormsModule, Validators, ReactiveFormsModule } from "@angular/forms";
 import { OnInit } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { PlaylistTrackComponent } from "./playlist-track/playlist-track.component";
 import { SpotifyAPIService } from '../../services/spotify-api.service';
 import { AuthService } from '../../services/auth.service';
@@ -180,15 +181,18 @@ editPlaylist(playlist: Playlist) {
     }
   }
 
-  playPlaylist(playlist: Playlist) {
+  async playPlaylist(playlist: Playlist) {
     const uris = (playlist.tracks || []).map((track: any) => track.uri).filter(Boolean);
     if (!uris.length) {
       alert('Esta playlist no tiene canciones para reproducir');
       return;
     }
-    this.playbackService.play(uris).catch(() => {
-      alert('No se pudo iniciar la reproducción. Verifica que tu cuenta de Spotify sea Premium y esté conectada.');
-    });
+    try {
+      await this.playbackService.play(uris);
+    } catch {
+      const sdkErr = await firstValueFrom(this.playbackService.sdkError$);
+      alert(sdkErr || 'No se pudo iniciar la reproducción. Verifica que tu cuenta de Spotify sea Premium y esté conectada.');
+    }
   }
 
   exportPlaylistToSpotify(playlist: Playlist) {

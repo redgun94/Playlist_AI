@@ -32,6 +32,7 @@
   </div>
 
   <div class="player-status">
-    <span *ngIf="!deviceReady">Conectando con Spotify...</span>
+    <span *ngIf="!deviceReady && !sdkError">Conectando con Spotify...</span>
+    <span *ngIf="sdkError" class="player-error">{{ sdkError }}</span>
   </div>
 </div>

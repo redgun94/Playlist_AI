@@ -102,3 +102,8 @@
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.5);
 }
+
+.player-error {
+  color: #e74c3c;
+  font-weight: 500;
+}
