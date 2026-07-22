@@ -1,6 +1,7 @@
 import { Component, inject, Input } from '@angular/core';
 import { DurationPipe } from "../../../pipes/duration.pipes";
 import { SavePlaylistService } from '../../../services/save-playlist-service.service';
+import { PlaybackService } from '../../../services/playback.service';
 
 @Component({
   selector: 'app-playlist-track',
@@ -13,15 +14,25 @@ export class PlaylistTrackComponent {
   @Input() tracks: any[] = [];
   @Input() playlistId : string = "";
   playlistServices : SavePlaylistService = inject(SavePlaylistService);
+  playbackService : PlaybackService = inject(PlaybackService);
 removeTrack( track: any) {
   console.log(this.playlistId);
   this.playlistServices.removeTrack(track,this.playlistId).subscribe({
     next : (response)=>{
       if(response.success){
-        return 
+        return
       }
     }
   })
+}
+
+playTrack(track: any) {
+  if (!track.uri) {
+    return;
+  }
+  this.playbackService.play([track.uri]).catch(() => {
+    alert('No se pudo iniciar la reproducción. Verifica que tu cuenta de Spotify sea Premium y esté conectada.');
+  });
 }
 
   

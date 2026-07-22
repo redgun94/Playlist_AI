@@ -10,6 +10,13 @@ interface SpotifyAuthResponse {
   userAuthenticated: boolean;
 }
 
+interface SpotifyPlaybackTokenResponse {
+  success: boolean;
+  userAuthenticated: boolean;
+  accessToken?: string;
+  isPremium?: boolean;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +37,19 @@ export class SpotifyAPIService {
 
    getStringToken(){
     return this.token;
+   }
+
+   // Token de Spotify + estado premium para el Web Playback SDK.
+   // El interceptor ya agrega el Authorization: Bearer <jwt propio>.
+   getPlaybackToken(): Observable<SpotifyPlaybackTokenResponse> {
+    const url = `${this.urlA}/spotify/playback-token`;
+    return this.httpRqst.get<SpotifyPlaybackTokenResponse>(url);
+   }
+
+   // Inicia la reproducción de una o varias canciones en el device_id del Web Playback SDK.
+   startPlayback(deviceId: string, uris: string[]): Observable<void> {
+    const url = `${this.url}/play`;
+    return this.httpRqst.put<void>(url, { deviceId, uris });
    }
    searchTracks(searchQuery: string): Observable<any> {
     throw new Error('Method not implemented.');

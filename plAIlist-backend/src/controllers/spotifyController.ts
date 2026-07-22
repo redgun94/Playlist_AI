@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 import UserSpotifyAuth from '../models/userSpotifyAuth';
+import { refreshTokenUser } from './authController';
 
 interface TokenData {
     accessToken: string;
@@ -268,6 +269,53 @@ export const exportPlaylist = async(req:Request, res:Response):Promise<void>=>{
   } catch(error: any){
     console.error('Error exportando playlist:', error.message);
     res.status(500).json({ success: false, message: 'Error al exportar playlist' });
+  }
+}
+
+// PUT /api/spotifySer/play
+// Inicia la reproducción de una o varias canciones en el device_id del Web Playback SDK.
+// Requiere verifyToken: el userId sale del JWT propio.
+export const startPlayback = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.user?.userId;
+  const { deviceId, uris } = req.body as { deviceId: string; uris: string[] };
+
+  if (!deviceId || !uris?.length) {
+    res.status(400).json({ success: false, message: 'deviceId y uris son requeridos' });
+    return;
+  }
+
+  try {
+    const userSpotifyAuth = await UserSpotifyAuth.findOne({ userId });
+    if (!userSpotifyAuth) {
+      res.status(404).json({ success: false, message: 'Usuario no autenticado con Spotify' });
+      return;
+    }
+
+    if (userSpotifyAuth.expiresAt.getTime() < Date.now()) {
+      const dataTokens = await refreshTokenUser(userSpotifyAuth.refreshToken);
+      userSpotifyAuth.accessToken = dataTokens.access_token;
+      userSpotifyAuth.expiresAt = new Date(Date.now() + dataTokens.expires_in * 1000);
+      await userSpotifyAuth.save();
+    }
+
+    await axios.put(
+      `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
+      { uris },
+      {
+        headers: {
+          'Authorization': `Bearer ${userSpotifyAuth.accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    res.status(204).send();
+  } catch (error: any) {
+    console.error('Error iniciando reproducción:', error.response?.data || error.message);
+    if (error.response?.status === 403) {
+      res.status(403).json({ success: false, message: 'Se requiere Spotify Premium para reproducir' });
+      return;
+    }
+    res.status(500).json({ success: false, message: 'Error al iniciar la reproducción' });
   }
 }
 

@@ -642,6 +642,30 @@ textarea {
   transform: scale(1.1);
 }
 
+.btn-play-playlist {
+  background: none;
+  border: none;
+  padding: 0.375rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #1DB954 !important;
+  background: rgba(29, 185, 84, 0.1) !important;
+  border: 1px solid #1DB954 !important;
+}
+
+.btn-play-playlist:hover {
+  background: #1ed760 !important;
+  color: #ffffff !important;
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(29, 185, 84, 0.5);
+}
+
 .btn-spotify-export {
   background: none;
   border: none;

@@ -7,6 +7,7 @@ import { OnInit } from '@angular/core';
 import { PlaylistTrackComponent } from "./playlist-track/playlist-track.component";
 import { SpotifyAPIService } from '../../services/spotify-api.service';
 import { AuthService } from '../../services/auth.service';
+import { PlaybackService } from '../../services/playback.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -26,6 +27,7 @@ export class SidebarComponent implements OnInit{
   currentUser: User | null = null;
   playlistSelected: boolean = false;
   spotifyServices : SpotifyAPIService = inject(SpotifyAPIService);
+  playbackService : PlaybackService = inject(PlaybackService);
   loading: boolean = false;
   showSuccess: boolean = false;
   exportingPlaylistName: string = '';
@@ -176,6 +178,17 @@ editPlaylist(playlist: Playlist) {
       this.playlistSelected = true;
       this.playlistService.currentSubjectPlaylist = playlist;
     }
+  }
+
+  playPlaylist(playlist: Playlist) {
+    const uris = (playlist.tracks || []).map((track: any) => track.uri).filter(Boolean);
+    if (!uris.length) {
+      alert('Esta playlist no tiene canciones para reproducir');
+      return;
+    }
+    this.playbackService.play(uris).catch(() => {
+      alert('No se pudo iniciar la reproducción. Verifica que tu cuenta de Spotify sea Premium y esté conectada.');
+    });
   }
 
   exportPlaylistToSpotify(playlist: Playlist) {

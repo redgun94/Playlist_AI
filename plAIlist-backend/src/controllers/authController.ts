@@ -366,6 +366,43 @@ export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
   })
 }
 
+// GET /api/auth/spotify/playback-token
+// Devuelve el access token de Spotify (para el Web Playback SDK) y si el usuario es Premium.
+// Requiere verifyToken: el userId sale del JWT propio, nunca de un query param.
+export const getSpotifyPlaybackToken = async (req: Request, res: Response): Promise<any> => {
+  const userId = req.user?.userId;
+
+  const userSpotifyactive = await UserSpotifyAuth.findOne({ userId });
+  if (!userSpotifyactive) {
+    return res.status(404).json({
+      success: false,
+      message: "User not authenticated with Spotify",
+      userAuthenticated: false
+    });
+  }
+
+  if (userSpotifyactive.expiresAt.getTime() < Date.now()) {
+    const dataTokens = await refreshTokenUser(userSpotifyactive.refreshToken);
+    if (!dataTokens) {
+      return res.status(401).json({
+        success: false,
+        message: "Error: expired or unauthorized user.",
+        userAuthenticated: false
+      });
+    }
+    userSpotifyactive.accessToken = dataTokens.access_token;
+    userSpotifyactive.expiresAt = new Date(Date.now() + dataTokens.expires_in * 1000);
+    await userSpotifyactive.save();
+  }
+
+  res.status(200).json({
+    success: true,
+    userAuthenticated: true,
+    accessToken: userSpotifyactive.accessToken,
+    isPremium: userSpotifyactive.spotifyProduct === 'premium'
+  });
+};
+
 export const ssoGoogle = async(req: Request, res: Response):Promise<void>=>{
     const redirect_uri = process.env.GOOGLE_REDIRECT_URI;
     const ssoGoogleUrl = process.env.GOOGLE_URL_AUTH;

@@ -11,10 +11,11 @@ import { ArtistPanelComponent } from '../Artist/artist-panel/artist-panel.compon
 import { SidebarComponent } from "../Artist/sidebar/sidebar.component";
 import { AgenteAiComponent } from "./agente-ai/agente-ai.component";
 import { Playlist } from '../models/playlist.models';
+import { PlayerBarComponent } from '../shared/player-bar/player-bar.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent, SidebarComponent, AgenteAiComponent],
+  imports: [TranslateModule, FormsModule, CommonModule, ArtistPanelComponent, SidebarComponent, AgenteAiComponent, PlayerBarComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
   encapsulation: ViewEncapsulation.None
