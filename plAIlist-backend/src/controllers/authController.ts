@@ -283,7 +283,8 @@ export const callbackSpotify = async(req: Request, res: Response):Promise<void>=
           spotifyUserId,
           spotifyEmail,
           spotifyDisplayName,
-          spotifyAvatar
+          spotifyAvatar,
+          spotifyProduct
         },
         process.env.JWT_SECRET as string,
         { expiresIn: '7d' }
@@ -372,9 +373,13 @@ export const getUserSpotify = async(req: Request, res: Response):Promise<any>=>{
 // Requiere verifyToken: el userId sale del JWT propio.
 export const getSpotifyPlaybackToken = async (req: Request, res: Response): Promise<any> => {
   const userId = req.user?.userId;
+  console.log('[playback-token] userId from JWT:', userId);
 
   const userSpotifyactive = await UserSpotifyAuth.findOne({ userId });
+  console.log('[playback-token] userSpotifyactive found:', !!userSpotifyactive, '| spotifyProduct:', userSpotifyactive?.spotifyProduct);
+
   if (!userSpotifyactive) {
+    console.log('[playback-token] No UserSpotifyAuth record for userId:', userId);
     return res.status(404).json({
       success: false,
       message: "User not authenticated with Spotify",

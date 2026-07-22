@@ -113,6 +113,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (payload.spotifyAvatar) {
             localStorage.setItem('spotifyAvatar', payload.spotifyAvatar);
           }
+          if (payload.spotifyProduct) {
+            localStorage.setItem('spotifyProduct', payload.spotifyProduct);
+          }
           this.authService.saveAuthData(token, {
             id: payload.userId || payload._id || payload.spotifyUserId || '',
             fullName: payload.fullName || payload.name || '',
@@ -200,6 +203,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   get spotifyUserId(): string | null {
     return localStorage.getItem('spotifyUserId');
+  }
+
+  get isSpotifyPremium(): boolean {
+    return localStorage.getItem('spotifyProduct') === 'premium';
   }
 
   logout(){

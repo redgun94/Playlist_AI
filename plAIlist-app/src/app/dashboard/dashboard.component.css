@@ -173,6 +173,21 @@
   line-height: 1.2;
 }
 
+.premium-star {
+  display: inline-flex;
+  align-items: center;
+  color: #FFD700;
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.6));
+  animation: starGlow 2s ease-in-out infinite;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+@keyframes starGlow {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.4)); }
+  50% { filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8)); }
+}
+
 .user-email {
   font-size: 0.6875rem;
   color: var(--text-secondary);
