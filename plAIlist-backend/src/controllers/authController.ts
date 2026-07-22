@@ -401,6 +401,23 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     await userSpotifyactive.save();
   }
 
+  // Si spotifyProduct no está guardado (usuarios que se autorizaron antes de agregar el campo),
+  // lo obtenemos de la API de Spotify y lo guardamos para futuras llamadas.
+  if (!userSpotifyactive.spotifyProduct) {
+    try {
+      const meRes = await axios.get('https://api.spotify.com/v1/me', {
+        headers: { 'Authorization': `Bearer ${userSpotifyactive.accessToken}` }
+      });
+      if (meRes.data?.product) {
+        userSpotifyactive.spotifyProduct = meRes.data.product;
+        await userSpotifyactive.save();
+        console.log('[playback-token] spotifyProduct fetched and saved:', meRes.data.product);
+      }
+    } catch (err) {
+      console.error('[playback-token] Error fetching spotifyProduct:', err);
+    }
+  }
+
   res.status(200).json({
     success: true,
     userAuthenticated: true,
