@@ -15,6 +15,7 @@ interface SpotifyPlaybackTokenResponse {
   userAuthenticated: boolean;
   accessToken?: string;
   isPremium?: boolean;
+  spotifyProduct?: string;
 }
 
 

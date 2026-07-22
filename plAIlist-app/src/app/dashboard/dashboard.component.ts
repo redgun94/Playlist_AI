@@ -80,18 +80,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.log('currentUser (tipo):', typeof this.currentUser);
     console.log('currentUser (valor):', this.currentUser);
 
-    // Fetch premium status desde el backend (para la estrella)
-    this.spotifyAPIService.getPlaybackToken().subscribe({
-      next: (res) => {
-        console.log('[Dashboard] getPlaybackToken response:', res);
-        if (res.isPremium !== undefined) {
-          localStorage.setItem('spotifyProduct', res.isPremium ? 'premium' : 'free');
-        }
-        this.cdr.detectChanges();
-      },
-      error: (err) => console.error('[Dashboard] getPlaybackToken error:', err)
-    });
-    
     // Suscribirse a cambios en el usuario
     this.userSubscription = this.authService.currentUser.subscribe(user => {
       console.log('Usuario recibido en suscripción:', user);
@@ -135,9 +123,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
             picture: payload.picture || payload.spotifyAvatar || undefined
           });
           window.history.replaceState({}, '', '/dashboard');
+          // Ahora que el token está guardado, fetch premium status
+          this.fetchPremiumStatus();
         } catch (e) {
           console.error('Error decodificando token de Spotify:', e);
         }
+      } else {
+        // Recarga normal (token ya en localStorage)
+        this.fetchPremiumStatus();
       }
 
       if (params['spotify_connected'] === 'true') {
@@ -152,6 +145,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       }
+    });
+  }
+
+  fetchPremiumStatus(): void {
+    this.spotifyAPIService.getPlaybackToken().subscribe({
+      next: (res) => {
+        console.log('[Dashboard] getPlaybackToken response:', res);
+        if (res.isPremium !== undefined) {
+          localStorage.setItem('spotifyProduct', res.isPremium ? 'premium' : 'free');
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('[Dashboard] getPlaybackToken error:', err)
     });
   }
 
