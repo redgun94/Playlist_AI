@@ -401,22 +401,22 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     await userSpotifyactive.save();
   }
 
-  // Si spotifyProduct no está guardado (usuarios que se autorizaron antes de agregar el campo),
-  // lo obtenemos de la API de Spotify y lo guardamos para futuras llamadas.
-  if (!userSpotifyactive.spotifyProduct) {
-    try {
-      const meRes = await axios.get('https://api.spotify.com/v1/me', {
-        headers: { 'Authorization': `Bearer ${userSpotifyactive.accessToken}` }
-      });
-      console.log('[playback-token] Spotify /v1/me response product:', meRes.data?.product);
-      if (meRes.data?.product) {
-        userSpotifyactive.spotifyProduct = meRes.data.product;
-        await userSpotifyactive.save();
-        console.log('[playback-token] spotifyProduct fetched and saved:', meRes.data.product);
-      }
-    } catch (err) {
-      console.error('[playback-token] Error fetching spotifyProduct:', err);
+  // Siempre actualizamos spotifyProduct desde la API de Spotify para
+  // reflejar cambios (free→premium, etc). El endpoint se llama poco,
+  // así que el costo de un GET /v1/me es mínimo.
+  try {
+    const meRes = await axios.get('https://api.spotify.com/v1/me', {
+      headers: { 'Authorization': `Bearer ${userSpotifyactive.accessToken}` }
+    });
+    const product = meRes.data?.product;
+    console.log('[playback-token] Spotify /v1/me product:', product);
+    if (product && product !== userSpotifyactive.spotifyProduct) {
+      userSpotifyactive.spotifyProduct = product;
+      await userSpotifyactive.save();
+      console.log('[playback-token] spotifyProduct updated:', product);
     }
+  } catch (err) {
+    console.error('[playback-token] Error fetching spotifyProduct:', err);
   }
 
   res.status(200).json({
