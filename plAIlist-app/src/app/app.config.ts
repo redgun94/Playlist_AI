@@ -16,7 +16,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor]), withFetch()),
     importProvidersFrom(
       TranslateModule.forRoot({
         fallbackLang: 'en',

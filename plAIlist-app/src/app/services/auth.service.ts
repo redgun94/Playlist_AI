@@ -100,11 +100,17 @@ export class AuthService {
 
   //Metodo para verificar si el usuario esta autenticado
   isAuthenticated():boolean{
+    if (typeof localStorage === 'undefined') {
+      return false;
+    }
     const token = localStorage.getItem('token');
     return !!token;
   }
 
   getToken():string | null {
+    if (typeof localStorage === 'undefined') {
+      return null;
+    }
     return localStorage.getItem('token');
   }
 
