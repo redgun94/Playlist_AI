@@ -62,25 +62,32 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
   }
 
   private checkScopesAndInit(): void {
+    console.log('[PlayerBar] checkScopesAndInit called');
     this.spotifyApi.checkPlaybackScopes().subscribe({
       next: (scopeRes) => {
+        console.log('[PlayerBar] checkPlaybackScopes response:', JSON.stringify(scopeRes));
         if (scopeRes.needsReauth) {
+          console.log('[PlayerBar] needsReauth=true, redirecting to Spotify login');
           const user = this.authService.currentUserValue;
           const userId = user?.id || '';
           window.location.href = this.spotifyApi.getSpotifyLoginUrl(userId);
           return;
         }
+        console.log('[PlayerBar] scopes OK, initializing SDK');
         this.initSdk();
       },
-      error: () => {
+      error: (err) => {
+        console.error('[PlayerBar] checkPlaybackScopes ERROR:', err);
         this.sdkError = 'No se pudieron verificar los permisos de Spotify.';
       }
     });
   }
 
   private initSdk(): void {
+    console.log('[PlayerBar] initSdk called');
     this.playbackService.initPlayer(() =>
       firstValueFrom(this.spotifyApi.getPlaybackToken()).then(r => {
+        console.log('[PlayerBar] getPlaybackToken for SDK token:', !!r.accessToken);
         if (!r.accessToken) {
           throw new Error('No se obtuvo el token de Spotify');
         }
