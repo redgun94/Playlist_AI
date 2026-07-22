@@ -32,7 +32,7 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
     console.log('[PlayerBar] ngOnInit - calling getPlaybackToken');
     this.spotifyApi.getPlaybackToken().subscribe({
       next: (res) => {
-        console.log('[PlayerBar] getPlaybackToken response:', res);
+        console.log('[PlayerBar] getPlaybackToken response:', JSON.stringify(res));
         this.spotifyLinked = res.userAuthenticated;
         this.isPremium = !!res.isPremium;
         console.log('[PlayerBar] spotifyLinked:', this.spotifyLinked, '| isPremium:', this.isPremium);

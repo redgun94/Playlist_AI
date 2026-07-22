@@ -423,7 +423,8 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
     success: true,
     userAuthenticated: true,
     accessToken: userSpotifyactive.accessToken,
-    isPremium: userSpotifyactive.spotifyProduct === 'premium'
+    isPremium: userSpotifyactive.spotifyProduct === 'premium',
+    spotifyProduct: userSpotifyactive.spotifyProduct
   });
 };
 
