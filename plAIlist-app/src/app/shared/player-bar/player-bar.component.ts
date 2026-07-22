@@ -37,6 +37,11 @@ export class PlayerBarComponent implements OnInit, OnDestroy {
         this.isPremium = !!res.isPremium;
         console.log('[PlayerBar] spotifyLinked:', this.spotifyLinked, '| isPremium:', this.isPremium);
 
+        // Guardar isPremium en localStorage para que el dashboard lo use (estrella)
+        if (res.isPremium !== undefined) {
+          localStorage.setItem('spotifyProduct', res.isPremium ? 'premium' : 'free');
+        }
+
         if (this.spotifyLinked && this.isPremium) {
           this.checkScopesAndInit();
         }

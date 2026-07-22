@@ -182,7 +182,9 @@ editPlaylist(playlist: Playlist) {
   }
 
   async playPlaylist(playlist: Playlist) {
+    console.log('Usuario Premium (localStorage):', localStorage.getItem('spotifyProduct'));
     const uris = (playlist.tracks || []).map((track: any) => track.uri).filter(Boolean);
+    console.log(uris);
     if (!uris.length) {
       alert('Esta playlist no tiene canciones para reproducir');
       return;

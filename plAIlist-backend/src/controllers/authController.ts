@@ -408,6 +408,7 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
       const meRes = await axios.get('https://api.spotify.com/v1/me', {
         headers: { 'Authorization': `Bearer ${userSpotifyactive.accessToken}` }
       });
+      console.log('[playback-token] Spotify /v1/me response product:', meRes.data?.product);
       if (meRes.data?.product) {
         userSpotifyactive.spotifyProduct = meRes.data.product;
         await userSpotifyactive.save();
@@ -431,9 +432,11 @@ export const getSpotifyPlaybackToken = async (req: Request, res: Response): Prom
 // Se llama UNA SOLA VEZ al cargar el dashboard, no en cada refresh de token del SDK.
 export const checkPlaybackScopes = async (req: Request, res: Response): Promise<any> => {
   const userId = req.user?.userId;
+  console.log('[check-scopes] userId:', userId);
 
   const userSpotifyactive = await UserSpotifyAuth.findOne({ userId });
   if (!userSpotifyactive) {
+    console.log('[check-scopes] No UserSpotifyAuth found, needsReauth: true');
     return res.status(200).json({ needsReauth: true });
   }
 
@@ -446,6 +449,7 @@ export const checkPlaybackScopes = async (req: Request, res: Response): Promise<
       headers: { 'Authorization': `Bearer ${userSpotifyactive.accessToken}` },
       validateStatus: () => true
     });
+    console.log('[check-scopes] probe status:', probe.status);
     if (probe.status === 403) {
       needsReauth = true;
     }
@@ -453,6 +457,7 @@ export const checkPlaybackScopes = async (req: Request, res: Response): Promise<
     needsReauth = true;
   }
 
+  console.log('[check-scopes] needsReauth:', needsReauth);
   res.status(200).json({ needsReauth });
 };
 

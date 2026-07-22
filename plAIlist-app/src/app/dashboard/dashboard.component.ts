@@ -79,6 +79,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.currentUser = this.authService.currentUserValue;
     console.log('currentUser (tipo):', typeof this.currentUser);
     console.log('currentUser (valor):', this.currentUser);
+
+    // Fetch premium status desde el backend (para la estrella)
+    this.spotifyAPIService.getPlaybackToken().subscribe({
+      next: (res) => {
+        console.log('[Dashboard] getPlaybackToken response:', res);
+        if (res.isPremium !== undefined) {
+          localStorage.setItem('spotifyProduct', res.isPremium ? 'premium' : 'free');
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('[Dashboard] getPlaybackToken error:', err)
+    });
     
     // Suscribirse a cambios en el usuario
     this.userSubscription = this.authService.currentUser.subscribe(user => {

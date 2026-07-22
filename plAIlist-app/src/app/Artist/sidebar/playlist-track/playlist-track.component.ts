@@ -28,6 +28,7 @@ removeTrack( track: any) {
 }
 
 async playTrack(track: any) {
+  console.log('Usuario Premium (localStorage):', localStorage.getItem('spotifyProduct'));
   if (!track.uri) {
     return;
   }
